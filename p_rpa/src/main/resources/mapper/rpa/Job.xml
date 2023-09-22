@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.rpa.job.dao.JobDao">
+    <select id="getNextJob" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
+        SELECT
+            JOB_ID
+             , RJ.SCEN_ID
+             , RS.SCEN_SCRIPT
+             , UPLOAD_FILE
+             , P_RATE
+             , JOB_COUNT
+             , JOB_STATE
+             , START_DATE
+             , END_DATE
+             , REG_DATE
+             , UPD_DATE
+        FROM RP_JOB RJ INNER JOIN RP_SCENARIO RS ON RJ.SCEN_ID = RS.SCEN_ID
+        WHERE
+            JOB_STATE = 101
+        ORDER BY REG_DATE ASC
+            LIMIT 1
+    </select>
+
+    <select id="getJobList" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
+        SELECT
+            JOB_ID
+             , RJ.SCEN_ID
+             , RS.SCEN_SCRIPT
+             , UPLOAD_FILE
+             , P_RATE
+             , JOB_COUNT
+             , JOB_STATE
+             , START_DATE
+             , END_DATE
+             , REG_DATE
+             , UPD_DATE
+        FROM RP_JOB RJ INNER JOIN RP_SCENARIO RS ON RJ.SCEN_ID = RS.SCEN_ID
+        <where>
+            <if test="scenId != null and scenId != ''">
+                RJ.SCEN_ID = #{scenId}
+            </if>
+        </where>
+        ORDER BY REG_DATE DESC
+    </select>
+
+    <select id="updJobStatus" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
+        UPDATE RP_JOB SET
+             P_RATE = #{pRate}
+             , JOB_STATE = #{jobState}
+            <if test="jobState == 200">
+                , START_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
+            </if>
+            <if test="jobState == 203">
+                , END_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
+            </if>
+             , UPD_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
+        WHERE
+            JOB_ID = #{jobId}
+    </select>
+
+<!--    <insert id="insSeanario" parameterType="Map">-->
+<!--        INSERT INTO RP_SEANARIO (SEAN_SCRIPT, SEAN_NAME)-->
+<!--        VALUES(#{seanScript},#{seanName})-->
+<!--    </insert>-->
+</mapper>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.item.dao.ItemDao">
+
+	<sql id="includeSelItem">
+		<where>
+			AND I.DATA_STATE = 'A'
+			<if test="authItemTypeList != null and !authItemTypeList.isEmpty()">
+				AND I.ATHRT_ITEM_TYPE IN
+				<foreach item="item" collection="authItemTypeLst" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="systemCodeList != null and !systemCodeList.isEmpty()">
+				AND I.SYSTEM_CODE IN
+				<foreach item="item" collection="systemCodeList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="itemNoList != null and !itemNoList.isEmpty()">
+				AND I.ITEM_NO IN
+				<foreach item="item" collection="itemNoList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="itemNo != null and itemNo > 0">
+				AND I.ITEM_NO = #{itemNo}
+			</if>
+			<if test="menuName != null and !menuName.equals('')">
+				AND I.MENU_NAME LIKE CONCAT('%', #{menuName}, '%')
+			</if>
+			<if test="itemName != null and !itemName.equals('')">
+				AND I.ITEM_NAME LIKE CONCAT('%', #{itemName}, '%')
+			</if>
+			<if test="fnctnId != null and !fnctnId.equals('')">
+				AND I.FNCTN_ID LIKE CONCAT('%', #{fnctnId}, '%')
+			</if>
+			<if test="systemAplctYn != null and !systemAplctYn.equals('')">
+				AND I.SYSTEM_APLCT_YN = #{systemAplctYn}
+			</if>
+			<if test="useYn != null and !useYn.equals('')">
+				AND I.USE_YN = #{useYn}
+			</if>
+			<if test="searchInput != null and !searchInput.equals('')">
+				AND I.ITEM_NAME LIKE CONCAT('%', #{searchInput}, '%') OR I.ITEM_DSCRP LIKE CONCAT('%', #{searchInput}, '%')
+			</if>
+			<if test="itemDscrp != null and !itemDscrp.equals('')">
+				AND I.ITEM_DSCRP LIKE CONCAT('%', #{itemDscrp}, '%')
+			</if>
+			<if test="startDate != null and !startDate.equals('') and endDate != null and !endDate.equals('')">
+				<if test="searchDateType != null and searchDateType.equals('M')">
+					AND I.MOD_DATE <![CDATA[>=]]> STR_TO_DATE(#{startDate},'%Y%m%d')
+					AND I.MOD_DATE <![CDATA[<=]]> STR_TO_DATE(CONCAT(#{endDate}, '235959'),'%Y%m%d%H%i%s')
+				</if>
+				<if test="searchDateType != null and searchDateType.equals('R')">
+					AND I.REG_DATE <![CDATA[>=]]> STR_TO_DATE(#{startDate},'%Y%m%d')
+					AND I.REG_DATE <![CDATA[<=]]> STR_TO_DATE(CONCAT(#{endDate}, '235959'),'%Y%m%d%H%i%s')
+				</if>
+			</if>
+		</where>
+	</sql>
+
+	<select id="getItemList_COUNT" parameterType="kr.fingate.gs.auth.item.dto.SearchItemDto" resultType="long">
+		SELECT COUNT(I.ITEM_NO)
+		FROM GA_ITEM I
+		<include refid="includeSelItem" />
+	</select>
+
+	<select id="getItemList" parameterType="kr.fingate.gs.auth.item.dto.SearchItemDto" resultType="kr.fingate.gs.auth.item.dto.ItemDto">
+		/* kr.fingate.gs.auth.item.dao.ItemDao.getItemList */
+		SELECT I.ITEM_NO
+		, I.SYSTEM_CODE
+		, I.AUTH_ITEM_TYPE
+		, I.MENU_NAME
+		, I.ITEM_NAME
+		, I.ITEM_DSCRP
+		, I.FNCTN_ID
+		, I.SYSTEM_APLCT_YN
+		, I.USE_YN
+		, DATE_FORMAT(I.REG_DATE, '%Y/%m/%d %H:%i') AS REG_DATE
+		, DATE_FORMAT(I.MOD_DATE, '%Y/%m/%d %H:%i') AS MOD_DATE
+		<if test="includeUserInfoYn.equals('Y')">
+		, CONCAT(U.USER_NAME, '(', O.ORGNZ_NAME, ')') AS REG_USER_NAME
+		, CONCAT(UM.USER_NAME, '(', OM.ORGNZ_NAME, ')') AS MOD_USER_NAME
+		</if>
+		FROM GA_ITEM I
+		<if test="includeUserInfoYn.equals('Y')">
+		LEFT JOIN GA_USER UM ON I.MOD_USER_NO = UM.USER_NO
+		LEFT JOIN GA_ORGNZ OM ON OM.ORGNZ_NO = UM.ORGNZ_NO
+		LEFT JOIN GA_USER U ON I.REG_USER_NO = U.USER_NO
+		LEFT JOIN GA_ORGNZ O ON O.ORGNZ_NO = U.ORGNZ_NO
+		</if>
+		<include refid="includeSelItem" />
+		<if test="orderByYn.equals('Y')">
+		ORDER BY I.ITEM_NO DESC
+		</if>
+ 	</select>
+
+ 	<insert id="insItem" parameterType="kr.fingate.gs.auth.item.dto.ItemDto" useGeneratedKeys="true" keyProperty="itemNo">
+		/* kr.fingate.gs.auth.item.dao.ItemDao.insItem */
+		INSERT INTO GA_ITEM (
+			  SYSTEM_CODE
+			, ATHRT_ITEM_TYPE
+			, ITEM_DSCRP
+			, MENU_NAME
+			, ITEM_NAME
+			, FNCTN_ID
+			, SYSTEM_APLCT_YN
+			, USE_YN
+			, REG_USER_NO
+		) VALUES(
+			 #{systemCode}
+			, #{authItemType}
+			, #{itemDscrp}
+			, #{menuName}
+			, #{itemName}
+			, #{fnctnId}
+			, #{systemAplctYn}
+			, #{useYn}
+			, #{rgstUserNo}
+		)
+ 	</insert>
+
+ 	<update id="updItem" parameterType="kr.fingate.gs.auth.item.dto.ItemDto">
+ 		/* kr.fingate.gs.auth.item.dao.ItemDao.updItem */
+		UPDATE GA_ITEM
+		SET
+			MOD_DATE = NOW()
+		  , MOD_USER_NO = #{modUserNo}
+		  <if test="itemDscrp != null and !itemDscrp.equals('')">
+			 , ITEM_DSCRP = #{itemDscrp}
+		  </if>
+		  <if test="systemAplctYn != null and !systemAplctYn.equals('')">
+			 , SYSTEM_APLCT_YN = #{systemAplctYn}
+		  </if>
+		  <if test="useYn != null and !useYn.equals('')">
+			 , USE_YN = #{useYn}
+		  </if>
+		WHERE
+			 ITEM_NO = #{itemNo}
+ 	</update>
+
+	<!-- Fnctn.ID 넘버링 조회 -->
+ 	<select id="getMaxFnctnId" parameterType="kr.fingate.gs.auth.item.dto.ItemDto" resultType="string">
+		/* kr.fingate.gs.auth.item.dao.ItemDao.getFnctnIdNum */
+		SELECT
+			 MAX(I.FNCTN_ID) AS FNCTN_ID
+		FROM
+			 GA_ITEM I
+		WHERE
+			 I.SYSTEM_CODE = #{systemCode}
+			 AND I.ATHRT_ITEM_TYPE = #{authItemType}
+	</select>
+
+	<!--<select id="getSystemMenuNameList" parameterType="java.util.List" resultType="string">
+		/* kr.fingate.gs.auth.item.dao.ItemDao.selSystemMenuName */
+		SELECT
+			I.MENU_NAME
+		FROM GI_ITEM I
+		WHERE I.MENU_NAME IS NOT NULL
+		AND I.ATHRT_ITEM_TYPE = 'M'
+		AND I.USE_YN = 'Y'
+		<if test="list != null and !list.isEmpty()">
+			AND I.SYSTEM_NO IN
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>-->
+</mapper>

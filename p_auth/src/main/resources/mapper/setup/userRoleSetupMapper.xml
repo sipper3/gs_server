@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.setup.dao.UserRoleSetupDao">
+
+	<!-- 로그인 사용아 권한 조회 S -->
+	<sql id="includeUserRoleItemFrom">
+		/* 사용자기준 개별롤 항목 조회 FROM-WHERE */
+		FROM GA_USER U
+		INNER JOIN GA_USER_ROLE UR ON U.USER_NO = UR.USER_NO AND (UR.ALWYS_YN = 'Y' OR NOW() BETWEEN UR.START_DATE AND UR.END_DATE) AND UR.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE R ON UR.ROLE_NO = R.ROLE_NO AND U.CLIENT_NO = R.CLIENT_NO AND R.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE_ITEM_MAP RIM ON R.ROLE_NO = RIM.ROLE_NO AND RIM.DATA_STATE = 'A'
+		INNER JOIN GA_ITEM I ON RIM.ITEM_NO = I.ITEM_NO AND I.DATA_STATE = 'A'
+		WHERE U.USE_YN = 'Y'
+		AND R.USE_YN = 'Y'
+		AND I.USE_YN = 'Y'
+		AND U.USER_NO = #{userNo}
+		<if test="systemCode != null and !systemCode.equals('')">
+			AND I.SYSTE_CODE = #{systemCode}
+		</if>
+	</sql>
+	<sql id="includeUserRoleGroupItemFrom">
+		/* 사용자기준 그룹롤 항목 조회 FROM-WHERE */
+		FROM GA_USER U
+		INNER JOIN GA_USER_ROLE_GROUP URG ON U.USER_NO = URG.USER_NO AND (URG.ALWYS_YN = 'Y' OR NOW() BETWEEN URG.START_DATE AND URG.END_DATE) AND URG.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE_GROUP RG ON URG.ROLE_GROUP_NO = RG.ROLE_GROUP_NO AND U.CLIENT_NO = RG.CLIENT_NO AND URG.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE_GROUP_MAP RGM ON RG.ROLE_GROUP_NO = RGM.ROLE_GROUP_NO AND RGM.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE R ON RGM.ROLE_NO = R.ROLE_NO AND U.CLIENT_NO = R.CLIENT_NO AND R.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE_ITEM_MAP RIM ON R.ROLE_NO = RIM.ROLE_NO AND RIM.DATA_STATE = 'A'
+		INNER JOIN GA_ITEM I ON RIM.ITEM_NO = I.ITEM_NO AND I.DATA_STATE = 'A'
+		WHERE U.USE_YN = 'Y'
+		AND R.USE_YN = 'Y'
+		AND RG.USE_YN = 'Y'
+		AND I.USE_YN = 'Y'
+		AND U.USER_NO = #{userNo}
+		<if test="systemCode != null and !systemCode.equals('')">
+			AND I.SYSTE_CODE = #{systemCode}
+		</if>
+	</sql>
+	<select id="getUserAllRoleItemList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.item.dto.ItemDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.getUserAllRoleItemList */
+
+		/* 개별롤 item */
+		SELECT U.USER_NO
+		, I.ITEM_NO
+		, I.AUTH_ITEM_TYPE
+		, I.SYSTEM_CODE
+		, I.MENU_NAME
+		, I.ITEM_NAME
+		, I.ITEM_DSCRP
+		, I.FNCTN_ID
+		, I.USE_YN
+		<include refid="includeUserRoleItemFrom"></include>
+
+		UNION ALL
+
+		/* 그룹롤 item */
+		SELECT
+		U.USER_NO
+		, I.ITEM_NO
+		, I.AUTH_ITEM_TYPE
+		, I.SYSTEM_CODE
+		, I.MENU_NAME
+		, I.ITEM_NAME
+		, I.ITEM_DSCRP
+		, I.FNCTN_ID
+		, I.USE_YN
+		<include refid="includeUserRoleGroupItemFrom"></include>
+	</select>
+	<!-- 로그인 사용아 권한 조회 E -->
+
+	<select id="getUserRoleList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.setup.dto.UserRoleDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.selUserRoleSetup */
+		SELECT USER_NO
+		, ROLE_NO
+		, ALWYS_YN
+		, START_DATE
+		, END_DATE
+		, DATA_STATE
+		FROM GA_ROLE
+		WHERE USER_NO = #{userNo}
+		AND ROLE_NO IN
+		<foreach item="item" index="index" collection="roleNoList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getUserRoleGroupList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.setup.dto.UserRoleGroupDto">
+		SELECT USER_NO
+		, ROLE_GROUP_NO
+		, ALWYS_YN
+		, START_DATE
+		, END_DATE
+		, DATA_STATE
+		FROM GA_ROLE_GROUP
+		WHERE USER_NO = #{userNo}
+		AND ROLE_GROUP_NO IN
+		<foreach item="item" index="index" collection="roleGroupNoList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<!-- 사용자 권한리스트 조회 S -->
+	<sql id="includeUserRoleSmryList">
+		WHERE U.CLIENT_NO = #{clntNo}
+		AND U.USE_YN = 'Y'
+		<if test="userNo != null and userNo != 0">
+			AND U.USER_NO = #{userNo}
+		</if>
+		<if test="userName != null and !userName.equals('')">
+			<choose>
+				<when test="userClass.equals('U')">
+					AND U.USER_NAME LIKE CONCAT(#{userName},'%')
+				</when>
+				<when test="userClass.equals('M')">
+					AND US.ROLE_LAST_MOD_USER_NAME LIKE CONCAT(#{userName},'%')
+				</when>
+			</choose>
+		</if>
+		<if test="startDate != null and !startDate.equals('') and endDate != null and !endDate.equals('')">
+			AND US.ROLE_LAST_MOD_DATE BETWEEN STR_TO_DATE(#{stDate},'%Y%m%d') AND STR_TO_DATE(CONCAT(#{edDate}, '235959'),'%Y%m%d%H%i%s')
+		</if>
+		<if test="roleNoList != null and !roleNoList.isEmpty()">
+			AND EXISTS (SELECT 1 FROM GA_USER_ROLE UR WHERE UR.USER_NO = U.USER_NO
+			AND UR.ROLE_NO IN
+			<foreach item="item" index="index" collection="roleNoList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+		<if test="roleGroupNoList != null and !roleGroupNoList.isEmpty()">
+			AND EXISTS (SELECT 1 FROM GA_USER_ROLE_GROUP URG WHERE URG.USER_NO = U.USER_NO
+			AND UR.ROLE_GROUP_NO IN
+			<foreach item="item" index="index" collection="roleGroupNoList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+		<if test="orgnzNoList != null and !orgnzNoList.isEmpty()">
+			AND O.ORGNZ_NO IN
+			<foreach item="item" index="index" collection="orgnzNoList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="orgnzName != null and !orgnzName.equals('')">
+			AND O.ORGNZ_NAME LIKE CONCAT(#{orgnzName},'%')
+		</if>
+		<if test="pstnCodeList != null and !pstnCodeList.isEmpty()">
+			AND U.PSTN_CODE IN
+			<foreach item="item" index="index" collection="pstnCodeList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="dutyCodeList != null and !dutyCodeList.isEmpty()">
+			AND U.DUTY_CODE IN
+			<foreach item="item" index="index" collection="dutyCodeList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="bsnsCodeList != null and !bsnsCodeList.isEmpty()">
+			AND U.BSNS_CD IN
+			<foreach item="item" index="index" collection="bsnsCdLst" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+
+	<select id="getUserRoleSmryList_COUNT" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleSmryDto" resultType="long">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.getUserRoleSmryList_COUNT */
+		SELECT COUNT(U.USER_NO)
+		FROM GA_USER U
+		INNER JOIN GA_ORGNZ O ON O.ORGNZ_NO = U.ORGNZ_NO
+		INNER JOIN (
+			SELECT  US.USER_NO
+			, US.ROLE_LAST_MOD_DATE
+			, US.ROLE_LAST_MOD_USER_NO
+			, IFNULL(UM.USER_NAME, US.ROLE_LAST_MOD_USER_NO) AS ROLE_LAST_MOD_USER_NAME
+			, IFNULL(OM.ORGNZ_NAME, '') AS ROLE_LAST_MOD_ORGNZ_NAME
+			FROM GA_USER_SMRY US
+			LEFT OUTER JOIN GA_USER UM ON US.ROLE_LAST_MOD_USER_NO = UM.USER_NO
+			LEFT OUTER JOIN GA_ORGNZ OM ON UM.ORGNZ_NO = OM.ORGNZ_NO
+		) GUS ON US.USER_NO = U.USER_NO
+		<include refid="includeUserRoleSmryList"/>
+	</select>
+
+	<select id="getUserRoleSmryList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleSmryDto" resultType="kr.fingate.gs.auth.setup.dto.UserRoleSmryDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.getUserRoleSmryList */
+		SELECT U.USER_NO
+			, U.USER_NAME
+			, U.PSTN_CODE
+			, U.DUTY_CODE
+			, U.BSNS_CODE
+			, O.ORGNZ_NO
+			, O.ORGNZ_NAME
+			, O.ORGNZ_DTL_NAME
+ 		     -- , GROUP_CONCAT(DISTINCT GRU.ROLE_NO) AS ROLE_NO_STR
+			, DATE_FORMAT(US.ROLE_LAST_MOD_DATE, '%Y/%m/%d %H:%i') AS ROLE_LAST_MOD_DATE
+			, CONCAT(US.ROLE_LAST_MOD_USER_NAME, '(', US.ROLE_LAST_MOD_ORGNZ_NAME, ')') AS ROLE_LAST_MOD_USER_NAME
+		FROM GA_USER U
+		INNER JOIN GA_ORGNZ O ON O.ORGNZ_NO = U.ORGNZ_NO
+		INNER JOIN (
+		    SELECT  USM.USER_NO
+		    	, USM.ROLE_LAST_MOD_DATE
+		    	, USM.ROLE_LAST_MOD_USER_NO
+		    	, IFNULL(UM.USER_NAME, USM.ROLE_LAST_MOD_USER_NO) AS ROLE_LAST_MOD_USER_NAME
+		    	, IFNULL(OM.ORGNZ_NAME, '') AS ROLE_LAST_MOD_ORGNZ_NAME
+			FROM GA_USER_SMRY USM
+			LEFT OUTER JOIN GA_USER UM ON US.ROLE_LAST_MOD_USER_NO = UM.USER_NO
+			LEFT OUTER JOIN GA_ORGNZ OM ON UM.ORGNZ_NO = OM.ORGNZ_NO
+		) US ON US.USER_NO = U.USER_NO
+		<include refid="includeUserRoleSmryList" />
+		ORDER BY US.ROLE_LAST_MOD_DATE DESC
+	</select>
+	<!-- 사용자 권한리스트 조회 E -->
+
+	<sql id="includeUserRoleFrom">
+		/* 사용자기준 개별롤 조회 FROM-WHERE */
+		FROM GA_USER U
+		INNER JOIN GA_USER_ROLE UR ON U.USER_NO = UR.USER_NO AND (UR.ALWYS_YN = 'Y' OR NOW() BETWEEN UR.START_DATE AND UR.END_DATE) AND UR.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE R ON UR.ROLE_NO = R.ROLE_NO AND U.CLIENT_NO = R.CLIENT_NO AND R.DATA_STATE = 'A'
+		WHERE U.USE_YN = 'Y'
+		AND R.USE_YN = 'Y'
+		AND U.USER_NO = #{userNo}
+	</sql>
+	<sql id="includeUserRoleGroupFrom">
+		/* 사용자기준 그룹롤 조회 FROM-WHERE */
+		FROM GA_USER U
+		INNER JOIN GA_USER_ROLE_GROUP URG ON U.USER_NO = URG.USER_NO AND (URG.ALWYS_YN = 'Y' OR NOW() BETWEEN URG.START_DATE AND URG.END_DATE) AND URG.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE_GROUP RG ON URG.ROLE_GROUP_NO = RG.ROLE_GROUP_NO AND U.CLIENT_NO = RG.CLIENT_NO AND URG.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE_GROUP_MAP RGM ON RG.ROLE_GROUP_NO = RGM.ROLE_GROUP_NO AND RGM.DATA_STATE = 'A'
+		INNER JOIN GA_ROLE R ON RGM.ROLE_NO = R.ROLE_NO AND U.CLIENT_NO = R.CLIENT_NO AND R.DATA_STATE = 'A'
+		WHERE U.USE_YN = 'Y'
+		AND R.USE_YN = 'Y'
+		AND RG.USE_YN = 'Y'
+		AND U.USER_NO = #{userNo}
+	</sql>
+
+	<select id="getUserRoleSetupList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.role.dto.RoleDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.selUserRoleSetup */
+		SELECT R.ROLE_NO
+			, R.ROLE_NAME
+			, R.ROLE_DSCRP
+			, UR.ROLE_GROUP_NAME
+			, UR.ALWYS_YN
+			, UR.START_DATE
+			, UR.END_DATE
+			, CASE WHEN UR.ROLE_NO IS NULL THEN 'N' ELSE 'Y' END AS USER_ROLE_YN
+		FROM GA_ROLE R
+		LEFT OUTER JOIN (
+			SELECT ROLE_NO
+				, GROUP_CONCAT(ROLE_GROUP_NAME) AS ROLE_GROUP_NAME
+		    	, IFNULL(MAX(ALWYS_YN), 'N') AS ALWYS_YN
+		    	, DATE_FORMAT(MIN(START_DATE), '%Y%m%d') AS START_DATE
+		    	, DATE_FORMAT(MAX(END_DATE), '%Y%m%d') AS END_DATE
+			FROM (
+				SELECT UR.ROLE_NO
+					, '' AS ROLE_GROUP_NAME
+					, UR.ALWYS_YN
+					, UR.START_DATE
+					, UR.END_DATE
+				<include refid="includeUserRoleFrom"></include>
+
+				UNION ALL
+
+				SELECT UR.ROLE_NO
+					, RG.ROLE_GROUP_NAME
+					, URG.ALWYS_YN
+					, URG.START_DATE
+					, URG.END_DATE
+				<include refid="includeUserRoleGroupFrom"></include>
+			) R
+			GROUP BY ROLE_NO
+		) UR ON R.ROLE_NO = UR.ROLE_NO
+		WHERE R.DATA_STATE = 'A'
+		AND EXISTS ( SELECT 1
+			FROM GA_ROLE_ITEM_MAP RIM
+			INNER JOIN GA_ITEM I ON RIM.ITEM_NO = I.ITEM_NO
+			WHERE RIM.DATA_STATE = 'A'
+			AND I.DATA_STATE = 'A'
+			AND I.USE_YN = 'Y'
+			AND RIM.ROLE_NO = R.ROLE_NO
+			AND I.SYSTEM_CODE = #{systemCode} )
+		AND R.USE_YN = 'Y'
+		AND R.CLIENT_NO = #{clntNo}
+		<if test="roleName != null and !roleName.equals('')">
+			AND U.ROLE_NAME LIKE CONCAT('%', #{roleName}, '%')
+		</if>
+	</select>
+
+	<select id="getUserRoleGroupSetupList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.role.dto.RoleDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.getUserRoleGroupSetupList */
+		SELECT RG.ROLE_GROUP_NO
+			, RG.ROLE_GROUP_NAME
+			, GROUP_CONCAT(R.ROLE_NAME) AS ROLE_NAME
+			, RG.ROLE_GROUP_DSCRP
+			, URG.ALWYS_YN
+			, URG.START_DATE
+			, URG.END_DATE
+			, CASE WHEN URG.ROLE_GROUP_NO IS NULL THEN 'N' ELSE 'Y' END AS USER_ROLE_GROUP_YN
+		FROM GA_ROLE_GROUP RG
+		LEFT OUTER JOIN (
+			SELECT RG.ROLE_GROUP_NO
+				, IFNULL(MAX(URG.ALWYS_YN), 'N') AS ALWYS_YN
+				, DATE_FORMAT(MIN(URG.START_DATE), '%Y%m%d') AS START_DATE
+				, DATE_FORMAT(MAX(URG.END_DATE), '%Y%m%d') AS END_DATE
+			<include refid="includeUserRoleGroupFrom"></include>
+			GROUP BY RG.ROLE_GROUP_NO
+		) URG ON RG.ROLE_GROUP_NO = URG.ROLE_GROUP_NO
+		WHERE RG.DATA_STATE = 'A'
+		AND RG.USE_YN = 'Y'
+		AND RG.CLIENT_NO = #{clntNo}
+		<if test="roleGroupName != null and !roleGroupName.equals('')">
+			AND RG.ROLE_GROUP_NAME LIKE CONCAT('%', #{roleName}, '%')
+		</if>
+	</select>
+
+	<select id="getUserRoleSystemNameList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.item.dto.ItemDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.selUserRoleItemSystem */
+		SELECT TBL.USER_NO
+		     , TBL.SYSTEM_CODE
+		FROM (
+			/* 개별롤 item */
+			SELECT U.USER_NO, I.SYSTEM_CODE
+			<include refid="includeUserRoleItemFrom"></include>
+
+			UNION ALL
+
+			/* 그룹롤 item */
+			SELECT U.USER_NO, I.SYSTEM_CODE
+			<include refid="includeUserRoleGroupItemFrom"></include>
+		) TBL
+		GROUP BY TBL.USER_NO, TBL.SYSTEM_CODE
+	</select>
+	<select id="getUserRoleNameList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.role.dto.RoleDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.selUserRole */
+		SELECT U.USER_NO
+		, R.ROLE_NO
+		, R.ROLE_NAME
+		<include refid="includeUserRoleFrom"></include>
+	</select>
+	<select id="getUserRoleGroupNameList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.role.dto.RoleDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.selUserRoleGroup */
+		SELECT U.USER_NO
+		, RG.ROLE_GROUP_NO
+		, RG.ROLE_GROUP_NAME
+		<include refid="includeUserRoleGroupFrom"></include>
+		GROUP BY U.USER_NO
+		, RG.ROLE_GROUP_NO
+		, RG.ROLE_GROUP_NAME
+	</select>
+
+
+	<!-- 동일조직 권한 부여자 확인 -->
+	<select id="getUserSameRoleOrgnzList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserSameRoleDto" resultType="kr.fingate.gs.auth.setup.dto.UserSameRoleDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.getUserSameRoleOrgnzList */
+		SELECT U.USER_NAME
+		, O.ORGNZ_NAME
+		, O.ORGNZ_DTL_NAME
+		, U.PSTN_CODE
+		, U.DUTY_CODE
+		, U.BSNS_CODE
+		FROM GA_ROLE R
+		INNER JOIN GA_USER_ROLE UR ON UR.ROLE_NO = R.ROLE_NO
+		INNER JOIN GA_USER U ON U.USER_NO = UR.USER_NO
+		INNER JOIN GA_ORGNZ O ON O.ORGNZ_NO = U.ORGNZ_NO
+		WHERE R.ROLE_NO = #{roleNo}
+		AND R.USE_YN = 'Y'
+		AND R.DATA_STATE = 'A'
+	  	AND UR.DATA_STATE = 'A'
+		AND U.USE_YN = 'Y'
+	  	AND O.ORGNZ_NO = #{orgnzNo}
+		AND (UR.ALWYS_YN = 'Y' OR NOW() BETWEEN UR.START_DATE AND UR.END_DATE)
+	</select>
+
+	<!-- 동일조직 권한 부여자 확인 -->
+	<select id="getUserSameRoleGroupOrgnzList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserSameRoleDto" resultType="kr.fingate.gs.auth.setup.dto.UserSameRoleDto">
+		/* kr.fingate.gs.auth.setup.dao.UserRoleSetupDao.getUserSameRoleGroupOrgnzList */
+		SELECT U.USER_NAME
+			 , O.ORGNZ_NAME
+			 , O.ORGNZ_DTL_NAME
+			 , U.PSTN_CODE
+			 , U.DUTY_CODE
+			 , U.BSNS_CODE
+		FROM GA_ROLE_GROUP RG
+				 INNER JOIN GA_USER_ROLE_GROUP URG ON URG.ROLE_NO = RG.ROLE_NO
+				 INNER JOIN GA_USER U ON U.USER_NO = URG.USER_NO
+				 INNER JOIN GA_ORGNZ O ON O.ORGNZ_NO = U.ORGNZ_NO
+		WHERE RG.ROLE_GROUP_NO = #{roleGroupNo}
+		  AND R.USE_YN = 'Y'
+		  AND R.DATA_STATE = 'A'
+		  AND URG.DATA_STATE = 'A'
+		  AND U.USE_YN = 'Y'
+		  AND O.ORGNZ_NO = #{orgnzNo}
+		  AND (URG.ALWYS_YN = 'Y' OR NOW() BETWEEN URG.START_DATE AND URG.END_DATE)
+	</select>
+
+</mapper>

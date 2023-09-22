@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.hstry.dao.HstryModDao">
+
+	<insert id="insRoleReason" parameterType="kr.fingate.gs.auth.hstry.dto.ReasonDto" useGeneratedKeys="true" keyProperty="reasonNo">
+		/* kr.fingate.gs.auth.setup.dao.HstryModDao.insRoleReason */
+		INSERT INTO GA_ROLE_REASAON (ENTTY_NAME
+									, ENTTY_KEY1
+									, ENTTY_KEY2
+									, REASON_TYPE
+									, REASON_CODE
+									, REASON
+									, REG_DATE
+									, REG_USER_NO
+		) VALUES (
+					 #{enttyName}
+				 , #{enttyKey1}
+				 , #{enttyKey2}
+				 , #{reasonType}
+				 , #{reasonCode}
+				 , #{reason}
+				 , NOW()
+				 , #{regUserNo}
+				 )
+	</insert>
+
+ 	<insert id="insRoleHstry" parameterType="java.util.List">
+		/* kr.fingate.gs.auth.hstry.dao.HstryModDao.insRoleHstry */
+		INSERT INTO GA_ROLE_HSTRY
+		(ENTTY_NAME
+		,ENTTY_KEY1
+		,ENTTY_KEY2
+		,ATRBT_NAME
+		,ORGNL_DATA
+		,CHANGE_DATA
+		,REASON_NO
+		,OPER_TYPE
+		,REG_USER_NO)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+		(#{item.enttyName}
+		,#{item.enttyKey1}
+		,#{item.enttyKey2}
+		,#{item.atrbtName}
+		,#{item.orgnlData}
+		,#{item.changeData}
+		,#{item.reasonNo}
+		,#{item.oprtnType}
+		,#{item.regUserNo})
+		</foreach>
+ 	</insert>
+
+	<insert id="insDataReason" parameterType="kr.fingate.gs.auth.hstry.dto.ReasonDto" useGeneratedKeys="true" keyProperty="reasonNo">
+		/* kr.fingate.gs.auth.setup.dao.HstryModDao.insDataReason */
+		INSERT INTO GA_DATA_REASAON (ENTTY_NAME
+									, ENTTY_KEY1
+									, REASON_TYPE
+									, REASON_CODE
+									, REASON
+									, REG_DATE
+									, REG_USER_NO
+		) VALUES (
+					 #{enttyName}
+				 , #{enttyKey1}
+				 , #{reasonType}
+				 , #{reasonCode}
+				 , #{reason}
+				 , NOW()
+				 , #{regUserNo}
+				 )
+	</insert>
+	
+ 	<insert id="insDataHstry" parameterType="java.util.List">
+		/* kr.fingate.gs.auth.hstry.dao.HstryModDao.insDataHstry */
+		INSERT INTO GA_DATA_HSTRY
+		(ENTTY_NAME
+		,ENTTY_KEY1
+		,ATRBT_NAME
+		,ORGNL_DATA
+		,CHANGE_DATA
+		,REASON_NO
+		,OPER_TYPE
+		,REG_USER_NO)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+		(#{item.enttyName}
+		,#{item.enttyKey1}
+		,#{item.atrbtName}
+		,#{item.orgnlData}
+		,#{item.changeData}
+		,#{item.reasonNo}
+		,#{item.oprtnType}
+		,#{item.regUserNo})
+		</foreach>
+ 	</insert>
+
+</mapper>

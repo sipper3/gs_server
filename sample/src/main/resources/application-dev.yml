@@ -1,0 +1,7 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+server:
+  name2: sample-dev

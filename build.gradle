@@ -1,0 +1,174 @@
+import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
+import org.springframework.boot.gradle.tasks.bundling.BootWar
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.2'
+	id 'io.spring.dependency-management' version '1.1.2'
+	id 'com.epages.restdocs-api-spec' version '0.18.2'
+	// Asciidoctor 플러그인 적용
+	// gradle 7.0 이상부터는 jvm 사용
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
+
+	// swagger
+	id 'org.hidetake.swagger.generator' version '2.19.2'
+}
+
+group = 'kr.fingate.gs'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'com.epages.restdocs-api-spec'
+	apply plugin: 'org.asciidoctor.jvm.convert'
+	apply plugin: 'org.hidetake.swagger.generator'
+
+	sourceCompatibility = 17
+	targetCompatibility = 17
+
+	repositories {
+		mavenCentral()
+	}
+
+
+	/* openapi3 생성 기본 설정 */
+	openapi3 {
+		title = "${project.name} API Documentation"
+		description = 'Spring REST Docs with SwaggerUI.'
+		version = '1.0.0'
+		format = 'json'
+	}
+
+
+
+	/* restdoc 설정 */
+	configurations {
+		asciidoctorExt
+	}
+
+	/* restdoc 설정 */
+	asciidoctor {
+		configurations 'asciidoctorExt'
+		dependsOn test
+		baseDirFollowsSourceFile()
+	}
+
+
+
+	/* 스웨거 start */
+
+	swaggerSources {
+		sample {
+			setInputFile(file("${project.buildDir}/api-spec/openapi3.json"))
+		}
+	}
+	// GenerateSwaggerUI 태스크가, openapi3 task 를 의존하도록 설정
+	tasks.withType(GenerateSwaggerUI) {
+		dependsOn 'openapi3'
+	}
+
+	tasks.register('copySwaggerUI', Copy) {
+		dependsOn 'generateSwaggerUI'
+		def generateSwaggerUISampleTask = tasks.named('generateSwaggerUISample', GenerateSwaggerUI).get()
+		println("${generateSwaggerUISampleTask}")
+		from("${project.buildDir}/swagger-ui-sample")
+		into("${project.buildDir}/resources/main/static/${project.name}/swagger-ui")
+
+		// output 폴더 삭제
+		doFirst {
+			delete file("${project.buildDir}/resources/main/static/${project.name}/swagger-ui")
+		}
+	}
+
+	/* 스웨거 end */
+
+
+	tasks.register('generateDocs')  {
+
+		dependsOn 'asciidoctor'
+		dependsOn 'openapi3'
+
+		// output 폴더 삭제
+		doFirst {
+			delete file("${project.buildDir}/resources/main/static/docs")
+			delete file("${project.buildDir}/resources/main/static/swagger-ui")
+		}
+
+		doLast {
+			copy {
+				from("${project.buildDir}/docs/asciidoc")
+				into("${project.buildDir}/resources/main/static/docs")
+			}
+			copy {
+				from("${project.buildDir}/api-spec")
+				into("${project.buildDir}/resources/main/static/docs")
+			}
+
+		}
+	}
+
+
+	dependencies {
+
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+
+//		implementation 'org.mybatis.spring.boot:mybatis-spring-boot'
+		implementation 'org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:2.2.2'
+//
+		implementation 'org.springframework.boot:spring-boot-starter-amqp'
+////		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+////		implementation 'org.springframework.boot:spring-boot-starter-security'
+//		implementation 'org.springframework.boot:spring-boot-starter-web'
+//		compileOnly 'org.projectlombok:lombok'
+//		annotationProcessor 'org.projectlombok:lombok'
+//
+//		implementation 'com.google.code.gson:gson:2.10.1'
+//		implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+//		implementation 'org.json:json:20230227'
+		implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+		//restDoc & openApi
+		asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+		testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.2'
+
+		//swagger
+		swaggerUI 'org.webjars:swagger-ui:4.11.1'
+
+		// Security
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+	}
+}

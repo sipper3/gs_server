@@ -1,0 +1,20 @@
+server:
+  port: 9018
+
+datasources:
+  - name: gs_public
+    base-package: kr.fingate.gs.*.**.dao
+    aop-execution: kr.fingate.gs..service.*.*(..)
+    data-source:
+      driverClassName: org.mariadb.jdbc.Driver
+      jdbcUrl: jdbc:mariadb://192.168.0.16:3306/gs_public
+      username: gs_public
+      password: hYN_nXa^?9#bJher
+      maximumPoolSize: 30  # max pool size (엑셀파일 참조)
+      minimumIdle: 15  # min pool size (엑셀파일 참조)
+      autoCommit: false
+      connectionTimeout: 30000
+
+logging:
+  file:
+    path: /data/gs_server/admin/

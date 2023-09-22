@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.tmp.dao.CommonDao">
+
+
+	<!-- 시스템 리스트 조회 -->
+	<select id="selSystem" resultType="kr.fingate.gs.auth.tmp.dto.SystemDto">
+		/* kr.fingate.gs.auth.common.dao.CommonDao.selSystem*/
+		SELECT
+			FS.SSTM_NO
+			 , FS.SSTM_CD
+		FROM
+			FI_SSTM FS
+				INNER JOIN FI_LCNS FL ON FS.SSTM_NO = FL.SSTM_NO
+		WHERE
+			FS.SSTM_STAT = 'Y'
+		  AND FL.LCNS_STAT = 'Y'
+		  AND FL.APLC_ST_DATE <![CDATA[<=]]> NOW()
+		  AND FL.APLC_ED_DATE <![CDATA[>=]]> NOW()
+	</select>
+
+	<select id="selAuthSystem" parameterType="long" resultType="kr.fingate.gs.auth.tmp.dto.SystemDto">
+		/* kr.richnco.rion.auth.common.dao.CommonDao.selAuthSystem */
+		SELECT DISTINCT
+		    GI.SYSTEM_CODE
+		FROM GA_ROLE_USER GRU
+		INNER JOIN GA_ROLE GR ON GRU.ROLE_NO = GR.ROLE_NO
+		INNER JOIN GA_ROLE_ITEM GRI ON GRI.ROLE_NO = GRU.ROLE_NO
+		INNER JOIN GA_ITEM GI ON GI.ITEM_NO = GRI.ITEM_NO
+		WHERE GRU.USER_NO = #{userNo}
+		  AND GRU.USE_YN = 'Y'
+		  AND GR.USE_YN = 'Y'
+		  AND GRI.USE_YN = 'Y'
+		  AND GI.USE_YN = 'Y'
+		  AND GR.ROLE_ST_DATE <![CDATA[<=]]> NOW()
+		  AND GR.ROLE_ED_DATE <![CDATA[>=]]> NOW()
+	</select>
+
+</mapper>

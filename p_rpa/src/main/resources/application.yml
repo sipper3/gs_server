@@ -1,0 +1,23 @@
+project:
+  name: rpa
+
+spring:
+  profiles:
+    active: local     # default profile
+    include:
+      - core
+    group:
+      local: core-${spring.profiles.active}
+      dev: core-${spring.profiles.active}
+      prod: core-${spring.profiles.active}
+
+server:
+
+
+jwt:
+  request:
+    ignore.module: >
+      /rpa/ignore/get,
+      /rpa/ignore/get/rpa
+    permit.module: >
+      /rpa/api/**

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.login.dao.SsoLoginDao">
+
+    <select id="getLogin" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.auth.login.dto.SsoLoginDto">
+        /* SsoLoginDao.getLogin */
+        SELECT CLIENT_NO
+             , LOGIN_EMAIL
+             , LOGIN_PSWRD
+        FROM FG_USER
+        WHERE CLIENT_NO = #{clientNo}
+          AND LOGIN_EMAIL = #{loginEmail}
+          AND DATA_STATUS = 'A'
+    </select>
+
+    <select id="getToken" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.core.security.dto.UserTokenDto">
+        /* SsoLoginDao.getToken */
+        SELECT CLIENT_NO
+             , USER_NO
+             , USER_NAME
+        FROM FG_USER
+        WHERE CLIENT_NO = #{clientNo}
+        AND LOGIN_EMAIL = #{loginEmail}
+        AND DATA_STATUS = 'A'
+    </select>
+</mapper>

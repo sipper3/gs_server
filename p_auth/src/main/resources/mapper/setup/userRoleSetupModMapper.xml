@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.setup.dao.UserRoleSetupModDao">
+
+    <insert id="insUserRole" parameterType="kr.fingate.gs.auth.setup.dto.UserRoleDto">
+        /* kr.fingate.gs.auth.setup.dao.UserRoleSetupModDao.insUserRole */
+        INSERT INTO GA_ROLE_USER (USER_NO
+                                 , ROLE_NO
+                                 , ALWYS_YN
+                                 , START_DATE
+                                 , END_DATE
+                                 , DATA_STATE
+                                 , REG_DATE
+                                 , REG_USER_NO
+        )VALUES (#{userNo}
+                , #{roleNo}
+                , #{alwysYn}
+                , STR_TO_DATE(CONCAT(#{startDate},'000000'),'%Y%m%d%H%i%s')
+                , STR_TO_DATE(CONCAT(#{endDate},'235959'),'%Y%m%d%H%i%s')
+                , #{dataState}
+                , NOW()
+                , #{regUserNo}
+                )
+    </insert>
+
+    <update id="updUserRole" parameterType="kr.fingate.gs.auth.setup.dto.UserRoleDto">
+        /* kr.fingate.gs.auth.setup.dao.UserRoleSetupModDao.updUserRole */
+        UPDATE GA_ROLE_USER SET
+            MOD_DATE = NOW()
+            , MOD_USER_NO = #{modUserNo}
+        <if test="dataState != null and !dataState.equals('')">
+            , DATA_STATE = #{dataState}
+        </if>
+        <if test="alwysYn != null and !alwysYn.equals('')">
+            <choose>
+                <when test="alwysYn = 'Y'">
+                    , ALWYS_YN = 'Y'
+                    , START_DATE = NULL
+                    , START_DATE = NULL
+                </when>
+                <otherwise>
+                    , ALWYS_YN = 'N'
+                    , START_DATE = STR_TO_DATE(CONCAT(#{startDate},'000000'),'%Y%m%d%H%i%s')
+                    , END_DATE = STR_TO_DATE(CONCAT(#{endDate},'235959'),'%Y%m%d%H%i%s')
+                </otherwise>
+            </choose>
+        </if>
+        WHERE ROLE_NO = #{roleNo}
+        AND USER_NO = #{userNo}
+    </update>
+
+    <insert id="insUserRoleGroup" parameterType="kr.fingate.gs.auth.setup.dto.UserRoleGroupDto">
+        /* kr.fingate.gs.auth.setup.dao.UserRoleSetupModDao.insUserRoleGroup */
+        INSERT INTO GA_ROLE_USER_GROUP (USER_NO
+                                 , ROLE_GROUP_NO
+                                 , ALWYS_YN
+                                 , START_DATE
+                                 , END_DATE
+                                 , DATA_STATE
+                                 , REG_DATE
+                                 , REG_USER_NO
+        )VALUES (#{userNo}
+                , #{roleGroupNo}
+                , #{alwysYn}
+                , STR_TO_DATE(CONCAT(#{startDate},'000000'),'%Y%m%d%H%i%s')
+                , STR_TO_DATE(CONCAT(#{endDate},'235959'),'%Y%m%d%H%i%s')
+                , #{dataState}
+                , NOW()
+                , #{regUserNo}
+                )
+    </insert>
+
+    <update id="updUserRoleGroup" parameterType="kr.fingate.gs.auth.setup.dto.UserRoleGroupDto">
+        /* kr.fingate.gs.auth.setup.dao.UserRoleSetupModDao.updUserRoleGroup */
+        UPDATE GA_ROLE_USER SET
+        MOD_DATE = NOW()
+        , MOD_USER_NO = #{modUserNo}
+        <if test="dataState != null and !dataState.equals('')">
+            , DATA_STATE = #{dataState}
+        </if>
+        <if test="alwysYn != null and !alwysYn.equals('')">
+            <choose>
+                <when test="alwysYn = 'Y'">
+                    , ALWYS_YN = 'Y'
+                    , START_DATE = NULL
+                    , START_DATE = NULL
+                </when>
+                <otherwise>
+                    , ALWYS_YN = 'N'
+                    , START_DATE = STR_TO_DATE(CONCAT(#{startDate},'000000'),'%Y%m%d%H%i%s')
+                    , END_DATE = STR_TO_DATE(CONCAT(#{endDate},'235959'),'%Y%m%d%H%i%s')
+                </otherwise>
+            </choose>
+        </if>
+        WHERE ROLE_GROUP_NO = #{roleGroupNo}
+        AND USER_NO = #{userNo}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,30 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+#  name: ws-local1     # core와 중복해서 사용하면 해당 프로젝트 내용이 반영 됨
+  name2: ws-local2
+  port: 9090
+  mq:
+    addresses: b-3a9a1631-b3a2-4deb-9097-fb573a1789bf.mq.ap-northeast-2.amazonaws.com:5671
+
+logging:
+  file:
+    path: C:\logs\gs\ws\
+
+datasources:
+  - name: rion-sales
+    base-package: kr.fingate.gs.*.**.dao
+    aop-execution: kr.fingate.gs..service.*.*(..)
+    data-source:
+      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      jdbcUrl: jdbc:log4jdbc:mysql://rion.c1k2nr1mczyl.ap-northeast-2.rds.amazonaws.com:3306/rion_sales?characterEncoding=UTF-8&serverTimezone=UTC&noAccessToProcedureBodies=true&useSSL=false&allowMultiQueries=true&autoReconnect=true
+      username: rion_sales
+      password: 8TE!!v56td4x=RRf
+      maximumPoolSize: 30  # max pool size (엑셀파일 참조)
+      minimumIdle: 15  # min pool size (엑셀파일 참조)
+      autoCommit: false
+      connectionTimeout: 30000
+

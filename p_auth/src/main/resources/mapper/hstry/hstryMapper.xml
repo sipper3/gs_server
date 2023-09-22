@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.hstry.dao.HstryDao">
+
+	<sql id="includeRoleHstryList">
+		<where>
+			AND RH.ENTTY_NAME = #{enttyName}
+			AND RH.ENTTY_KEY1 = #{enttyKey1}
+		</where>
+	</sql>
+	<select id="getRoleHstryList_COUNT" parameterType="kr.fingate.gs.comon.dto.hstry.HstryDto" resultType="long">
+		SELECT COUNT(RH.HSTRY_SEQ)
+		FROM GA_ROLE_HSTRY RH
+		<include refid="includeRoleHstryList" />
+	</select>
+	
+	<select id="getRoleHstryList" parameterType="kr.fingate.gs.comon.dto.hstry.HstryDto" resultType="kr.fingate.gs.comon.dto.hstry.HstryDto">
+		/* kr.fingate.gs.auth.hstry.dao.HstryDao.getRoleHstryList */
+		SELECT
+		RH.HSTRY_SEQ
+		, RH.ATRBT_NAME
+		, RH.ORGNL_VALUE
+		, RH.CHANGE_VALUE
+		, RH.OPRTN_TYPE
+		, CONCAT(U.USER_NAME, '(', O.ORGNZ_NAME, ')') AS REG_USER_NAME
+		, DATE_FORMAT(RH.REG_DATE, '%Y/%m/%d %H:%i') AS REG_DATE
+		FROM GA_ROLE_HSTRY RH
+		LEFT JOIN GA_USER U ON RH.REG_USER_NO = U.USER_NO
+		LEFT JOIN GA_OGNI O ON U.ORGNZ_NO = O.ORGNZ_NO
+		<include refid="includeRoleHstryList" />
+		ORDER BY RH.REG_DATE DESC
+	</select>
+
+	<!-- 개인롤 이력 조회 -->
+	<sql id="includeUserRoleHstryList">
+		WHERE RH.ENTTY_NAME = 'GA_USER_ROLE'
+		AND RH.ENTTY_KEY1 = #{userNo}
+		<if test="roleName != null and !roleName.equals('')">
+			AND R.ROLE_NAME LIKE CONCAT(#{roleName},'%')
+		</if>
+		GROUP BY RH.ENTTY_KEY1, RH.ENTTY_KEY2, RH.REASON_NO
+	</sql>
+	<select id="getUserRoleHstryList_COUNT" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="long">
+		SELECT COUNT(CNT.HIST_SEQ)
+		FROM (
+			SELECT RH.HSTRY_SEQ
+			FROM GA_ROLE_HSTRY RH
+			INNER JOIN GA_ROLE R ON RH.ENTTY_KEY2 = R.ROLE_NO
+			<include refid="includeUserRoleHstryList"/>
+		) CNT
+	</select>
+	<select id="getUserRoleHstryList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.hstry.dto.RoleHstryDto">
+		/* kr.fingate.gs.auth.hstry.dao.UserRoleHstryDao.getUserRoleHstryList*/
+		SELECT 'I' AS ROLE_TYPE
+		, R.ROLE_NAME
+
+		, RH.ATRBT_NAME
+		, RH.ORGNL_DATA
+		, RH.CHANGE_DATA
+
+		, RH.REASON_NO
+		, RS.REASON_CODE
+		, RS.REASON_TYPE
+		, RS.REASON
+		, DATE_FORMAT(RH.REG_DATE, '%Y/%m/%d %H:%i') AS REG_DATE
+		, CONCAT(UG.USER_NAME, '(', OG.ORGNZ_NAME, ')') AS REG_USER_NAME
+		FROM
+		GA_ROLE_HSTRY RH
+		INNER JOIN GA_ROLE R ON RH.ENTTY_KEY2 = R.ROLE_NO
+		INNER JOIN GA_ROLE_REASON RS ON RH.REASON_NO = RS.REASON_NO
+		LEFT JOIN GA_USER UG ON RH.REG_USER_NO = UG.USER_NO
+		LEFT JOIN GA_ORGNZ OG ON UG.ORGNZ_NO = OG.ORGNZ_NO
+		<include refid="includeUserRoleHstryList"/>
+		ORDER BY RH.REASON_NO DESC, RH.REG_DATE DESC
+	</select>
+
+	<!-- 그룹롤 이력 조회 -->
+	<sql id="includeUserRoleGroupHstryList">
+		WHERE RH.ENTTY_NAME = 'GA_USER_ROLE_GROUP'
+		AND RH.ENTTY_KEY1 = #{userNo}
+		<if test="roleName != null and !roleName.equals('')">
+			AND RG.ROLE_GROUP_NAME LIKE CONCAT(#{roleName},'%')
+		</if>
+		GROUP BY RH.ENTTY_KEY1, RH.ENTTY_KEY2, RH.REASON_NO
+	</sql>
+	<select id="getUserRoleGroupHstryList_COUNT" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="long">
+		SELECT COUNT(CNT.HIST_SEQ)
+		FROM (
+			SELECT RH.HSTRY_SEQ
+			FROM GA_ROLE_HSTRY RH
+			INNER JOIN GA_ROLE_GROUP RG ON RH.ENTTY_KEY2 = RG.ROLE_GROUP_NO
+			<include refid="includeUserRoleGroupHstryList"/>
+		) CNT
+	</select>
+
+	<select id="getUserRoleGroupHstryList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.hstry.dto.RoleHstryDto">
+		/* kr.fingate.gs.auth.hstry.dao.UserRoleHstryDao.getUserRoleGroupHstryList */
+		SELECT 'G' AS ROLE_TYPE
+
+		, RG.ROLE_GROUP_NAME
+		, RH.ATRBT_NAME
+		, RH.ORGNL_DATA
+		, RH.CHANGE_DATA
+
+		, RH.REASON_NO
+		, RS.REASON_CODE
+		, RS.REASON_TYPE
+		, RS.REASON
+
+		, DATE_FORMAT(RH.REG_DATE, '%Y/%m/%d %H:%i') AS REG_DATE
+		, CONCAT(UG.USER_NAME, '(', OG.ORGN_NAME, ')') AS REG_USER_NAME
+		FROM
+		GA_ROLE_HSTRY RH
+		INNER JOIN GA_ROLE_GROUP RG ON RH.ENTTY_KEY2 = RG.ROLE_GROUP_NO
+		INNER JOIN GA_ROLE_REASON RS ON RH.REASON_NO = RS.REASON_NO
+		LEFT JOIN GA_USER UG ON RH.REG_USER_NO = UG.USER_NO
+		LEFT JOIN GA_ORGNZ OG ON UG.ORGNZ_NO = OG.ORGNZ_NO
+		<include refid="includeUserRoleGroupHstryList"/>
+		ORDER BY RH.REASON_NO DESC, RH.REG_DATE DESC
+	</select>
+</mapper>

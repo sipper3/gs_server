@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.admin.code.dao.CodeDao">
+
+    <select id="selDispCode" parameterType="java.util.List" resultType="kr.fingate.gs.admin.code.dto.DispCodeDto">
+        /* kr.fingate.gs.admin.code.dao.selDispCode */
+        SELECT CODE_INIT
+            , CODE_ID
+            , CODE_NAME
+            , CODE_NCKNM
+        FROM GP_CODE
+        WHERE CODE_INIT IN
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        AND USE_YN = 'Y'
+        AND DISP_YN = 'Y'
+        ORDER BY CODE_INIT, PRINT_ORDER ASC
+    </select>
+
+</mapper>

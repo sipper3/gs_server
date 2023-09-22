@@ -1,0 +1,17 @@
+server:
+  mq:
+    addresses: b-3a9a1631-b3a2-4deb-9097-fb573a1789bf.mq.ap-northeast-2.amazonaws.com:5671
+
+jwt:
+  secretKey: "fingate@server:secretKey:20230816:KUROIkTHJcI31z5QrBNDzitqulyusggC:snapshot"
+  request:
+    ignore.core: >
+      /*/swagger/**,
+      /*/swagger-ui/**,
+      /*/webjars/**,
+      /*/api-docs/json,
+      /*/api-docs/json/swagger-config,
+      /error/**,
+      /static/**,
+      /favicon.ico,
+      /h2-console/**

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.role.dao.RoleModDao">
+
+    <!-- 개별롤 추가 -->
+    <insert id="insRole" parameterType="kr.fingate.gs.auth.vo.RoleVO" useGeneratedKeys="true" keyProperty="roleNo">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.insRole */
+        INSERT INTO GA_ROLE (
+                  CLIENT_NO
+                , ROLE_NAME
+                , ROLE_DSCRP
+                , USE_YN
+                , DATA_STATE
+                , REG_DATE
+                , REG_USER_NO
+                , MOD_DATE
+                , MOD_USER_NO
+        )
+        VALUES (
+                 #{clientNo}
+               , #{roleName}
+               , #{roleDscrp}
+               , #{useYn}
+               , 'A'
+               , NOW()
+               , #{regUserNo}
+               , NOW()
+               , #{modUserNo}
+               )
+    </insert>
+
+    <!-- 개별롤 수정 -->
+    <update id="updRole" parameterType="kr.fingate.gs.auth.vo.RoleVO" useGeneratedKeys="true" keyProperty="roleNo">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.updRole */
+        UPDATE GA_ROLE
+           SET MOD_DATE = NOW()
+             , MOD_USER_NO = #{modUserNo}
+        <if test="roleName != null and !roleName.equals('')">
+            , ROLE_NAME = #{roleName}
+        </if>
+        <if test="roleDscrp != null and !roleDscrp.equals('')">
+             , ROLE_DSCRP = #{roleDscrp}
+        </if>
+        <if test="useYn != null and !useYn.equals('')">
+             , USE_YN = #{useYn}
+        </if>
+        <if test="dataState != null and !dataState.equals('')">
+             , DATA_STATE = #{dataState}
+        </if>
+         WHERE ROLE_NO = #{roleNo}
+    </update>
+
+    <!-- 개별롤 데이터 생성 -->
+    <insert id="insRollItemMap" parameterType="kr.fingate.gs.auth.role.dto.RoleInsDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.insRollItemMap */
+        INSERT INTO GA_ROLE_ITEM_MAP (
+                 ROLE_NO
+               , ITEM_NO
+               , DATA_STATE
+               , REG_DATE
+               , REG_USER_NO
+               , MOD_DATE
+               , MOD_USER_NO
+        )
+        VALUES
+        <foreach collection="roleItemMapVOList" item="item" separator=",">
+            (#{roleNo}, #{item.itemNo}, 'A', NOW(), #{regUserNo}, NOW(), #{modUserNo})
+        </foreach>
+    </insert>
+
+    <!-- 개별 롤 데이터 수정(항목수정) -->
+    <update id="updRollItemMap" parameterType="kr.fingate.gs.auth.role.dto.RoleInsDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.updRoleItem */
+        INSERT INTO GA_ROLE_ITEM_MAP (
+                  ROLE_NO
+                , ITEM_NO
+                , DATA_STATE
+                , REG_DATE
+                , REG_USER_NO
+                , MOD_DATE
+                , MOD_USER_NO
+        )
+        VALUES
+        <foreach collection="roleItemMapVOList" item="item" separator=",">
+            (#{item.roleNo}, #{item.itemNo}, #{item.dataState}, NOW(), #{regUserNo}, NOW(), #{modUserNo})
+        </foreach>
+        ON DUPLICATE KEY
+        UPDATE MOD_DATE = NOW()
+             , MOD_USER_NO = #{modUserNo}
+             , DATA_STATE = values(DATA_STATE)
+    </update>
+
+
+    <!-- 그룹롤 추가 -->
+    <insert id="insRoleGroup" parameterType="kr.fingate.gs.auth.vo.RoleGroupMapVO" useGeneratedKeys="true" keyProperty="roleGroupNo">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.insRoleGroup */
+        INSERT INTO GA_ROLE_GROUP (
+                  CLIENT_NO
+                , ROLE_GROUP_NAME
+                , ROLE_GROUP_DSCRP
+                , USE_YN
+                , DATA_STATE
+                , REG_DATE
+                , REG_USER_NO
+                , MOD_DATE
+                , MOD_USER_NO
+        )
+        VALUES (
+                 #{clientNo}
+               , #{roleGroupName}
+               , #{roleGroupDscrp}
+               , #{useYn}
+               , 'A'
+               , NOW()
+               , #{regUserNo}
+               , NOW()
+               , #{modUserNo}
+               )
+    </insert>
+
+    <!-- 그룹롤 수정 -->
+    <update id="updRoleGroup" parameterType="kr.fingate.gs.auth.vo.RoleGroupMapVO" useGeneratedKeys="true" keyProperty="roleGroupNo">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.updRoleGroup */
+        UPDATE GA_ROLE_GROUP
+        SET MOD_DATE = NOW()
+        , MOD_USER_NO = #{modUserNo}
+        <if test="roleGroupName != null and !roleGroupName.equals('')">
+            , ROLE_GROUP_NAME = #{roleGroupName}
+        </if>
+        <if test="roleGroupDscrp != null and !roleGroupDscrp.equals('')">
+            , ROLE_GROUP_DSCRP = #{roleGroupDscrp}
+        </if>
+        <if test="useYn != null and !useYn.equals('')">
+            , USE_YN = #{useYn}
+        </if>
+        <if test="dataState != null and !dataState.equals('')">
+            , DATA_STATE = #{dataState}
+        </if>
+        WHERE ROLE_GROUP_NO = #{roleGroupNo}
+    </update>
+
+    <!-- 그룹롤 데이터 생성 -->
+    <insert id="insRollGroupMap" parameterType="kr.fingate.gs.auth.role.dto.RoleGroupInsDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.insRollGroupMap */
+        INSERT INTO GA_ROLE_GROUP_MAP (
+                  ROLE_GROUP_NO
+                , ROLE_NO
+                , DATA_STATE
+                , REG_DATE
+                , REG_USER_NO
+                , MOD_DATE
+                , MOD_USER_NO
+        )
+        VALUES
+        <foreach collection="roleGroupMapVOList" item="item" separator=",">
+            (#{roleGroupNo}, #{item.roleNo}, 'A', NOW(), #{regUserNo}, NOW(), #{modUserNo})
+        </foreach>
+    </insert>
+
+    <!-- 그룹롤 데이터 수정(항목수정) -->
+    <update id="updRollGroupMap" parameterType="kr.fingate.gs.auth.role.dto.RoleGroupInsDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleModDao.updRollGroupMap */
+        INSERT INTO GA_ROLE_GROUP_MAP (
+                  ROLE_GROUP_NO
+                , ROLE_NO
+                , DATA_STATE
+                , REG_DATE
+                , REG_USER_NO
+                , MOD_DATE
+                , MOD_USER_NO
+        )
+        VALUES
+        <foreach collection="roleGroupMapVOList" item="item" separator=",">
+            (#{item.roleGroupNo}, #{item.roleNo}, #{item.dataState}, NOW(), #{regUserNo}, NOW(), #{modUserNo})
+        </foreach>
+        ON DUPLICATE KEY
+        UPDATE MOD_DATE = NOW()
+        , MOD_USER_NO = #{modUserNo}
+        , DATA_STATE = values(DATA_STATE)
+    </update>
+
+</mapper>

@@ -1,0 +1,21 @@
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "HTTP://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="aggressiveLazyLoading" value="false" />
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<setting name="jdbcTypeForNull" value="VARCHAR" />
+		<setting name="callSettersOnNulls" value="true" />
+		<setting name="returnInstanceForEmptyRow" value="true"/>
+	</settings>
+<!--	<objectFactory type="kr.fingate.gs.core.mybatis.ObjectFactory"></objectFactory>-->
+
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			<!-- config params as the following -->
+			<property name="param1" value="value1"/>
+		</plugin>
+	</plugins>
+
+</configuration>

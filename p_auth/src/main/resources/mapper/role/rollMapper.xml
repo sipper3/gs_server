@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.role.dao.RoleDao">
+
+    <sql id="includeSelRole">
+        <where>
+            <if test="searchUseYn != null and !searchUseYn.equals('')">
+                AND R.USE_YN = #{searchUseYn}
+            </if>
+            <if test="searchRoleName != null and !searchRoleName.equals('')">
+                AND R.ROLE_NAME LIKE CONCAT('%', #{searchRoleName}, '%')
+            </if>
+            <if test="searchRoleNo != null and searchRoleNo > 0">
+                AND R.ROLE_NO = #{searchRoleNo}
+            </if>
+            AND R.DATA_STATE <![CDATA[ <> ]]> 'D'
+        </where>
+    </sql>
+
+    <select id="getRoleList_COUNT" parameterType="kr.fingate.gs.auth.role.dto.SearchRoleDto" resultType="long">
+        SELECT COUNT(R.ROLE_NO)
+          FROM GA_ROLE R
+        <include refid="includeSelRole"/>
+    </select>
+
+    <!-- 개별롤 리스트 -->
+    <select id="getRoleList" parameterType="kr.fingate.gs.auth.role.dto.SearchRoleDto" resultType="kr.fingate.gs.auth.vo.RoleVO">
+        /* kr.fingate.gs.auth.auth.dao.RoleDao.roleList */
+        SELECT R.ROLE_NO
+        , R.CLIENT_NO
+        , R.ROLE_NAME
+        , R.ROLE_DSCRP
+        , R.USE_YN
+        FROM GA_ROLE R
+        <include refid="includeSelRole"/>
+    </select>
+
+    <!-- 개별롤 상세 상단 조회 -->
+    <select id="getRoleInfoTop" parameterType="kr.fingate.gs.auth.vo.RoleVO" resultType="kr.fingate.gs.auth.role.dto.RoleInfoTopDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleDao.getRoleInfoTop */
+        SELECT R.ROLE_NO
+             , R.ROLE_NAME
+             , R.ROLE_DSCRP
+             , GROUP_CONCAT(DISTINCT I.ITEM_NO) AS ITEM_NO_STR
+             , GROUP_CONCAT(DISTINCT I.SYSTEM_CODE) AS SYSTEM_CODE_STR
+             , COUNT(DISTINCT I.SYSTEM_CODE) AS SSTM_CD_CNT
+             , COUNT(DISTINCT I.FNCTN_ID) AS FNCTN_ID
+             , COUNT(DISTINCT UR.USER_NO) AS GRNT_NO_CNT
+             , COUNT(DISTINCT O.ORGNZ_NO) AS GRNT_ORGNZ_CNT
+             , R.USE_YN
+          FROM GA_ROLE R
+          LEFT OUTER JOIN GA_ROLE_ITEM_MAP RIM ON R.ROLE_NO = RIM.ROLE_NO AND RIM.DATA_STATE <![CDATA[ <> ]]> 'D'
+          LEFT OUTER JOIN GA_ITEM I ON RIM.ITEM_NO = I.ITEM_NO AND I.DATA_STATE <![CDATA[ <> ]]> 'D'
+          LEFT JOIN GA_USER_ROLE UR ON R.ROLE_NO = UR.ROLE_NO AND UR.DATA_STATE <![CDATA[ <> ]]> 'D'
+          LEFT JOIN GA_USER U ON UR.USER_NO = U.USER_NO AND U.USE_YN = 'Y'
+          LEFT JOIN GA_ORGNZ O ON U.ORGNZ_NO = O.ORGNZ_NO AND O.USE_YN = 'Y' AND O.CLIENT_NO = R.CLIENT_NO
+         WHERE R.ROLE_NO = #{roleNo}
+           AND R.CLIENT_NO = #{clientNo}
+           AND R.DATA_STATE <![CDATA[ <> ]]> 'D'
+         GROUP BY R.ROLE_NO
+    </select>
+
+    <!-- 롤 항목 조회(ITEM) -->
+    <select id="getRoleItemList" parameterType="kr.fingate.gs.auth.vo.RoleVO" resultType="kr.fingate.gs.auth.item.dto.ItemDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleDao.roleItemList */
+        SELECT I.ITEM_NO
+             , I.AUTH_ITEM_TYPE
+             , I.SYSTEM_CODE
+             , I.MENU_NAME
+             , I.ITEM_NAME
+             , I.FNCTN_ID
+             , I.ITEM_DSCRP
+          FROM GA_ITEM I
+         INNER JOIN GA_ROLE_ITEM_MAP RIM ON I.ITEM_NO = RIM.ITEM_NO
+         INNER JOIN GA_ROLE R ON R.ROLE_NO = RIM.ROLE_NO
+         WHERE R.USE_YN = 'Y'
+           AND R.ROLE_NO = #{roleNo}
+        ORDER BY I.SYSTEM_CODE, I.FNCTN_ID, I.MENU_NAME
+    </select>
+
+    <!-- 동일 롤이 부여된 사용인(탭) 조회 -->
+    <sql id="includeSelSameRoleUser">
+        WHERE U.USER_NO IN (
+            SELECT USER_NO
+              FROM GA_USER_ROLE
+             WHERE ROLE_NO = #{roleNo}
+               AND DATA_STATE <![CDATA[ <> ]]> 'D'
+        )
+          AND U.USE_YN = 'Y'
+        <if test="clientNo != null and clientNo != 0">
+          AND C.CLIENT_NO = #{clientNo}
+        </if>
+    </sql>
+    <select id="getSameRoleUserList_COUNT" parameterType="kr.fingate.gs.auth.role.dto.RoleDto" resultType="long">
+        SELECT COUNT(0)
+        FROM GA_USER U
+        INNER JOIN GA_CLIENT C ON U.CLIENT_NO = C.CLIENT_NO
+        <include refid="includeSelSameRoleUser" />
+    </select>
+    <select id="getSameRoleUserList" parameterType="kr.fingate.gs.auth.role.dto.RoleDto" resultType="kr.fingate.gs.auth.vo.UserVO">
+        /* kr.richnco.rion.authm.role.dao.RoleDao.selSameRoleUser - roropoly(김민재)*/
+        SELECT O.ORGNZ_NAME
+             , U.USER_NAME
+             , U.DUTY_CODE
+             , U.PSTN_CODE
+             , U.BSNS_CODE
+          FROM GA_USER U
+         INNER JOIN GA_CLIENT C ON U.CLIENT_NO = C.CLIENT_NO
+         INNER JOIN GA_ORGNZ O ON U.ORGNZ_NO = O.ORGNZ_NO
+        <include refid="includeSelSameRoleUser" />
+    </select>
+
+    <!-- --><!-- --><!-- --><!-- --><!-- -->
+    <!-- --><!-- --><!-- --><!-- --><!-- -->
+
+    <sql id="includeSelRoleGroup">
+        <where>
+            <if test="searchUseYn != null and !searchUseYn.equals('')">
+                AND RG.USE_YN = #{searchUseYn}
+            </if>
+            <if test="searchRoleName != null and !searchRoleName.equals('')">
+                AND RG.ROLE_GROUP_NAME LIKE CONCAT('%', #{searchRoleName}, '%')
+            </if>
+            <if test="searchRoleNo != null and !searchRoleNo.isEmpty()">
+                AND RG.ROLE_GROUP_NO = #{searchRoleNo}
+            </if>
+            AND RG.CLIENT_NO = #{clientNo}
+            AND RG.DATA_STATE <![CDATA[ <> ]]> 'D'
+        </where>
+    </sql>
+
+    <select id="roleGroupList_COUNT" parameterType="kr.fingate.gs.auth.role.dto.SearchRoleDto" resultType="long">
+        SELECT COUNT(R.ROLE_GROUP_NO)
+          FROM GA_ROLE_GROUP RG
+        <include refid="includeSelRoleGroup"/>
+    </select>
+
+    <!-- 그룹롤 리스트 -->
+    <select id="roleGroupList" parameterType="kr.fingate.gs.auth.role.dto.SearchRoleDto" resultType="kr.fingate.gs.auth.vo.UserRoleGroupVO">
+        /* kr.fingate.gs.auth.auth.dao.RoleDao.roleGroupList */
+        SELECT RG.ROLE_GROUP_NO
+             , RG.CLIENT_NO
+             , RG.ROLE_GROUP_NAME
+             , RG.ROLE_GROUP_DSCRP
+             , RG.USE_YN
+          FROM GA_ROLE_GROUP RG
+        <include refid="includeSelRoleGroup"/>
+    </select>
+
+    <!-- 그룹롤 상세 상단 조회 -->
+    <select id="getRoleGroupInfoTop" parameterType="kr.fingate.gs.auth.vo.RoleGroupVO" resultType="kr.fingate.gs.auth.role.dto.RoleInfoTopDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleDao.getRoleGroupInfoTop */
+        SELECT RG.ROLE_GROUP_NO
+             , RG.ROLE_GROUP_NAME
+             , RG.ROLE_GROUP_DSCRP
+             , GROUP_CONCAT(DISTINCT I.SYSTEM_CODE) AS SYSTEM_CODE_STR
+             , COUNT(DISTINCT I.SYSTEM_CODE) AS SSTM_CD_CNT
+             , COUNT(DISTINCT UR.USER_NO) AS GRNT_NO_CNT
+             , COUNT(DISTINCT O.ORGNZ_NO) AS GRNT_ORGNZ_CNT
+             , RG.USE_YN
+          FROM GA_ROLE_GROUP RG
+          LEFT OUTER JOIN GA_ROLE_GROUP_MAP RGM ON RG.ROLE_GROUP_NO = RGM.ROLE_GROUP_NO
+          LEFT OUTER JOIN GA_ROLE R ON R.ROLE_NO = RGM.ROLE_NO
+          LEFT OUTER JOIN GA_ROLE_ITEM_MAP RIM ON R.ROLE_NO = RIM.ROLE_NO AND RIM.DATA_STATE <![CDATA[ <> ]]> 'D'
+          LEFT OUTER JOIN GA_ITEM I ON RIM.ITEM_NO = I.ITEM_NO AND I.AUTH_ITEM_TYPE = 'S' AND I.DATA_STATE <![CDATA[ <> ]]> 'D'
+          LEFT JOIN GA_USER_ROLE UR ON R.ROLE_NO = UR.ROLE_NO AND UR.DATA_STATE <![CDATA[ <> ]]> 'D'
+          LEFT JOIN GA_USER U ON UR.USER_NO = U.USER_NO AND U.USE_YN = 'Y'
+          LEFT JOIN GA_ORGNZ O ON U.ORGNZ_NO = O.ORGNZ_NO AND O.USE_YN = 'Y' AND O.CLIENT_NO = R.CLIENT_NO
+         WHERE RG.ROLE_GROUP_NO = #{roleGroupNo}
+           AND RG.CLIENT_NO = #{clientNo}
+           AND RG.DATA_STATE <![CDATA[ <> ]]> 'D'
+         GROUP BY RG.ROLE_GROUP_NO
+    </select>
+
+    <!-- 그룹롤 상세 개별롤 아이템 리스트 -->
+    <select id="getRoleGroupPrivateList" parameterType="kr.fingate.gs.auth.vo.RoleGroupVO" resultType="kr.fingate.gs.auth.role.dto.RoleInfoTopDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleDao.getRoleGroupPrivateList */
+        SELECT I.ITEM_NO
+             , I.AUTH_ITEM_TYPE
+             , I.SYSTEM_CODE
+             , I.MENU_NAME
+             , I.ITEM_NAME
+             , I.ITEM_DSCRP
+             , I.FNCTN_ID
+        FROM GA_ROLE_GROUP RG
+        LEFT OUTER JOIN GA_ROLE_GROUP_MAP RGM ON RG.ROLE_GROUP_NO = RGM.ROLE_GROUP_NO
+        LEFT OUTER JOIN GA_ROLE R ON R.ROLE_NO = RGM.ROLE_NO
+        LEFT OUTER JOIN GA_ROLE_ITEM_MAP RIM ON R.ROLE_NO = RIM.ROLE_NO AND RIM.DATA_STATE <![CDATA[ <> ]]> 'D'
+        LEFT OUTER JOIN GA_ITEM I ON RIM.ITEM_NO = I.ITEM_NO AND I.DATA_STATE <![CDATA[ <> ]]> 'D'
+        WHERE RG.ROLE_GROUP_NO = #{roleGroupNo}
+          AND RG.CLIENT_NO = #{clientNo}
+          AND RG.DATA_STATE <![CDATA[ <> ]]> 'D'
+    </select>
+
+    <!-- 그룹롤 상세 롤리스트 -->
+    <select id="getRoleGroupItemList" parameterType="kr.fingate.gs.auth.vo.RoleGroupVO" resultType="kr.fingate.gs.auth.role.dto.RoleInfoTopDto">
+        /* kr.fingate.gs.auth.auth.dao.RoleDao.getRoleGroupItemList */
+        SELECT R.ROLE_NO
+             , R.ROLE_NAME
+             , R.ROLE_DSCRP
+        FROM GA_ROLE_GROUP RG
+         LEFT OUTER JOIN GA_ROLE_GROUP_MAP RGM ON RG.ROLE_GROUP_NO = RGM.ROLE_GROUP_NO
+         LEFT OUTER JOIN GA_ROLE R ON R.ROLE_NO = RGM.ROLE_NO
+        WHERE RG.ROLE_GROUP_NO = #{roleGroupNo}
+          AND RG.CLIENT_NO = #{clientNo}
+          AND RG.DATA_STATE <![CDATA[ <> ]]> 'D'
+    </select>
+
+
+</mapper>

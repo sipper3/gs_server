@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.auth.item.dao.ItemModDao">
+
+ 	<insert id="insItem" parameterType="kr.fingate.gs.auth.item.dto.ItemDto" useGeneratedKeys="true" keyProperty="itemNo">
+		/* kr.fingate.gs.auth.item.dao.ItemModDao.insItem */
+		INSERT INTO GA_ITEM (
+			  SYSTEM_CODE
+			, ATHRT_ITEM_TYPE
+			, ITEM_DSCRP
+			, MENU_NAME
+			, ITEM_NAME
+			, FNCTN_ID
+			, SYSTEM_APLCT_YN
+			, USE_YN
+			, REG_USER_NO
+		) VALUES(
+			 #{systemCode}
+			, #{authItemType}
+			, #{itemDscrp}
+			, #{menuName}
+			, #{itemName}
+			, #{fnctnId}
+			, #{systemAplctYn}
+			, #{useYn}
+			, #{rgstUserNo}
+		)
+ 	</insert>
+
+ 	<update id="updItem" parameterType="kr.fingate.gs.auth.item.dto.ItemDto">
+ 		/* kr.fingate.gs.auth.item.dao.ItemModDao.updItem */
+		UPDATE GA_ITEM
+		SET
+			MOD_DATE = NOW()
+		  , MOD_USER_NO = #{modUserNo}
+		  <if test="itemDscrp != null and !itemDscrp.equals('')">
+			 , ITEM_DSCRP = #{itemDscrp}
+		  </if>
+		  <if test="systemAplctYn != null and !systemAplctYn.equals('')">
+			 , SYSTEM_APLCT_YN = #{systemAplctYn}
+		  </if>
+		  <if test="useYn != null and !useYn.equals('')">
+			 , USE_YN = #{useYn}
+		  </if>
+		WHERE
+			 ITEM_NO = #{itemNo}
+ 	</update>
+
+</mapper>

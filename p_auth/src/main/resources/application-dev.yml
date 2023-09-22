@@ -1,0 +1,20 @@
+server:
+  port: 9017
+
+datasources:
+  - name: gs_auth
+    base-package: kr.fingate.gs.*.**.dao
+    aop-execution: kr.fingate.gs..service.*.*(..)
+    data-source:
+      driverClassName: org.mariadb.jdbc.Driver
+      jdbcUrl: jdbc:mariadb://192.168.0.16:3306/gs_auth
+      username: gs_auth
+      password: e=+N2+G74vYK&TUG
+      maximumPoolSize: 30  # max pool size (엑셀파일 참조)
+      minimumIdle: 15  # min pool size (엑셀파일 참조)
+      autoCommit: false
+      connectionTimeout: 30000
+
+logging:
+  file:
+    path: /data/gs_server/auth/
