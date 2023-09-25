@@ -1,10 +1,12 @@
 package kr.fingate.gs.rpa.job.dto;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class JobDto {
     private int jobId;
+    private String jobName;
     private int scenId;
     private String scenScript;
     private String uploadFile;
@@ -15,4 +17,5 @@ public class JobDto {
     private String endDate;
     private String regDate;
     private String updDate;
+    private MultipartFile file;
 }
