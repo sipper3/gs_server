@@ -37,12 +37,6 @@
 			<if test="fnctnId != null and !fnctnId.equals('')">
 				AND I.FNCTN_ID LIKE CONCAT('%', #{fnctnId}, '%')
 			</if>
-			<if test="systemAplctYn != null and !systemAplctYn.equals('')">
-				AND I.SYSTEM_APLCT_YN = #{systemAplctYn}
-			</if>
-			<if test="useYn != null and !useYn.equals('')">
-				AND I.USE_YN = #{useYn}
-			</if>
 			<if test="searchInput != null and !searchInput.equals('')">
 				AND I.ITEM_NAME LIKE CONCAT('%', #{searchInput}, '%') OR I.ITEM_DSCRP LIKE CONCAT('%', #{searchInput}, '%')
 			</if>
@@ -77,7 +71,6 @@
 		, I.ITEM_NAME
 		, I.ITEM_DSCRP
 		, I.FNCTN_ID
-		, I.SYSTEM_APLCT_YN
 		, I.USE_YN
 		, DATE_FORMAT(I.REG_DATE, '%Y/%m/%d %H:%i') AS REG_DATE
 		, DATE_FORMAT(I.MOD_DATE, '%Y/%m/%d %H:%i') AS MOD_DATE
@@ -107,7 +100,6 @@
 			, MENU_NAME
 			, ITEM_NAME
 			, FNCTN_ID
-			, SYSTEM_APLCT_YN
 			, USE_YN
 			, REG_USER_NO
 		) VALUES(
@@ -117,7 +109,6 @@
 			, #{menuName}
 			, #{itemName}
 			, #{fnctnId}
-			, #{systemAplctYn}
 			, #{useYn}
 			, #{rgstUserNo}
 		)
@@ -131,9 +122,6 @@
 		  , MOD_USER_NO = #{modUserNo}
 		  <if test="itemDscrp != null and !itemDscrp.equals('')">
 			 , ITEM_DSCRP = #{itemDscrp}
-		  </if>
-		  <if test="systemAplctYn != null and !systemAplctYn.equals('')">
-			 , SYSTEM_APLCT_YN = #{systemAplctYn}
 		  </if>
 		  <if test="useYn != null and !useYn.equals('')">
 			 , USE_YN = #{useYn}
