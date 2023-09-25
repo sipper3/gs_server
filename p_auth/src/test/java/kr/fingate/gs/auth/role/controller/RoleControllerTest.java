@@ -3,7 +3,9 @@ package kr.fingate.gs.auth.role.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.fingate.gs.auth.AuthApplication;
+import kr.fingate.gs.auth.role.dto.RoleInsDto;
 import kr.fingate.gs.auth.role.dto.SearchRoleDto;
+import kr.fingate.gs.auth.vo.RoleItemMapVO;
 import kr.fingate.gs.common.Item;
 import kr.fingate.gs.common.TestBaseController;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.epages.restdocs.apispec.Schema.schema;
 import static kr.fingate.gs.common.Item.field;
@@ -74,6 +79,49 @@ public class RoleControllerTest extends TestBaseController {
                         .requestSchema(schema("SearchRoleDto"))
                         .requestFields(requestItems.toFields())
                         .responseFields(responseItems.toFields())
+                        .build(), true, true);
+    }
+
+    @Test
+    @DisplayName("롤 저장")
+    void testInsRole() throws Exception {
+
+        //given
+        RoleInsDto roleInsDto = new RoleInsDto();
+        List<RoleItemMapVO> roleItemMapList = new ArrayList<RoleItemMapVO>();
+        roleInsDto.setRoleName("Test Case Role");
+        roleInsDto.setRoleDscrp("RoleDscrption of Test Case Role");
+        roleInsDto.setUseYn("Y");
+        RoleItemMapVO roleItemMapVO = new RoleItemMapVO();
+        roleItemMapVO.setItemNo(0);
+        roleItemMapVO.setDataState("A");
+        roleItemMapList.add(roleItemMapVO);
+        roleInsDto.setRoleItemMapList(roleItemMapList);
+
+        Item requestItems = field(
+                field("roleName", STRING, "역할명", Item.State.IGNORED),
+                field("roleDscrp", STRING, "역할설명", Item.State.IGNORED),
+                field("roleItemMapVOList", ARRAY, "항목(권한)", Item.State.IGNORED,
+                    field("itemNo", STRING, "항목번호", Item.State.IGNORED),
+                    field("dataState", STRING, "데이터상태", Item.State.IGNORED)
+                )
+        );
+
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                post("/auth/api/role/getRoleList")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(roleInsDto))
+        );
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+
+        generateDocument(resultActions,
+                ResourceSnippetParameters.builder()
+                        .tag("롤조회") // 문서에 표시될 태그.summary("사용자 정보 생성") // 문서에 표시될 요약정보
+                        .description("개별롤에 대한 롤 조회") // 문서에 표시될 상세정보
+                        .requestSchema(schema("SearchRoleDto"))
+                        .requestFields(requestItems.toFields())
                         .build(), true, true);
     }
 }
