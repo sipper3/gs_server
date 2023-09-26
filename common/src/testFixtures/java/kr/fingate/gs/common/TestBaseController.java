@@ -1,7 +1,10 @@
 package kr.fingate.gs.common;
 
 import com.epages.restdocs.apispec.*;
+import kr.fingate.gs.comon.annotation.Info;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -20,6 +23,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +94,11 @@ public abstract class TestBaseController {
         return generateDocument(resultAction, rp, false, false);
     }
 
-    public ResultActions generateDocument(ResultActions resultAction, ResourceSnippetParameters rp, boolean isPageRqst, boolean isPageResp) throws Exception {
+    public ResultActions generateDocument(ResultActions resultAction, ResourceSnippetParameters rp, boolean isPageResp) throws Exception {
+        return generateDocument(resultAction, rp, isPageResp, false);
+    }
+
+    public ResultActions generateDocument(ResultActions resultAction, ResourceSnippetParameters rp, boolean isPageResp, boolean isPageRqst) throws Exception {
 
         // epages 의 ResourceSnippetParameters는 ascii에서 fields 파일을 생성x -> 기존 restdoc과 openapi용 epages를 동시에 사용해야하므로 해당 메소드 사용필요
 //        List<FieldDescriptor> fields = rp.getResponseFields();
@@ -167,4 +178,102 @@ public abstract class TestBaseController {
                         ResourceDocumentation.resource(newSnippet)));
         return resultAction;
     }
+
+
+
+    public <T> List<FieldDescriptor> generateFieldDescriptor(T t, String[] requiredItems, String... items) throws Exception {
+
+        return getFieldDescriptors(t.getClass(), "", requiredItems, items);
+    }
+
+    public <T> List<FieldDescriptor> generateFieldDescriptor(T t, String... items) throws Exception {
+
+        return getFieldDescriptors(t.getClass(), "", new String[]{}, items);
+    }
+
+    private List<FieldDescriptor> getFieldDescriptors(Class c, String superPath, String[] requiredItems, String... items){
+
+        List<FieldDescriptor> result = new ArrayList<>();
+        Field[] fields = getFields(c);
+
+        if(fields != null) {
+            for(Field field : fields) {
+
+                JsonIgnore ignore = field.getAnnotation(JsonIgnore.class);
+                if(ignore != null) {
+                    continue;
+                }
+
+                boolean isChild = false;
+                String path = superPath + field.getName();
+                String name = field.getName();
+                String desc = "";
+
+                // JSON type 지정
+                JsonFieldType jsonFieldType;
+                if(field.getType().isAssignableFrom(String.class)){
+                    jsonFieldType = STRING;
+                }else if(field.getType().isAssignableFrom(Integer.class) || field.getType().isAssignableFrom(long.class) ){
+                    jsonFieldType = NUMBER;
+                }else if(field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Arrays.class) ){
+                    jsonFieldType = ARRAY;
+                    isChild = true;
+                }else if(field.getType().isAssignableFrom(Boolean.class) ){
+                    jsonFieldType = ARRAY;
+                }else {
+                    jsonFieldType = OBJECT;
+                    isChild = true;
+                }
+
+                Info fieldInfo = field.getAnnotation(Info.class);
+                if(fieldInfo != null) {
+                    name = fieldInfo.value();
+
+                    if(fieldInfo.description() != null && !fieldInfo.description().equals("")) {
+                        desc = " : " + fieldInfo.description();
+                    }
+                }
+
+                FieldDescriptor f = PayloadDocumentation.fieldWithPath(path)
+                        .type(jsonFieldType)
+                        .description(name + desc);
+
+                if(Arrays.asList(items).contains(path)) {
+                    if(!Arrays.asList(requiredItems).contains(path)) {
+                        f.optional();
+                    }
+                }else{
+                    f.ignored();
+                }
+
+                result.add(f);
+
+                if(isChild) {
+                    if(jsonFieldType.equals(ARRAY)) {
+                        ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+                        Class child = (Class<?>) genericType.getActualTypeArguments()[0];
+                        if(child.getPackageName().contains("fingate")) {
+                            result.addAll(getFieldDescriptors(child, path+"[].", items));
+                        }
+                    }else{
+                        result.addAll(getFieldDescriptors(field.getType(), path+".", items));
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+    private Field[] getFields(Class c){
+
+        Field[] fields = c.getDeclaredFields();
+
+        Class superClazz = c.getSuperclass();
+        if(superClazz != null){
+            return ArrayUtils.addAll(fields, getFields(superClazz));
+        }
+
+        return fields;
+    }
+
 }

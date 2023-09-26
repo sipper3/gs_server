@@ -1,6 +1,7 @@
 package kr.fingate.gs.comon.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kr.fingate.gs.comon.annotation.Info;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,26 +9,26 @@ import lombok.Setter;
 @Setter
 public class BaseVO {
 
-	// 클라이언트번호
 	@JsonIgnore
+	@Info("클라이언트번호")
 	private long clientNo;
 
-	// 등록일
+	@Info("등록일")
 	private String regDate;
 
-	// 등록자NO
+	@Info("등록자No")
 	private long regUserNo;
 
-	// 등록자명
+	@Info("등록자명")
 	private String regUserName;
 
-	// 수정일
+	@Info("수정일")
 	private String modDate;
 
-	// 수정자NO
+	@Info("수정자No")
 	private long modUserNo;
 
-	// 수정자명
+	@Info("수정자명")
 	private String modUserName;
 
 

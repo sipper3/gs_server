@@ -1,6 +1,5 @@
 project:
   name: auth
-
 spring:
   profiles:
     active: local     # default profile
@@ -11,8 +10,11 @@ spring:
       local: core-${spring.profiles.active},common-${spring.profiles.active}
       dev: core-${spring.profiles.active},common-${spring.profiles.active}
       prod: core-${spring.profiles.active},common-${spring.profiles.active}
+  pid:
+    file: auth.pid
 
 server:
+  port: 9017
   mq-hosts:
     - v-host: contract
       user: contract
