@@ -19,13 +19,10 @@ public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if(body instanceof ExceptionResponse) {
-            ExceptionResponse exceptionResponse = (ExceptionResponse) body;
-            RestResponse restResponse = RestResponse.builder().code(ResponseCode.FAIL).error(exceptionResponse).build();
-            return restResponse;
+        if(body instanceof ExceptionResponse exceptionResponse) {
+            return RestResponse.builder().code(ResponseCode.FAIL).error(exceptionResponse).build();
         }
+        return RestResponse.builder().code(ResponseCode.OK).data(body).build();
 
-        RestResponse restResponse = RestResponse.builder().code(ResponseCode.OK).data(body).build();
-        return restResponse;
     }
 }
