@@ -1,7 +1,7 @@
-package kr.fingate.gs.comon.util;
+package kr.fingate.gs.core.util;
 
-import kr.fingate.gs.comon.consts.CommonConst;
-import kr.fingate.gs.comon.dto.file.FileDto;
+import kr.fingate.gs.core.consts.CoreConst;
+import kr.fingate.gs.core.dto.file.FileDto;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class FileUtil {
     private String NOT_ALLOWED_FILE;
 
     private FileDto saveFile(MultipartFile mpf, String destPath) throws Exception {
-        String targetPath = FilenameUtils.normalize(BASE_DIR + CommonConst.FILE_SEPARATOR + destPath);
+        String targetPath = FilenameUtils.normalize(BASE_DIR + File.separator + destPath);
         String originalFilename = FilenameUtils.getName(mpf.getOriginalFilename());
         String newFileName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(originalFilename);
 
@@ -46,13 +46,13 @@ public class FileUtil {
                 dest_dir.mkdirs();
             }
 
-            Path path = Paths.get(targetPath + CommonConst.FILE_SEPARATOR + newFileName);
+            Path path = Paths.get(targetPath + File.separator + newFileName);
             byte[] bytes = mpf.getBytes();
             Files.write(path, bytes);
 
             fileDto.setFilePath(targetPath);
             fileDto.setOriginFileName(originalFilename);
-            fileDto.setStatus(CommonConst.FILE_SUCCESS_UPLOAD);
+            fileDto.setStatus(CoreConst.FILE_SUCCESS_UPLOAD);
 
         } catch (IOException e) {
             logger.error("saveFile failed \n" + e.getMessage());
@@ -78,7 +78,7 @@ public class FileUtil {
             if(file != null && !file.isEmpty()) {
                 FileDto fileDto = new FileDto();
                 if(this.isNotAllowed(file)) {
-                    fileDto.setStatus(CommonConst.FILE_NOT_ALLOWED);
+                    fileDto.setStatus(CoreConst.FILE_NOT_ALLOWED);
                 } else {
                     fileDto = this.saveFile(file, destPath);
                 }

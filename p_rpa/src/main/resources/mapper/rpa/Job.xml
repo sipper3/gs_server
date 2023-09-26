@@ -12,6 +12,7 @@
              , P_RATE
              , JOB_COUNT
              , JOB_STATE
+             , LOGIN_SCRIPT
              , START_DATE
              , END_DATE
              , REG_DATE
@@ -32,6 +33,7 @@
              , P_RATE
              , JOB_COUNT
              , JOB_STATE
+             , REG_ID
              , START_DATE
              , END_DATE
              , REG_DATE
@@ -40,6 +42,9 @@
         <where>
             <if test="scenId != null and scenId != ''">
                 RJ.SCEN_ID = #{scenId}
+            </if>
+            <if test="regId != null and regId != ''">
+                RJ.REG_ID = #{regId}
             </if>
         </where>
         ORDER BY REG_DATE DESC

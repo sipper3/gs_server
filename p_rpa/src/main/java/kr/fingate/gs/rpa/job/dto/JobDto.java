@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class JobDto {
+public class JobDto<T> {
     private int jobId;
     private String jobName;
     private int scenId;
@@ -17,5 +17,7 @@ public class JobDto {
     private String endDate;
     private String regDate;
     private String updDate;
-    private MultipartFile file;
+
+    // Login
+    private String loginScript;
 }
