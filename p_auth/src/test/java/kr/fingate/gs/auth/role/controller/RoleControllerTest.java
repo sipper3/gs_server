@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,26 +43,27 @@ public class RoleControllerTest extends TestBaseController {
         searchRoleDto.setPageSize(20);
 
         Item requestItems = field(
-                field("searchRoleName", STRING, "searchkey에 대한 입력값", Item.State.IGNORED),
-                field("searchRoleNo", STRING, "searchkey에 대한 입력값", Item.State.IGNORED),
-                field("searchKey", STRING, "roleName : 권한명, roleDscrp : 권한설명", Item.State.IGNORED),
-                field("searchVal", STRING, "searchkey에 대한 입력값", Item.State.IGNORED),
-                field("searchUseYn", STRING, "사용여부 : Y, N", Item.State.IGNORED)
+                field("searchRoleName", STRING, "searchkey에 대한 입력값", Item.State.OPTIONAL),
+                field("searchRoleNo", STRING, "searchkey에 대한 입력값", Item.State.OPTIONAL),
+                field("searchKey", STRING, "roleName : 권한명, roleDscrp : 권한설명", Item.State.OPTIONAL),
+                field("searchVal", STRING, "searchkey에 대한 입력값", Item.State.OPTIONAL),
+                field("searchUseYn", STRING, "사용여부 : Y, N", Item.State.OPTIONAL)
         );
 
         Item responseItems = field(
-                        field("roleNo", NUMBER, "권한 Unique", Item.State.IGNORED),
-                        field("roleName", NUMBER, "권한명", Item.State.IGNORED),
-                        field("roleDscrp", STRING, "권한 상세 설명", Item.State.IGNORED),
-                        field("useYn", STRING, "사용여부", Item.State.IGNORED),
-                        field("regDate", STRING, "사용여부", Item.State.IGNORED),
-                        field("regUserNo", STRING, "사용여부", Item.State.IGNORED),
-                        field("regUserName", STRING, "사용여부", Item.State.IGNORED),
-                        field("modDate", STRING, "사용여부", Item.State.IGNORED),
-                        field("modUserNo", STRING, "사용여부", Item.State.IGNORED),
-                        field("modUserName", STRING, "사용여부", Item.State.IGNORED)
+                        field("roleNo", NUMBER, "권한 Unique", Item.State.OPTIONAL),
+                        field("roleName", STRING, "권한명", Item.State.OPTIONAL),
+                        field("roleDscrp", STRING, "권한 상세 설명", Item.State.OPTIONAL),
+                        field("useYn", STRING, "사용여부", Item.State.OPTIONAL),
+                        field("regDate", STRING, "사용여부", Item.State.OPTIONAL),
+                        field("regUserNo", NUMBER, "사용여부", Item.State.OPTIONAL),
+                        field("regUserName", STRING, "사용여부", Item.State.OPTIONAL),
+                        field("modDate", STRING, "사용여부", Item.State.OPTIONAL),
+                        field("modUserNo", NUMBER, "사용여부", Item.State.OPTIONAL),
+                        field("modUserName", STRING, "사용여부", Item.State.OPTIONAL)
 //                )
         );
+        List<FieldDescriptor> requestFields = generateFieldDescriptor(searchRoleDto, "searchRoleName", "searchRoleNo");
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -77,9 +79,9 @@ public class RoleControllerTest extends TestBaseController {
                         .tag("롤조회") // 문서에 표시될 태그.summary("사용자 정보 생성") // 문서에 표시될 요약정보
                         .description("개별롤에 대한 롤 조회") // 문서에 표시될 상세정보
                         .requestSchema(schema("SearchRoleDto"))
-                        .requestFields(requestItems.toFields())
+                        .requestFields(requestFields)
                         .responseFields(responseItems.toFields())
-                        .build(), true, true);
+                        .build(), true);
     }
 
     @Test
@@ -96,7 +98,7 @@ public class RoleControllerTest extends TestBaseController {
         roleItemMapVO.setItemNo(0);
         roleItemMapVO.setDataState("A");
         roleItemMapList.add(roleItemMapVO);
-        roleInsDto.setRoleItemMapList(roleItemMapList);
+        roleInsDto.setRoleItemMapVOList(roleItemMapList);
 
         Item requestItems = field(
                 field("roleName", STRING, "역할명", Item.State.IGNORED),
@@ -107,6 +109,13 @@ public class RoleControllerTest extends TestBaseController {
                 )
         );
 
+        String[] requiredItems = new String[]{"roleNo", "roleName"};
+        String[] items = new String[]{"roleNo", "roleName", "roleDscrp", "roleItemMapVOList", "roleItemMapVOList[].itemNo"};
+        List<FieldDescriptor> requestFields = generateFieldDescriptor(roleInsDto, requiredItems, items);
+
+        for(FieldDescriptor f : requestFields) {
+            System.out.println( f.getPath() +  " : " + f.getType() + " / " + f.isIgnored() + " " + f.isOptional());
+        }
         //when
         ResultActions resultActions = mockMvc.perform(
                 post("/auth/api/role/getRoleList")
@@ -121,7 +130,7 @@ public class RoleControllerTest extends TestBaseController {
                         .tag("롤조회") // 문서에 표시될 태그.summary("사용자 정보 생성") // 문서에 표시될 요약정보
                         .description("개별롤에 대한 롤 조회") // 문서에 표시될 상세정보
                         .requestSchema(schema("SearchRoleDto"))
-                        .requestFields(requestItems.toFields())
-                        .build(), true, true);
+                        .requestFields(requestFields)
+                        .build(), true);
     }
 }
