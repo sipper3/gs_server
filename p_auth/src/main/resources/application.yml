@@ -1,6 +1,5 @@
 project:
   name: auth
-
 spring:
   profiles:
     active: local     # default profile
@@ -13,6 +12,7 @@ spring:
       prod: core-${spring.profiles.active},common-${spring.profiles.active}
 
 server:
+  port: 9017
   mq-hosts:
     - v-host: contract
       user: contract
