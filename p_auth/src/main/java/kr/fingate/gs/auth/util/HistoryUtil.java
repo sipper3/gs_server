@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("unchecked")
 public class HistoryUtil<T, U extends HstryDto> {
 	static final Logger logger = LoggerFactory.getLogger(HistoryUtil.class);
 
