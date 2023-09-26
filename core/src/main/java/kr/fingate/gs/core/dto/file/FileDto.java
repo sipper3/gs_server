@@ -1,13 +1,15 @@
-package kr.fingate.gs.comon.dto.file;
+package kr.fingate.gs.core.dto.file;
 
+import kr.fingate.gs.core.dto.BaseObject;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.File;
+import java.io.Serializable;
 
 @Getter
 @Setter
-public class FileDto {
+public class FileDto extends BaseObject {
+
     private String fileName;
     private String fileFieldName;
     private long fileSize;
