@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TokenType {
-    ACCESS_TOKEN("C-Authm-Token","AccessToken"),
-    REFRESH_TOKEN("Z-Authm-Token","RefreshToken"),
-    LICENCE_TOKEN("I-Authm-Token","LicenceToken");
+    ACCESS_TOKEN("C-Auth-Token","AccessToken"),
+    REFRESH_TOKEN("Z-Auth-Token","RefreshToken"),
+    LICENCE_TOKEN("I-Auth-Token","LicenceToken");
 
-    String header;
-    String subject;
+    final String header;
+    final String subject;
 }

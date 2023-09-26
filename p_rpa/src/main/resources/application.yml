@@ -6,10 +6,11 @@ spring:
     active: local     # default profile
     include:
       - core
+      - common
     group:
-      local: core-${spring.profiles.active}
-      dev: core-${spring.profiles.active}
-      prod: core-${spring.profiles.active}
+      local: core-${spring.profiles.active},common-${spring.profiles.active}
+      dev: core-${spring.profiles.active},common-${spring.profiles.active}
+      prod: core-${spring.profiles.active},common-${spring.profiles.active}
 
 server:
 
@@ -19,5 +20,6 @@ jwt:
     ignore.module: >
       /rpa/ignore/get,
       /rpa/ignore/get/rpa
+      /rpa/api/**
     permit.module: >
       /rpa/api/**
