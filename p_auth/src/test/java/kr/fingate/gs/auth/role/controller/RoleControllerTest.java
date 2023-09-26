@@ -98,14 +98,13 @@ public class RoleControllerTest extends TestBaseController {
         roleItemMapVO.setItemNo(0);
         roleItemMapVO.setDataState("A");
         roleItemMapList.add(roleItemMapVO);
-        roleInsDto.setRoleItemMapVOList(roleItemMapList);
+        roleInsDto.setRoleItemMapList(roleItemMapList);
 
         Item requestItems = field(
                 field("roleName", STRING, "역할명", Item.State.IGNORED),
                 field("roleDscrp", STRING, "역할설명", Item.State.IGNORED),
                 field("roleItemMapVOList", ARRAY, "항목(권한)", Item.State.IGNORED,
-                    field("itemNo", STRING, "항목번호", Item.State.IGNORED),
-                    field("dataState", STRING, "데이터상태", Item.State.IGNORED)
+                    field("itemNo", STRING, "항목번호", Item.State.IGNORED)
                 )
         );
 
