@@ -14,7 +14,7 @@ public class RestResponse<T> {
 
     @Builder
     public RestResponse(ResponseCode code, ExceptionResponse error, T data) {
-        this.result = code.isResult();
+        this.result = code.reasonPhrase();
         this.error = error;
         this.data = data;
     }
