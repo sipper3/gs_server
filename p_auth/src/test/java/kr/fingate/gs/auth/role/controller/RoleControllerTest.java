@@ -98,7 +98,7 @@ public class RoleControllerTest extends TestBaseController {
         roleItemMapVO.setItemNo(0);
         roleItemMapVO.setDataState("A");
         roleItemMapList.add(roleItemMapVO);
-        roleInsDto.setRoleItemMapList(roleItemMapList);
+        roleInsDto.setRoleItemMapVOList(roleItemMapList);
 
         Item requestItems = field(
                 field("roleName", STRING, "역할명", Item.State.IGNORED),
