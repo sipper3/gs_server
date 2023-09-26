@@ -109,12 +109,13 @@ public class RoleControllerTest extends TestBaseController {
         );
 
         String[] requiredItems = new String[]{"roleNo", "roleName"};
-        String[] items = new String[]{"roleNo", "roleName", "roleDscrp", "roleItemMapVOList", "roleItemMapVOList[].itemNo"};
-        List<FieldDescriptor> requestFields = generateFieldDescriptor(roleInsDto, requiredItems, items);
+        List<FieldDescriptor> requestFields = generateFieldDescriptor(roleInsDto, requiredItems, "");
 
         for(FieldDescriptor f : requestFields) {
             System.out.println( f.getPath() +  " : " + f.getType() + " / " + f.isIgnored() + " " + f.isOptional());
         }
+
+        System.out.println(objectMapper.writeValueAsString(roleInsDto));
         //when
         ResultActions resultActions = mockMvc.perform(
                 post("/auth/api/role/getRoleList")
