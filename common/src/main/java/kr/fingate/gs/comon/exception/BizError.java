@@ -8,6 +8,11 @@ public enum BizError {
 
 	INTERNAL_SERVER_ERROR(500, "내부 서버 오류가 발생했습니다."),
 
+	// LOGIN ERROR
+	LOGN_NOT_USER(1000, "로그인 실패! 아이디 또는 비밀번호를 확인해주세요."),
+	LOGN_LOCK_USER(1001, "해당 계정은 잠금 상태 입니다."),
+	LOGN_EXPIRE_USER(1002, "개인정보보호와 안전한 사이트 이용을 위해 6개월 마다 비밀번호 변경을 권장하고 있습니다. 비밀번호를 변경해 주세요."),
+
 	ACCESS_NOT_ALLOWED(3001, "허용되지 않는 접근입니다. "),
 
 	HTTP_REQUEST_METHOD_NOT_SUPPORTED(3002, "지원하지 않는 Method입니다."),
@@ -43,8 +48,6 @@ public enum BizError {
 	// SALS_STAF 전용, 필수 3종 고객 동의 인증 체크 용 (타 기능에서 사용 불가)
 	SALS_STAF_UNAUTHORIZED(9401, "고객정보가 인증되지 않았습니다."),
 	SALS_STAF_UNAUTHORIZED_OVER(9402, "실패회수를 초과 하였습니다.");
-
-
 
 	private final int value;
 	private final String reasonPhrase;

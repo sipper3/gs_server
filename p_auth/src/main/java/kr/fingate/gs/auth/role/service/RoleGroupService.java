@@ -158,9 +158,9 @@ public class RoleGroupService {
 
 			roleModDao.insRoleGroup(roleGroupInsDto);
 
-			List<RoleGroupMapVO> roleGroupMapVOList = roleGroupInsDto.getRoleGroupMapVOList();
+			List<RoleGroupMapVO> roleGroupMapList = roleGroupInsDto.getRoleGroupMapList();
 
-			if(roleGroupMapVOList == null) throw new BizException("필수값 필요.");
+			if(roleGroupMapList == null) throw new BizException("필수값 필요.");
 
 			roleModDao.insRollGroupMap(roleGroupInsDto);
 
@@ -199,7 +199,7 @@ public class RoleGroupService {
 	 * 그룹롤 항목 수정
 	 */
 	@Transactional(rollbackFor = {BizException.class, Exception.class})
-	public void updRoleGroupMap(List<RoleGroupMapVO> roleGroupMapVOList) throws Exception {
+	public void updRoleGroupMap(List<RoleGroupMapVO> roleGroupMapList) throws Exception {
 		try {
 
 			RoleGroupInsDto roleGroupInsDto = new RoleGroupInsDto();
@@ -208,9 +208,9 @@ public class RoleGroupService {
 			roleGroupInsDto.setModUserNo(userTokenDto.getUserNo());
 			roleGroupInsDto.setModUserName(userTokenDto.getUserName());
 
-			roleGroupInsDto.setRoleGroupMapVOList(roleGroupMapVOList);
+			roleGroupInsDto.setRoleGroupMapList(roleGroupMapList);
 
-			if(roleGroupMapVOList == null) throw new BizException("필수값 필요.");
+			if(roleGroupMapList == null) throw new BizException("필수값 필요.");
 
 			roleModDao.updRollGroupMap(roleGroupInsDto);
 

@@ -15,5 +15,5 @@ import java.util.List;
 @AllArgsConstructor
 public class RoleGroupInsDto extends RoleGroupVO {
 
-    List<RoleGroupMapVO> roleGroupMapVOList;
+    List<RoleGroupMapVO> roleGroupMapList;
 }

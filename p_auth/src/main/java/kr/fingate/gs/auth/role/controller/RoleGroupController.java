@@ -59,12 +59,12 @@ public class RoleGroupController {
 
     /**
      * 그룹롤 아이템 수정
-     * @param roleGroupMapVOList
+     * @param roleGroupMapList
      * @throws Exception
      */
     @RequestMapping(value = "/updRoleGroupMap", method = RequestMethod.POST)
-    public void updRoleGroupMap(@RequestBody List<RoleGroupMapVO> roleGroupMapVOList) throws Exception {
-        roleGroupService.updRoleGroupMap(roleGroupMapVOList);
+    public void updRoleGroupMap(@RequestBody List<RoleGroupMapVO> roleGroupMapList) throws Exception {
+        roleGroupService.updRoleGroupMap(roleGroupMapList);
     }
 
 

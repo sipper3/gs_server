@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class SsoLoginDto {
 
     private long clientNo;
-    private String loginEmail;
+    private String loginId;
     private String loginPswrd;
+    private String newLoginPswrd;
 
 }

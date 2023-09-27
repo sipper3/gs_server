@@ -59,12 +59,12 @@ public class RoleController {
 
     /**
      * 롤 아이템 수정
-     * @param roleItemMapVOList
+     * @param roleItemMapList
      * @throws Exception
      */
     @RequestMapping(value = "/updRoleItem", method = RequestMethod.POST)
-    public void updRoleItem(@RequestBody List<RoleItemMapVO> roleItemMapVOList) throws Exception {
-        roleService.updRoleItem(roleItemMapVOList);
+    public void updRoleItem(@RequestBody List<RoleItemMapVO> roleItemMapList) throws Exception {
+        roleService.updRoleItem(roleItemMapList);
     }
 
 

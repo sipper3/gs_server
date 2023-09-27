@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
  * AccessToken에 저장될 Data 항목
  */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTokenDto {

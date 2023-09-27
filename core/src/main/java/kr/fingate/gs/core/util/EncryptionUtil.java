@@ -1,6 +1,7 @@
 package kr.fingate.gs.core.util;
 
 import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,109 +31,96 @@ public class EncryptionUtil {
 	public static byte[] aes256IvBytes = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //aes256 암호화
 	private static final int SALT_SIZE = 16;
 
-	public static String aesParamsEncode(String str, String key) throws Exception {
+	public static String aes256Encode(String str, String key) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
 		if(StringUtils.isEmpty(str)) return "";
 
-		byte[] textBytes = str.getBytes(StandardCharsets.UTF_8);
+		String aes256key = key;
+		if (key.length() > 32){
+			aes256key = key.substring(0, 32);
+		}
+
+		byte[] textBytes = str.getBytes("UTF-8");
 
 		AlgorithmParameterSpec ivSpec = new IvParameterSpec(aes256IvBytes);
-
-		SecretKeySpec newKey = new SecretKeySpec(EncryptionUtil.sha256(key), "AES");
+		SecretKeySpec newKey = new SecretKeySpec(aes256key.getBytes("UTF-8"), "AES");
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, newKey, ivSpec);
 
-		return DatatypeConverter.printHexBinary(cipher.doFinal(textBytes));
+		String enStr = new String(Base64.encodeBase64(cipher.doFinal(textBytes)));
+		return EncryptionUtil.charEnMapping(enStr);
 	}
 
-	public static String aesParamsDecode(String str, String key) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, DecoderException {
-		if(StringUtils.isEmpty(str)) return "";
 
-		char[] toCharArray = str.toCharArray();
-		byte[] textBytes = Hex.decodeHex(toCharArray);
+
+	public static String aes256Decode(String str, String key) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+
+		if(StringUtils.isEmpty(str)) return "";
+		str = EncryptionUtil.charDeMapping(str);
+
+		String aes256key = key;
+		if (key.length() > 32){
+			aes256key = key.substring(0, 32);
+		}
+
+		byte[] textBytes = Base64.decodeBase64(str.getBytes());
 
 		AlgorithmParameterSpec ivSpec = new IvParameterSpec(aes256IvBytes);
-		SecretKeySpec newKey = new SecretKeySpec(EncryptionUtil.sha256(key), "AES");
+
+		SecretKeySpec newKey = new SecretKeySpec(aes256key.getBytes("UTF-8"), "AES");
 
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		cipher.init(Cipher.DECRYPT_MODE, newKey, ivSpec);
 
-		return new String(cipher.doFinal(textBytes), StandardCharsets.UTF_8);
+		String deStr = new String(cipher.doFinal(textBytes), "UTF-8");
+		return deStr;
 	}
 
-	public static byte[] sha256(String str) throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		md.update(str.getBytes());
-		return md.digest();
-	}
-	public static String password(String str, String key) throws NoSuchAlgorithmException {
-		if(StringUtils.isEmpty(str)) return null;
+	public static String charEnMapping(String enStr) {
 
-		String preKey = key.substring(0, 3);
-		String tailKey = key.substring(3, 3);
-		String temp = preKey + str + tailKey + key;
+		enStr = enStr.replaceAll("[/]", "_slash_");
+		enStr = enStr.replaceAll("[+]", "_plus_");
+		enStr = enStr.replaceAll("[:]", "_col_");
+		enStr = enStr.replaceAll("[;]", "_smcol_");
+		enStr = enStr.replaceAll("[&]", "_amper_");
+		enStr = enStr.replaceAll("[$]", "_dol_");
+		enStr = enStr.replaceAll("[']", "_grave_");
+		enStr = enStr.replaceAll("[~]", "_tilde_");
+		enStr = enStr.replaceAll("[!]", "_exmark_");
+		enStr = enStr.replaceAll("[@]", "_at_");
+		enStr = enStr.replaceAll("[#]", "_sharp_");
+		enStr = enStr.replaceAll("[%]", "_per_");
+		enStr = enStr.replaceAll("[*]", "_ast_");
+		enStr = enStr.replaceAll("[\"]", "_quot_");
+		enStr = enStr.replaceAll("[']", "_apost_");
+		enStr = enStr.replaceAll("[?]", "_quest_");
+		enStr = enStr.replaceAll("[-]", "_min_");
+		enStr = enStr.replaceAll("[=]", "_eq_");
 
-		return byteToString(EncryptionUtil.sha256(temp));
-
-
-	}
-
-	private static String byteToString(byte[] temp) {
-		StringBuilder sb = new StringBuilder();
-
-		for(byte a : temp) {
-			sb.append(String.format("%02x", a));
-		}
-
-		return sb.toString();
+		return enStr;
 	}
 
-	public static String getSalt() {
-		SecureRandom sr = new SecureRandom();
+	public static String charDeMapping(String enStr) {
 
-		byte[] salt = new byte[SALT_SIZE];
+		enStr = enStr.replaceAll("_slash_", "/");
+		enStr = enStr.replaceAll("_plus_", "+");
+		enStr = enStr.replaceAll("_col_", ":");
+		enStr = enStr.replaceAll("_smcol_", ";");
+		enStr = enStr.replaceAll("_amper_", "&");
+		enStr = enStr.replaceAll("_dol_", "$");
+		enStr = enStr.replaceAll("_grave_", "'");
+		enStr = enStr.replaceAll("_tilde_", "~");
+		enStr = enStr.replaceAll("_exmark_", "!");
+		enStr = enStr.replaceAll("_at_", "@");
+		enStr = enStr.replaceAll("_sharp_", "#");
+		enStr = enStr.replaceAll("_per_", "%");
+		enStr = enStr.replaceAll("_ast_", "*");
+		enStr = enStr.replaceAll("_quot_", "\"");
+		enStr = enStr.replaceAll("_apost_", "'");
+		enStr = enStr.replaceAll("_quest_", "?");
+		enStr = enStr.replaceAll("_min_", "-");
+		enStr = enStr.replaceAll("_eq_", "=");
 
-		sr.nextBytes(salt);
-		return byteToString(salt);
-	}
-
-	public static String getRandomNumberKey(int size) {
-		StringBuilder rtnKey = new StringBuilder();
-		Random random = new Random(); // 랜덤 객체 생성
-
-		// 난수 생성
-		for(int i = 0; i < size; i++) {
-			rtnKey.append(random.nextInt(10));
-		}
-
-		return rtnKey.toString();
-	}
-
-	public static String getRandomKey(int size) {
-		StringBuffer buf =new StringBuffer();
-		Random rnd =new Random();
-
-		for(int i=0;i<size;i++){
-
-			if(rnd.nextBoolean()){
-				buf.append((char)((int)(rnd.nextInt(26))+97));
-			}else{
-				buf.append((rnd.nextInt(10)));
-			}
-		}
-
-		return buf.toString();
-	}
-
-
-	public static void main(String[] args) throws Exception {
-
-		String str = "{\"userNo\":1,\"mertNo\":\"10\",\"chrMethodCode\":\"ABC\"}";
-		String key = "01234567890123456789012345678999";
-		String encrypted = EncryptionUtil.aesParamsEncode(str, key);
-		System.out.println(encrypted);
-
-		System.out.println(EncryptionUtil.aesParamsDecode(encrypted, key));
-
+		return enStr;
 	}
 
 

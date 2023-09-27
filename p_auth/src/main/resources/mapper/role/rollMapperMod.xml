@@ -65,7 +65,7 @@
                , MOD_USER_NO
         )
         VALUES
-        <foreach collection="roleItemMapVOList" item="item" separator=",">
+        <foreach collection="roleItemMapList" item="item" separator=",">
             (#{roleNo}, #{item.itemNo}, 'A', NOW(), #{regUserNo}, NOW(), #{modUserNo})
         </foreach>
     </insert>
@@ -83,7 +83,7 @@
                 , MOD_USER_NO
         )
         VALUES
-        <foreach collection="roleItemMapVOList" item="item" separator=",">
+        <foreach collection="roleItemMapList" item="item" separator=",">
             (#{item.roleNo}, #{item.itemNo}, #{item.dataState}, NOW(), #{regUserNo}, NOW(), #{modUserNo})
         </foreach>
         ON DUPLICATE KEY
@@ -154,7 +154,7 @@
                 , MOD_USER_NO
         )
         VALUES
-        <foreach collection="roleGroupMapVOList" item="item" separator=",">
+        <foreach collection="roleGroupMapList" item="item" separator=",">
             (#{roleGroupNo}, #{item.roleNo}, 'A', NOW(), #{regUserNo}, NOW(), #{modUserNo})
         </foreach>
     </insert>
@@ -172,7 +172,7 @@
                 , MOD_USER_NO
         )
         VALUES
-        <foreach collection="roleGroupMapVOList" item="item" separator=",">
+        <foreach collection="roleGroupMapList" item="item" separator=",">
             (#{item.roleGroupNo}, #{item.roleNo}, #{item.dataState}, NOW(), #{regUserNo}, NOW(), #{modUserNo})
         </foreach>
         ON DUPLICATE KEY

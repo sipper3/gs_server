@@ -1,6 +1,7 @@
 package kr.fingate.gs.auth.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import kr.fingate.gs.comon.annotation.Info;
 import kr.fingate.gs.comon.vo.BaseVO;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoleVO extends BaseVO {
 
     // 역할번호

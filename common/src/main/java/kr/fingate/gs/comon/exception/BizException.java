@@ -13,22 +13,22 @@ public class BizException extends RuntimeException {
         this.message = message;
     }
 
-	public BizException(BizError rionError) {
-        super(rionError.valueOf(rionError.value()).getReasonPhrase());
-        this.code = rionError.valueOf(rionError.value()).value();
-        this.message = rionError.valueOf(rionError.value()).getReasonPhrase();
+	public BizException(BizError bizError) {
+        super(bizError.valueOf(bizError.value()).getReasonPhrase());
+        this.code = bizError.valueOf(bizError.value()).value();
+        this.message = bizError.valueOf(bizError.value()).getReasonPhrase();
     }
-	
-	public BizException(BizError rionError, String message) {
-		super(rionError.valueOf(rionError.value()).getReasonPhrase());
-		this.code = rionError.valueOf(rionError.value()).value();
+
+	public BizException(BizError bizError, String message) {
+		super(bizError.valueOf(bizError.value()).getReasonPhrase());
+		this.code = bizError.valueOf(bizError.value()).value();
 		this.message = message;
 	}
 
-	public BizException(BizError rionError, Throwable e) {
-        super(rionError.valueOf(rionError.value()).getReasonPhrase(), e);
-        this.code = rionError.valueOf(rionError.value()).value();
-        this.message = rionError.valueOf(rionError.value()).getReasonPhrase();
+	public BizException(BizError bizError, Throwable e) {
+        super(bizError.valueOf(bizError.value()).getReasonPhrase(), e);
+        this.code = bizError.valueOf(bizError.value()).value();
+        this.message = bizError.valueOf(bizError.value()).getReasonPhrase();
     }
 
     public BizException(String message, Throwable e) {

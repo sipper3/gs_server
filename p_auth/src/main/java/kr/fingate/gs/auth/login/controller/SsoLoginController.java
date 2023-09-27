@@ -27,7 +27,7 @@ public class SsoLoginController {
         if(loginDto.getClientNo() < CommonConst.FINPL_CLIENT_NO){
             throw new Exception("clientNo is null!");
         }
-        if(ObjectUtil.isEmpty(loginDto.getLoginEmail())){
+        if(ObjectUtil.isEmpty(loginDto.getLoginId())){
             throw new Exception("loginEmail is null!");
         }
         if(ObjectUtil.isEmpty(loginDto.getLoginPswrd())){

@@ -2,27 +2,49 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.fingate.gs.auth.login.dao.SsoLoginDao">
+<mapper namespace="kr.fingate.gs.auth.login.dao.LoginDao">
 
-    <select id="getLogin" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.auth.login.dto.SsoLoginDto">
+    <select id="getLogin" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.auth.login.dto.LoginInfoDto">
         /* SsoLoginDao.getLogin */
-        SELECT CLIENT_NO
-             , LOGIN_EMAIL
-             , LOGIN_PSWRD
-        FROM FG_USER
-        WHERE CLIENT_NO = #{clientNo}
-          AND LOGIN_EMAIL = #{loginEmail}
-          AND DATA_STATUS = 'A'
+        SELECT U.USER_NO
+             , U.LOGIN_ID
+             , UA.LOCK_YN
+             , IF(TIMESTAMPDIFF(SECOND , DATE_ADD(UA.LAST_CHANGE_DATE, INTERVAL UA.AUTH_LIFE_DAY DAY ), NOW()) > 0, 'Y', 'N') EXPIRED_YN
+          FROM GA_USER U
+         INNER JOIN GA_USER_AUTH UA ON U.USER_NO = UA.USER_NO
+           AND U.CLIENT_NO = #{clientNo}
+           AND U.LOGIN_ID = #{loginId}
+           AND UA.LOGIN_PSWRD = PASSWORD(#{loginPswrd})
     </select>
 
-    <select id="getToken" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.core.security.dto.UserTokenDto">
+    <select id="getLoginUserInfo" parameterType="kr.fingate.gs.core.security.dto.UserTokenDto" resultType="kr.fingate.gs.auth.login.dto.LoginInfoDto">
+        /* SsoLoginDao.getLogin */
+        SELECT U.USER_NO
+             , U.LOGIN_ID
+             , U.USER_NAME
+             , U.CLIENT_NO
+             , O.ORGNZ_NAME
+             , O.ORGNZ_DTL_NAME
+             , U.PSTN_CODE
+             , U.DUTY_CODE
+             , U.BSNS_CODE
+             , UA.LOCK_YN
+             , IF(TIMESTAMPDIFF(SECOND , DATE_ADD(UA.LAST_CHANGE_DATE, INTERVAL UA.AUTH_LIFE_DAY DAY ), NOW()) > 0, 'Y', 'N') EXPIRED_YN
+        FROM GA_USER U
+                 INNER JOIN GA_USER_AUTH UA ON U.USER_NO = UA.USER_NO
+                 INNER JOIN GA_ORGNZ O ON U.ORGNZ_NO = O.ORGNZ_NO AND U.CLIENT_NO = O.CLIENT_NO
+            AND U.CLIENT_NO = #{clientNo}
+            AND U.LOGIN_ID = #{loginId}
+    </select>
+
+    <select id="getTokenOld" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.core.security.dto.UserTokenDto">
         /* SsoLoginDao.getToken */
         SELECT CLIENT_NO
              , USER_NO
              , USER_NAME
         FROM FG_USER
         WHERE CLIENT_NO = #{clientNo}
-        AND LOGIN_EMAIL = #{loginEmail}
+        AND LOGIN_EMAIL = #{loginId}
         AND DATA_STATUS = 'A'
     </select>
 </mapper>

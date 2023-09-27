@@ -35,5 +35,5 @@ public class RoleInsDto extends RoleVO {
     private  String useYn;
 
     @Info("롤아이템Map리스트")
-    List<RoleItemMapVO> roleItemMapVOList;
+    List<RoleItemMapVO> roleItemMapList;
 }

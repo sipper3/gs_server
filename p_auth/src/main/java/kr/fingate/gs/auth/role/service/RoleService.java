@@ -142,9 +142,9 @@ public class RoleService {
 
 			roleModDao.insRole(roleInsDto);
 
-			List<RoleItemMapVO> roleItemMapVOList = roleInsDto.getRoleItemMapVOList();
+			List<RoleItemMapVO> roleItemMapList = roleInsDto.getRoleItemMapList();
 
-			if(roleItemMapVOList == null) throw new BizException("필수값 필요.");
+			if(roleItemMapList == null) throw new BizException("필수값 필요.");
 
 			roleModDao.insRollItemMap(roleInsDto);
 
@@ -184,7 +184,7 @@ public class RoleService {
 	 * 개별롤 항목(아이템) 수정
 	 */
 	@Transactional(rollbackFor = {BizException.class, Exception.class})
-	public void updRoleItem(List<RoleItemMapVO> roleItemMapVOList) throws Exception {
+	public void updRoleItem(List<RoleItemMapVO> roleItemMapList) throws Exception {
 		try {
 
 			RoleInsDto roleInsDto = new RoleInsDto();
@@ -193,9 +193,9 @@ public class RoleService {
 			roleInsDto.setModUserNo(userTokenDto.getUserNo());
 			roleInsDto.setModUserName(userTokenDto.getUserName());
 
-			roleInsDto.setRoleItemMapVOList(roleItemMapVOList);
+			roleInsDto.setRoleItemMapList(roleItemMapList);
 
-			if(roleItemMapVOList == null) throw new BizException("필수값 필요.");
+			if(roleItemMapList == null) throw new BizException("필수값 필요.");
 
 			roleModDao.updRollItemMap(roleInsDto);
 
