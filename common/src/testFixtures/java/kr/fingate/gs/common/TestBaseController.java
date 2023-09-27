@@ -1,10 +1,11 @@
 package kr.fingate.gs.common;
 
 import com.epages.restdocs.apispec.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import kr.fingate.gs.comon.annotation.Info;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -23,17 +24,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static kr.fingate.gs.common.Item.field;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 //import org.springframework.web.filter.CharacterEncodingFilter;
@@ -180,23 +179,49 @@ public abstract class TestBaseController {
     }
 
 
+    /**
+     * Info Annotation 기반 List<FieldDescriptor> 생성
+     * @param t 생성 대상 DTO
+     * @param isNotDefault default 값 제외 여부
+     * @param requiredItems 필수 항목
+     * @param items restDoc에 표기할 항목
+     * @return
+     * @throws Exception
+     */
+    public <T> List<FieldDescriptor> generateFieldDescriptor(T t, boolean isNotDefault, String[] requiredItems, String... items) throws Exception {
 
+        return getFieldDescriptors(t, "", isNotDefault, requiredItems, items);
+    }
+
+    /**
+     * Info Annotation 기반 List<FieldDescriptor> 생성
+     * @param t 생성 대상 DTO
+     * @param requiredItems 필수 항목
+     * @param items restDoc에 표기할 항목
+     * @return
+     * @throws Exception
+     */
     public <T> List<FieldDescriptor> generateFieldDescriptor(T t, String[] requiredItems, String... items) throws Exception {
 
-        return getFieldDescriptors(t.getClass(), "", requiredItems, items);
+        return getFieldDescriptors(t, "", false, requiredItems, items);
     }
 
     public <T> List<FieldDescriptor> generateFieldDescriptor(T t, String... items) throws Exception {
 
-        return getFieldDescriptors(t.getClass(), "", new String[]{}, items);
+        return getFieldDescriptors(t, "", false, new String[]{}, items);
     }
 
-    private List<FieldDescriptor> getFieldDescriptors(Class c, String superPath, String[] requiredItems, String... items){
+    private <T> List<FieldDescriptor> getFieldDescriptors(T c, String superPath, boolean isNotDefault, String[] requiredItems, String... items) throws Exception{
 
         List<FieldDescriptor> result = new ArrayList<>();
-        Field[] fields = getFields(c);
+        Field[] fields = getFields(c.getClass());
 
         if(fields != null) {
+            JsonInclude jsonInclude = c.getClass().getAnnotation(JsonInclude.class);
+            if(jsonInclude != null && jsonInclude.value() == JsonInclude.Include.NON_DEFAULT) {
+                isNotDefault = true;
+            }
+
             for(Field field : fields) {
 
                 JsonIgnore ignore = field.getAnnotation(JsonIgnore.class);
@@ -206,20 +231,42 @@ public abstract class TestBaseController {
 
                 boolean isChild = false;
                 String path = superPath + field.getName();
-                String name = field.getName();
+                String name = "ERROR : @Info Annotation required!!!";
                 String desc = "";
+
+                field.setAccessible(true);
+                Object value = field.get(c);
+
+                // default 체크
+                if(isNotDefault) {
+                    if(value == null) continue;
+                    if(field.getType().isAssignableFrom(int.class) && (int)value == 0) {
+                        continue;
+                    }else if(field.getType().isAssignableFrom(long.class) && (long)value == 0) {
+                        continue;
+                    }else if(field.getType().isAssignableFrom(float.class) && (float)value == 0.0f) {
+                        continue;
+                    }else if(field.getType().isAssignableFrom(double.class) && (double)value == 0.0d) {
+                        continue;
+                    }
+                }
 
                 // JSON type 지정
                 JsonFieldType jsonFieldType;
                 if(field.getType().isAssignableFrom(String.class)){
                     jsonFieldType = STRING;
-                }else if(field.getType().isAssignableFrom(Integer.class) || field.getType().isAssignableFrom(long.class) ){
+                }else if(field.getType().isAssignableFrom(int.class)
+                        || field.getType().isAssignableFrom(long.class)
+                        || field.getType().isAssignableFrom(float.class)
+                        || field.getType().isAssignableFrom(double.class)
+                        || field.getType().isAssignableFrom(BigInteger.class)
+                        || field.getType().isAssignableFrom(BigDecimal.class) ){
                     jsonFieldType = NUMBER;
                 }else if(field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Arrays.class) ){
                     jsonFieldType = ARRAY;
                     isChild = true;
                 }else if(field.getType().isAssignableFrom(Boolean.class) ){
-                    jsonFieldType = ARRAY;
+                    jsonFieldType = BOOLEAN;
                 }else {
                     jsonFieldType = OBJECT;
                     isChild = true;
@@ -238,7 +285,7 @@ public abstract class TestBaseController {
                         .type(jsonFieldType)
                         .description(name + desc);
 
-                if(Arrays.asList(items).contains(path)) {
+                if(isNotDefault || Arrays.asList(items).contains(path)) {
                     if(!Arrays.asList(requiredItems).contains(path)) {
                         f.optional();
                     }
@@ -252,11 +299,12 @@ public abstract class TestBaseController {
                     if(jsonFieldType.equals(ARRAY)) {
                         ParameterizedType genericType = (ParameterizedType) field.getGenericType();
                         Class child = (Class<?>) genericType.getActualTypeArguments()[0];
-                        if(child.getPackageName().contains("fingate")) {
-                            result.addAll(getFieldDescriptors(child, path+"[].", items));
+                        ArrayList list = (ArrayList) value;
+                        if(child.getPackageName().contains("fingate") && !list.isEmpty()) {
+                            result.addAll(getFieldDescriptors(list.get(0), path+"[].", isNotDefault, requiredItems, items));
                         }
                     }else{
-                        result.addAll(getFieldDescriptors(field.getType(), path+".", items));
+                        result.addAll(getFieldDescriptors(field, path+".", isNotDefault, requiredItems, items));
                     }
                 }
             }
