@@ -2,6 +2,11 @@ server:
   mq:
     addresses: b-3a9a1631-b3a2-4deb-9097-fb573a1789bf.mq.ap-northeast-2.amazonaws.com:5671
 
+file:
+  publicDir: public
+  privateDir: private
+  not_allowed_file: exe,bat,htm,html,vps,pif,scr
+
 jwt:
   secretKey: "fingate@server:secretKey:20230816:KUROIkTHJcI31z5QrBNDzitqulyusggC:snapshot"
   request:

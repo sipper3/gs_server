@@ -4,3 +4,6 @@ spring:
       password: admin1234
       port: 6379
       host: 3.37.126.80
+
+file:
+  baseDir: C:\home\fingate\files

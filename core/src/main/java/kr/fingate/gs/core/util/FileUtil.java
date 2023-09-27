@@ -56,6 +56,7 @@ public class FileUtil {
 
         } catch (IOException e) {
             logger.error("saveFile failed \n" + e.getMessage());
+            fileDto.setStatus(CoreConst.FILE_FAIL_UPLOAD);
         }
 
         return fileDto;

@@ -12,8 +12,8 @@ spring:
       dev: core-${spring.profiles.active},common-${spring.profiles.active}
       prod: core-${spring.profiles.active},common-${spring.profiles.active}
 
-server:
-
+pagehelper:
+  helper-dialect: mariadb
 
 jwt:
   request:

@@ -24,6 +24,21 @@
             LIMIT 1
     </select>
 
+    <sql id="includeJobList">
+        <where>
+            <if test="scenId != null and scenId != ''">
+                RJ.SCEN_ID = #{scenId}
+            </if>
+            <if test="regId != null and regId != ''">
+                RJ.REG_ID = #{regId}
+            </if>
+        </where>
+    </sql>
+    <select id="getJobList_COUNT" resultType="long">
+        SELECT COUNT(JOB_ID)
+        FROM RP_JOB RJ INNER JOIN RP_SCENARIO RS ON RJ.SCEN_ID = RS.SCEN_ID
+        <include refid="includeJobList" />
+    </select>
     <select id="getJobList" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
         SELECT
             JOB_ID
@@ -39,14 +54,7 @@
              , REG_DATE
              , UPD_DATE
         FROM RP_JOB RJ INNER JOIN RP_SCENARIO RS ON RJ.SCEN_ID = RS.SCEN_ID
-        <where>
-            <if test="scenId != null and scenId != ''">
-                RJ.SCEN_ID = #{scenId}
-            </if>
-            <if test="regId != null and regId != ''">
-                RJ.REG_ID = #{regId}
-            </if>
-        </where>
+        <include refid="includeJobList" />
         ORDER BY REG_DATE DESC
     </select>
 

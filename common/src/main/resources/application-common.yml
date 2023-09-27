@@ -2,7 +2,3 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
 
-file:
-  publicDir: public
-  privateDir: private
-  not_allowed_file: exe,bat,htm,html,vps,pif,scr

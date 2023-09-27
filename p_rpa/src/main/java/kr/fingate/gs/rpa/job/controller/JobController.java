@@ -2,6 +2,7 @@ package kr.fingate.gs.rpa.job.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import kr.fingate.gs.comon.dto.PageInfoDto;
 import kr.fingate.gs.core.dto.file.FileDto;
 import kr.fingate.gs.core.util.FileUtil;
 import kr.fingate.gs.rpa.job.dto.JobDto;
@@ -35,6 +36,13 @@ public class JobController {
         logger.info(SYSTEM_DIR);
 
         return jobService.getNextJob();
+    }
+
+    @RequestMapping(value="/list", method = {RequestMethod.GET, RequestMethod.POST})
+    public PageInfoDto<JobDto> getJobList() throws Exception {
+        logger.info(SYSTEM_DIR);
+
+        return new PageInfoDto<>(jobService.getJobList());
     }
 
     @PostMapping(value = "/upload")
