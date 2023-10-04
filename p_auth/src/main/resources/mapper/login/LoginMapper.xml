@@ -37,14 +37,14 @@
             AND U.LOGIN_ID = #{loginId}
     </select>
 
-    <select id="getTokenOld" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.core.security.dto.UserTokenDto">
-        /* SsoLoginDao.getToken */
-        SELECT CLIENT_NO
-             , USER_NO
-             , USER_NAME
-        FROM FG_USER
-        WHERE CLIENT_NO = #{clientNo}
-        AND LOGIN_EMAIL = #{loginId}
-        AND DATA_STATUS = 'A'
+    <select id="getCheckPswad" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.auth.login.dto.SsoLoginDto">
+        /* SsoLoginDao.getLogin */
+        SELECT U.LOGIN_ID
+          FROM GA_USER U
+         INNER JOIN GA_USER_AUTH UA ON U.USER_NO = UA.USER_NO
+           AND U.CLIENT_NO = #{clientNo}
+           AND U.LOGIN_ID = #{loginId}
+           AND UA.LOGIN_PSWRD = #{loginPswrd}
     </select>
+
 </mapper>
