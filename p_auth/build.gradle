@@ -44,3 +44,6 @@ openapi3 {
     }
 }
 
+build {
+    dependsOn 'generateDocs'
+}

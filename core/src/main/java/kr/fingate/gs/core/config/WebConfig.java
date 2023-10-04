@@ -34,6 +34,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/favicon.ico").addResourceLocations("/").setCachePeriod(0);
+		registry.addResourceHandler("/docs/**").addResourceLocations("classpath:/static/docs/").setCachePeriod(0);
 	}
 
 	@Override
