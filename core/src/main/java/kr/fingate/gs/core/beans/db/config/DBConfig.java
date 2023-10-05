@@ -123,6 +123,7 @@ public class DBConfig implements BeanDefinitionRegistryPostProcessor, Applicatio
 				.addPropertyReference("dataSource", datasource.getName(DBConfig.BEAN_TYPE.DATASOURCE))
 				.addPropertyValue("configLocation", CONFIG_LOCALTION)
 				.addPropertyValue("mapperLocations", "classpath:" + baseMapper)
+				.addPropertyValue("typeAliasesPackage", "kr.fingate.gs.*.vo;kr.fingate.gs.**.dto;")
 				.getBeanDefinition();
 
 		registry.registerBeanDefinition(datasource.getName(DBConfig.BEAN_TYPE.SESSION_FACTORY), sqlSessionFactory);
