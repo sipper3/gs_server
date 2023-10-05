@@ -2,9 +2,11 @@ package kr.fingate.gs.comon.vo;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
+@Alias("HstryVO")
 public class HstryVO extends BaseVO {
 
     // 이력순번
