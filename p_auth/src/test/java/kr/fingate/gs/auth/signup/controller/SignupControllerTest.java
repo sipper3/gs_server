@@ -25,8 +25,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 @SpringBootTest(classes = {AuthApplication.class})
 public class SignupControllerTest extends TestBaseController {
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+//    @Autowired
+//    protected ObjectMapper objectMapper;
 
 //    @Test
 //    @DisplayName("회원가입")

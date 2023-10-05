@@ -28,8 +28,8 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
 @SpringBootTest(classes = {AuthApplication.class})
 class SsoLoginControllerTest extends TestBaseController {
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+//    @Autowired
+//    protected ObjectMapper objectMapper;
 //
 //    @Test
 //    @DisplayName("로그인")

@@ -1,13 +1,9 @@
-package kr.fingate.gs.auth.login.sevice;
+package kr.fingate.gs.auth.login.service;
 
 import kr.fingate.gs.auth.login.dao.LoginDao;
-import kr.fingate.gs.auth.login.dto.LoginDto;
-import kr.fingate.gs.auth.login.dto.LoginInfoDto;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
 import kr.fingate.gs.comon.exception.BizError;
 import kr.fingate.gs.comon.exception.BizException;
-import kr.fingate.gs.core.security.service.JwtService;
-import kr.fingate.gs.core.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
