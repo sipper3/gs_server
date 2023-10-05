@@ -8,11 +8,11 @@ import kr.fingate.gs.auth.login.dto.LoginDto;
 import kr.fingate.gs.auth.login.dto.LoginInfoDto;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
 import kr.fingate.gs.comon.consts.enums.RedisKey;
-import kr.fingate.gs.comon.exception.BizError;
-import kr.fingate.gs.comon.exception.BizException;
 import kr.fingate.gs.comon.util.EncryptionUtil;
 import kr.fingate.gs.comon.util.ObjectUtil;
 import kr.fingate.gs.comon.util.RedisUtil;
+import kr.fingate.gs.core.aop.exception.BizException;
+import kr.fingate.gs.core.aop.response.ResponseCode;
 import kr.fingate.gs.core.security.dto.UserTokenDto;
 import kr.fingate.gs.core.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -44,15 +44,15 @@ public class LoginPublicService {
         LoginInfoDto loginInfoDto = loginDao.getLogin(ssoLoginDto);
 
         if(loginInfoDto == null){
-            throw new BizException(BizError.LOGN_NOT_USER);
+            throw new BizException(ResponseCode.LOGN_NOT_USER);
         }
 
         if(loginInfoDto.getLockYn().equals("Y")){
-            throw new BizException(BizError.LOGN_LOCK_USER);
+            throw new BizException(ResponseCode.LOGN_LOCK_USER);
         }
 
         if(loginInfoDto.getExpiredYn().equals("Y")){
-            throw new BizException(BizError.LOGN_EXPIRE_USER);
+            throw new BizException(ResponseCode.LOGN_EXPIRE_USER);
         }
 
         String fg = EncryptionUtil.aesEncode(ssoLoginDto.getClientNo() + ":" + ssoLoginDto.getLoginId(), encryptionKey);

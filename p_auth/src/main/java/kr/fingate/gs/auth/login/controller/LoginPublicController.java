@@ -6,11 +6,14 @@ import kr.fingate.gs.auth.login.dto.LoginDto;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
 import kr.fingate.gs.auth.login.service.LoginPublicService;
 import kr.fingate.gs.comon.consts.CommonConst;
-import kr.fingate.gs.comon.exception.BizError;
-import kr.fingate.gs.comon.exception.BizException;
 import kr.fingate.gs.comon.util.ObjectUtil;
+import kr.fingate.gs.core.aop.exception.BizException;
+import kr.fingate.gs.core.aop.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class LoginPublicController {
     public LoginDto getLogin(HttpServletResponse response, @RequestBody SsoLoginDto loginDto) throws Exception {
 
         if(loginDto.getClientNo() < CommonConst.FINPL_CLIENT_NO || ObjectUtil.isEmpty(loginDto.getLoginId()) || ObjectUtil.isEmpty(loginDto.getLoginPswrd())){
-            throw new BizException(BizError.MISSING_PARAMETER);
+            throw new BizException(ResponseCode.MISSING_PARAMETER);
         }
 
         return loginPublicService.getLogin(response, loginDto);

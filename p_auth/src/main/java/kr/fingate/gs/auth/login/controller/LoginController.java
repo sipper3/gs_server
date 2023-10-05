@@ -3,9 +3,9 @@ package kr.fingate.gs.auth.login.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
 import kr.fingate.gs.auth.login.service.LoginService;
-import kr.fingate.gs.comon.exception.BizError;
-import kr.fingate.gs.comon.exception.BizException;
 import kr.fingate.gs.comon.util.ObjectUtil;
+import kr.fingate.gs.core.aop.exception.BizException;
+import kr.fingate.gs.core.aop.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +23,7 @@ public class LoginController {
     public void getCheckPswrd(HttpServletResponse response, @RequestBody SsoLoginDto loginDto) throws Exception {
 
         if(ObjectUtil.isEmpty(loginDto.getLoginPswrd())){
-            throw new BizException(BizError.MISSING_PARAMETER);
+            throw new BizException(ResponseCode.MISSING_PARAMETER);
         }
 
         loginService.getCheckPswad(loginDto);
@@ -33,7 +33,7 @@ public class LoginController {
     public void updPswrd(@RequestBody SsoLoginDto loginDto) throws Exception {
 
         if(ObjectUtil.isEmpty(loginDto.getLoginPswrd()) || ObjectUtil.isEmpty(loginDto.getNewLoginPswrd())){
-            throw new BizException(BizError.MISSING_PARAMETER);
+            throw new BizException(ResponseCode.MISSING_PARAMETER);
         }
 
         loginService.updPswrd(loginDto);
