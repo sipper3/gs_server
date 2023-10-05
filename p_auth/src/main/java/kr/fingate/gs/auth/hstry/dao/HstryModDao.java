@@ -1,6 +1,6 @@
 package kr.fingate.gs.auth.hstry.dao;
 
-import kr.fingate.gs.comon.dto.hstry.HstryDto;
+import kr.fingate.gs.common.dto.hstry.HstryDto;
 import kr.fingate.gs.auth.hstry.dto.ReasonDto;
 import org.apache.ibatis.annotations.Mapper;
 

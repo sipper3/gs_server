@@ -1,6 +1,6 @@
 package kr.fingate.gs.auth.role.dto;
 
-import kr.fingate.gs.comon.vo.BaseVO;
+import kr.fingate.gs.common.vo.BaseVO;
 import lombok.*;
 
 @AllArgsConstructor

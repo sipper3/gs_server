@@ -2,9 +2,10 @@ package kr.fingate.gs.sales.cstmr.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import kr.fingate.gs.comon.exception.BizError;
-import kr.fingate.gs.comon.exception.BizException;
+import kr.fingate.gs.common.exception.BizError;
+import kr.fingate.gs.common.exception.BizException;
 import kr.fingate.gs.sales.cstmr.dao.CstmrDao;
+import kr.fingate.gs.sales.cstmr.dao.CstmrModDao;
 import kr.fingate.gs.sales.cstmr.dto.CstmrListDto;
 import kr.fingate.gs.sales.cstmr.dto.CstmrListSearchDto;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class CstmrService {
 
     final CstmrDao cstmrDao;
+
+    final CstmrModDao cstmrModDao;
+
 
 
     public Page<CstmrListDto> getCstmrList(CstmrListSearchDto cstmrListSearchDto) {

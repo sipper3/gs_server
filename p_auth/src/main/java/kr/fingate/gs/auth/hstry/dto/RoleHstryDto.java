@@ -1,6 +1,6 @@
 package kr.fingate.gs.auth.hstry.dto;
 
-import kr.fingate.gs.comon.vo.HstryVO;
+import kr.fingate.gs.common.vo.HstryVO;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.type.Alias;

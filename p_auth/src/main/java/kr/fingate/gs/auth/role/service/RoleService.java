@@ -2,7 +2,6 @@ package kr.fingate.gs.auth.role.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import kr.fingate.gs.auth.item.dao.ItemDao;
 import kr.fingate.gs.auth.item.dto.ItemDto;
 import kr.fingate.gs.auth.role.dao.RoleDao;
@@ -12,11 +11,10 @@ import kr.fingate.gs.auth.role.dto.RoleInfoTopDto;
 import kr.fingate.gs.auth.role.dto.RoleInsDto;
 import kr.fingate.gs.auth.role.dto.SearchRoleDto;
 import kr.fingate.gs.auth.user.dto.UserDto;
-import kr.fingate.gs.auth.vo.ItemVO;
 import kr.fingate.gs.auth.vo.RoleItemMapVO;
 import kr.fingate.gs.auth.vo.RoleVO;
-import kr.fingate.gs.comon.exception.BizError;
-import kr.fingate.gs.comon.exception.BizException;
+import kr.fingate.gs.common.exception.BizError;
+import kr.fingate.gs.common.exception.BizException;
 import kr.fingate.gs.core.security.dto.UserTokenDto;
 import kr.fingate.gs.core.service.CoreService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 

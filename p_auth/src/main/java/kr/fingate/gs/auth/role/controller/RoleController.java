@@ -1,10 +1,7 @@
 package kr.fingate.gs.auth.role.controller;
 
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageInfo;
 import kr.fingate.gs.auth.item.dto.ItemDto;
-import kr.fingate.gs.auth.item.dto.SearchItemDto;
-import kr.fingate.gs.auth.item.service.ItemService;
 import kr.fingate.gs.auth.role.dto.RoleDto;
 import kr.fingate.gs.auth.role.dto.RoleInfoTopDto;
 import kr.fingate.gs.auth.role.dto.RoleInsDto;
@@ -13,7 +10,7 @@ import kr.fingate.gs.auth.role.service.RoleService;
 import kr.fingate.gs.auth.user.dto.UserDto;
 import kr.fingate.gs.auth.vo.RoleItemMapVO;
 import kr.fingate.gs.auth.vo.RoleVO;
-import kr.fingate.gs.comon.dto.PageInfoDto;
+import kr.fingate.gs.common.dto.PageInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

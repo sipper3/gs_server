@@ -1,14 +1,10 @@
 package kr.fingate.gs.auth.role.dto;
 
-import com.github.pagehelper.Page;
-import kr.fingate.gs.auth.vo.RoleVO;
-import kr.fingate.gs.comon.annotation.Info;
-import kr.fingate.gs.comon.vo.PageVO;
-import lombok.Builder;
+import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.vo.PageVO;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 @Getter
 @Setter
 public class SearchRoleDto extends PageVO {

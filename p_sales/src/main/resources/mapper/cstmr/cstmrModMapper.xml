@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.sales.cstmr.dao.CstmrModDao">
+
+    <insert id="insCstmr" useGeneratedKeys="true" keyProperty="cstmrNo" parameterType="CstmrVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.insCstmr */
+        INSERT INTO TB_CSTMR
+            (
+             CLIENT_NO, CSTMR_NAME, IDNTN_NO, BRTHD, BRTHD_LUNAR_YN, GENDER
+            , CLPHN_NO, CLPHN_NO_4DGT, CLPHN_AUTH_YN, TLPHN_NO, TLPHN_NO_4DGT, ADTN_TLPHN_NO, ADTN_TLPHN_NO_4DGT, EMAIL
+            , CTPRV_CODE, TWNSH_CODE, HOME_ZPCD, HOME_ADRES, HOME_ADRES_DTL, OFFICE_NAME, OFFICE_TLPHN_NO
+            , CSTMR_CLASS, CSTMR_TYPE, CSTMR_REG_TYPE, REG_MEDIA, REG_KEY, RSPNS_USER_NO, CLCTN_PATH, PREV_CSTMR_NO
+            , PRVCY_USE_AGRMN_YN, PRVCY_USE_AGRMN_DATE, PRVCY_USE_PERIOD, PRVCY_USE_EXPRT_DATE, PRVCY_USE_AGRMN_TYPE
+            , MRKTN_RCV_AGRMN_YN, MRKTN_RCV_AGRMN_DATE, MRKTN_RCV_AGRMN_TYPE
+            , TLPHN_RCV_AGRMN_YN, SMS_RCV_AGRMN_YN, EMAIL_RCV_AGRMN_YN
+            , DATA_STATE, REG_DATE, REG_USER_NO, MOD_DATE, MOD_USER_NO
+            )
+        VALUES
+            ( #{clientNo}, #{cstmrName}, #{idntnNo}, #{brthd}, #{brthdLunarYn}, #{gender}
+            , #{clphnNo}, #{clphnNo4dgt}, #{clphnAuthYn}, #{tlphnNo}, #{tlphnNo4dgt}, #{adtnTlphnNo}, #{adtnTlphnNo4dgt}, #{email}
+            , #{ctprvCode}, #{twnshCode}, #{homeZpcd}, #{homeAdres}, #{homeAdresDtl}, #{officeName}, #{officeTlphnNo}
+            , #{cstmrClass}, #{cstmrType}, #{cstmrRegType}, #{regMedia}, #{regKey}, #{rspnsUserNo}, #{clctnPath}, #{prevCstmrNo}
+            , #{prvcyUseAgrmnYn}, #{prvcyUseAgrmnDate}, #{prvcyUsePeriod}, #{prvcyUseExprtDate}, #{prvcyUseAgrmnType}
+            , #{mrktnRcvAgrmnYn}, #{mrktnRcvAgrmnDate}, #{mrktnRcvAgrmnType}
+            , #{tlphnRcvAgrmnYn}, #{smsRcvAgrmnYn}, #{emailRcvAgrmnYn}
+            , 'A', NOW(), #{regUserNo}, NOW(), #{modUserNo}
+            )
+    </insert>
+    <update id="updCstmr" parameterType="CstmrVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.insCstmr */
+        UPDATE TB_CSTMR
+        SET CSTMR_NAME = #{cstmrName}
+            , IDNTN_NO = #{idntnNo}
+            , BRTHD = #{brthd}
+            , BRTHD_LUNAR_YN = #{brthdLunarYn}
+            , GENDER = #{gender}
+            , CLPHN_NO = #{clphnNo}
+            , CLPHN_NO_4DGT = #{clphnNo4dgt}
+            , CLPHN_AUTH_YN = #{clphnAuthYn}
+            , TLPHN_NO = #{tlphnNo}
+            , TLPHN_NO_4DGT = #{tlphnNo4dgt}
+            , ADTN_TLPHN_NO = #{adtnTlphnNo}
+            , ADTN_TLPHN_NO_4DGT = #{adtnTlphnNo4dgt}
+            , EMAIL = #{email}
+            , CTPRV_CODE = #{ctprvCode}
+            , TWNSH_CODE = #{twnshCode}
+            , HOME_ZPCD = #{homeZpcd}
+            , HOME_ADRES = #{homeAdres}
+            , HOME_ADRES_DTL = #{homeAdresDtl}
+            , OFFICE_NAME = #{officeName}
+            , OFFICE_TLPHN_NO = #{officeTlphnNo}
+            , CSTMR_CLASS = #{cstmrClass}
+            , MOD_DATE = now()
+            , MOD_USER_NO = #{modUserNo}
+        WHERE CSTMR_NO = #{cstmrNo}
+    </update>
+    <update id="delCstmr">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.delCstmr */
+        UPDATE TB_CSTMR
+            SET DATA_STATE = 'D'
+            , MOD_DATE = NOW()
+            , MOD_USER_NO = #{modUserNo}
+        WHERE CSTMR_NO = #{cstmrNo}
+    </update>
+
+
+    <insert id="insCstmrAdtnInfo" parameterType="CstmrAdtnInfoVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.insCstmrAdtnInfo */
+        INSERT INTO TB_CSTMR_ADTN_INFO (CSTMR_NO, FAX_NO, OFFICE_ZPCD, OFFICE_ADRES, OFFICE_ADRES_DTL, DPRTM, PSTN, MRG_YN, MRG_ANVRS, DRIVE_CODE, NOH, REG_DATE, REG_USER_NO, MOD_DATE, MOD_USER_NO)
+        VALUES (#{cstmrNo}, #{faxNo}, #{officeZpcd}, #{officeAdres}, #{officeAdresDtl}, #{dprtm}, #{pstn}, #{mrgYn}, #{mrgAnvrs},
+                #{driveCode}, #{noh}, now(), #{regUserNo}, now(), #{modUserNo})
+    </insert>
+    <update id="updCstmrAdtnInfo" parameterType="CstmrAdtnInfoVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.updCstmrAdtnInfo */
+        update TB_CSTMR_ADTN_INFO
+        set FAX_NO = #{faxNo}
+          , OFFICE_ZPCD = #{officeZpcd}
+          , OFFICE_ADRES = #{officeAdres}
+          , OFFICE_ADRES_DTL = #{officeAdresDtl}
+          , DPRTM = #{dprtm}
+          , PSTN = #{pstn}
+          , MRG_YN = #{mrgYn}
+          , MRG_ANVRS = #{mrgAnvrs}
+          , DRIVE_CODE = #{driveCode}
+          , NOH = #{noh}
+          , MOD_DATE = now()
+          , MOD_USER_NO = #{modUserNo}
+        where CSTMR_NO = #{cstmrNo}
+    </update>
+
+    <insert id="insCstmrMemo" useGeneratedKeys="true" keyProperty="memoSeq" parameterType="CstmrMemoVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.insCstmrMemo */
+        INSERT INTO TB_CSTMR_MEMO
+            (CSTMR_NO, PRCSN_CLASS, MEMO, DATA_STATE, REG_DATE, REG_USER_NO)
+        VALUES
+            (#{cstmrNo}, #{prcsnClass}, #{memo}, 'A', NOW(), #{reguUserNo})
+    </insert>
+
+    <insert id="insCstmrSmsAuth" useGeneratedKeys="true" keyProperty="smsAgrmnSeq" parameterType="CstmrSmsAuthVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.insCstmrSmsAuth */
+        INSERT INTO TB_CSTMR_SMS_AUTH
+        (AUTH_NO, RCV_TLPHN_NO, CSTMR_NO, SEND_TLPHN_NO, SEND_USER_NO, MSG, AUTH_YN, AUTH_PRFRM_USER, AUTH_DT, REG_DATE, REG_USER_NO)
+        VALUES (#{authNo}, #{rcvTlphnNo}, #{cstmrNo}, #{sendTlphnNo}, #{sendUserNo}, #{msg}, #{authYn}, #{authPrfrmUser}, #{authDt}, now(), #{regUserNo})
+    </insert>
+
+    <update id="updCstmrSmsAuth" parameterType="CstmrSmsAuthVO" >
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.updCstmrSmsAuth */
+        UPDATE TB_CSTMR_SMS_AUTH
+        SET AUTH_YN = 'Y'
+          , AUTH_PRFRM_USER = #{authPrfrmUser}
+          , AUTH_DT = NOW()
+        WHERE SMS_AGRMN_SEQ = #{smsAgrmnSeq}
+          AND AUTH_NO = #{authNo}
+    </update>
+
+    <update id="updCstmrClphnNo" parameterType="CstmrVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrModDao.updCstmrClphnNo */
+        UPDATE TB_CSTMR
+        SET CLPHN_NO = #{clphnNo}
+        , CLPHN_NO_4DGT = #{clphnNo4dgt}
+        , MOD_USER_NO = #{modUserNo}
+        , MOD_DATE = NOW()
+        WHERE CSTMR_NO = #{cstmrNo}
+    </update>
+</mapper>

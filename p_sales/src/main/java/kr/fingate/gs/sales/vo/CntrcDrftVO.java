@@ -1,7 +1,8 @@
 package kr.fingate.gs.sales.vo;
 
-import kr.fingate.gs.comon.annotation.Info;
-import kr.fingate.gs.comon.vo.BaseVO;
+import org.apache.ibatis.type.Alias;
+import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.vo.BaseVO;
 import java.math.BigInteger;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Alias("CntrcDrftVO")
 public class CntrcDrftVO extends BaseVO {
 
     @Info(value="입력순번")

@@ -2,8 +2,8 @@ package kr.fingate.gs.auth.signup.controller;
 
 import kr.fingate.gs.auth.signup.dto.SignupDto;
 import kr.fingate.gs.auth.signup.service.SignupService;
-import kr.fingate.gs.comon.consts.CommonConst;
-import kr.fingate.gs.comon.consts.enums.SocialType;
+import kr.fingate.gs.common.consts.CommonConst;
+import kr.fingate.gs.common.consts.enums.SocialType;
 import kr.fingate.gs.core.consts.enums.AuthmRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

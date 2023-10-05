@@ -1,13 +1,15 @@
 package kr.fingate.gs.sales.vo;
 
-import kr.fingate.gs.comon.annotation.Info;
-import kr.fingate.gs.comon.vo.BaseVO;
+import org.apache.ibatis.type.Alias;
+import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@Alias("MdchtTakovHstryVO")
 public class MdchtTakovHstryVO extends BaseVO {
 
     @Info(value="이력순번")

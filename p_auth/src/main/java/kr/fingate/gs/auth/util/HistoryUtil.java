@@ -1,8 +1,8 @@
 package kr.fingate.gs.auth.util;
 
 import com.google.common.base.CaseFormat;
-import kr.fingate.gs.comon.annotation.ComparableEntity;
-import kr.fingate.gs.comon.dto.hstry.HstryDto;
+import kr.fingate.gs.common.annotation.ComparableEntity;
+import kr.fingate.gs.common.dto.hstry.HstryDto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

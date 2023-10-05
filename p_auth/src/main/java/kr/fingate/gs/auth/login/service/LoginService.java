@@ -2,8 +2,8 @@ package kr.fingate.gs.auth.login.service;
 
 import kr.fingate.gs.auth.login.dao.LoginDao;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
-import kr.fingate.gs.core.aop.exception.BizException;
-import kr.fingate.gs.core.aop.response.ResponseCode;
+import kr.fingate.gs.common.exception.BizError;
+import kr.fingate.gs.common.exception.BizException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LoginService {
 
+//    private final JwtService jwtService;
     private final LoginDao loginDao;
+
 
     public void getCheckPswad(SsoLoginDto loginDto) {
 

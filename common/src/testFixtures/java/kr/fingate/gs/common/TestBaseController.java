@@ -3,7 +3,7 @@ package kr.fingate.gs.common;
 import com.epages.restdocs.apispec.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import kr.fingate.gs.comon.annotation.Info;
+import kr.fingate.gs.common.annotation.Info;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;

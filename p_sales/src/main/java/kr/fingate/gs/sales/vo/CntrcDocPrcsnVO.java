@@ -1,13 +1,15 @@
 package kr.fingate.gs.sales.vo;
 
-import kr.fingate.gs.comon.annotation.Info;
-import kr.fingate.gs.comon.vo.BaseVO;
+import org.apache.ibatis.type.Alias;
+import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@Alias("CntrcDocPrcsnVO")
 public class CntrcDocPrcsnVO extends BaseVO {
 
     @Info(value="처리번호")

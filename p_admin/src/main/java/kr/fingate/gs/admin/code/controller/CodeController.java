@@ -1,7 +1,7 @@
 package kr.fingate.gs.admin.code.controller;
 
 import kr.fingate.gs.admin.code.service.CodeService;
-import kr.fingate.gs.comon.util.ObjectUtil;
+import kr.fingate.gs.common.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

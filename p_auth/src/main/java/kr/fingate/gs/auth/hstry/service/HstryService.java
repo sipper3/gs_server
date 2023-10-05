@@ -2,10 +2,8 @@ package kr.fingate.gs.auth.hstry.service;
 
 import kr.fingate.gs.auth.hstry.dao.HstryDao;
 import kr.fingate.gs.auth.hstry.dao.HstryModDao;
-import kr.fingate.gs.comon.dto.hstry.HstryDto;
+import kr.fingate.gs.common.dto.hstry.HstryDto;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,13 +1,15 @@
 package kr.fingate.gs.sales.vo;
 
-import kr.fingate.gs.comon.annotation.Info;
-import kr.fingate.gs.comon.vo.BaseVO;
+import org.apache.ibatis.type.Alias;
+import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@Alias("CstmrVO")
 public class CstmrVO extends BaseVO {
 
     @Info(value="고객번호")
@@ -31,26 +33,26 @@ public class CstmrVO extends BaseVO {
     @Info(value="휴대전화번호")
     private String clphnNo;
 
+    @Info(value="휴대전화번호4자리")
+    private String clphnNo4Dgt;
+
     @Info(value="휴대전화인증여부")
     private String clphnAuthYn;
 
     @Info(value="자택전화번호")
     private String tlphnNo;
 
-    @Info(value="기타(추가)전화번호")
-    private String etcTlphnNo;
+    @Info(value="자택전화번호4자리")
+    private String tlphnNo4Dgt;
+
+    @Info(value="추가전화번호")
+    private String adtnTlphnNo;
+
+    @Info(value="추가전화번호4자리")
+    private String adtnTlphnNo4Dgt;
 
     @Info(value="이메일")
     private String email;
-
-    @Info(value="전화수신동의여부")
-    private String tlphnRcvAgrmnYn;
-
-    @Info(value="SMS수신동의여부")
-    private String smsRcvAgrmnYn;
-
-    @Info(value="이메일수신동의여부")
-    private String emailRcvAgrmnYn;
 
     @Info(value="시도코드")
     private String ctprvCode;
@@ -109,20 +111,26 @@ public class CstmrVO extends BaseVO {
     @Info(value="개인정보활용만료일")
     private String prvcyUseExprtDate;
 
-    @Info(value="고객관리동의")
-    private String cstmrMngmnAgrmn;
-
-    @Info(value="고객관리동의유형")
-    private String cstmrMngmnAgrmnType;
-
-    @Info(value="마케팅수신동의일")
-    private String mrktnRcvAgrmnDate;
+    @Info(value="개인정보활용동의유형")
+    private String prvcyUseAgrmnType;
 
     @Info(value="마케팅수신동의여부")
     private String mrktnRcvAgrmnYn;
 
-    @Info(value="마케팅동의유형")
-    private String mrktnAgrmnType;
+    @Info(value="마케팅수신동의일")
+    private String mrktnRcvAgrmnDate;
+
+    @Info(value="마케팅수신동의유형")
+    private String mrktnRcvAgrmnType;
+
+    @Info(value="전화수신동의여부")
+    private String tlphnRcvAgrmnYn;
+
+    @Info(value="SMS수신동의여부")
+    private String smsRcvAgrmnYn;
+
+    @Info(value="이메일수신동의여부")
+    private String emailRcvAgrmnYn;
 
     @Info(value="데이터상태")
     private String dataState;

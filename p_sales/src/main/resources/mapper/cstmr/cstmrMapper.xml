@@ -4,22 +4,237 @@
 
 <mapper namespace="kr.fingate.gs.sales.cstmr.dao.CstmrDao">
 
-    <sql id="includeSelCstmrList">
+    <sql id="includeGetCstmrList">
         <where>
+            AND CS.DATA_STATE = 'A'
+            AND CS.CLIENT_NO = #{clientNo}
+            AND CS.RSPNS_USER_NO = #{rspnsUserNo}
+            <if test="cstmrName != null and !cstmrName.equals('')">
+                AND CS.CSTMR_NAME LIKE CONCAT(#{cstmrName}, '%')
+            </if>
+            <if test="encClphnNo != null and !encClphnNo.equals('') ">
+                AND CS.CLPHN_NO = #{encClphnNo}
+            </if>
+            <if test="endIdntnNo != null and !endIdntnNo.equals('') ">
+                AND CS.IDNTN_NO = #{endIdntnNo}
+            </if>
+            <if test="gender != null and !gender.equals('') ">
+                AND CS.GENDER = #{gender}
+            </if>
+            <if test="cstmrType != null and !cstmrType.equals('') ">
+                AND CS.CSTMR_TYPE = #{cstmrType}
+            </if>
+            <if test="mrktnRcvAgrmnYn != null and !mrktnRcvAgrmnYn.equals('') ">
+                AND CS.MRKTN_RCV_AGRMN_YN = #{mrktnRcvAgrmnYn}
+            </if>
+            <if test="rspnsUserNo != null and rspnsUserNo != 0 ">
+                AND CS.RSPNS_USER_NO = #{rspnsUserNo}
+            </if>
+            <if test="rspnsUserNoList != null and rspnsUserNoList.size != 0 ">
+                AND CS.RSPNS_USER_NO IN
+                <foreach item="item" index="index" collection="rspnsUserNoList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="rspnsOrgnzNoList != null and rspnsOrgnzNoList.size != 0 ">
+                AND U.ORGNZ_NO IN
+                <foreach item="item" index="index" collection="rspnsOrgnzNoList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="regStartDate != null and !regStartDate.equals('') ">
+                AND CS.REG_DATE <![CDATA[ >= ]]> STR_TO_DATE(CONCAT(#{regStartDate}, '000000'), '%Y%m%d%H%i%S')
+            </if>
+            <if test="regEndDate != null and !regEndDate.equals('') ">
+                AND C.RGST_DATE <![CDATA[ <= ]]> STR_TO_DATE(CONCAT(#{regEndDate}, '235959'), '%Y%m%d%H%i%S')
+            </if>
+            <if test="modStartDate != null and !modStartDate.equals('') ">
+                AND CS.MOD_DATE <![CDATA[ >= ]]> STR_TO_DATE(CONCAT(#{modStartDate}, '000000'), '%Y%m%d%H%i%S')
+            </if>
+            <if test="modEndDate != null and !modEndDate.equals('') ">
+                AND C.MOD_DATE <![CDATA[ <= ]]> STR_TO_DATE(CONCAT(#{modEndDate}, '235959'), '%Y%m%d%H%i%S')
+            </if>
         </where>
     </sql>
 
-    <select id="getCstmrList_COUNT" parameterType="kr.fingate.gs.sales.cstmr.dto.CstmrListSearchDto" resultType="long">
+    <select id="getCstmrList_COUNT" parameterType="CstmrListSearchDto" resultType="long">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getCstmrList_COUNT */
         SELECT COUNT(1)
-          FROM GS_CSTMR R
-        <include refid="includeSelCstmrList"/>
+          FROM TB_CSTMR CS
+        <include refid="includeGetCstmrList"/>
     </select>
 
     <!-- 고객 리스트 -->
-    <select id="getCstmrList" parameterType="kr.fingate.gs.sales.cstmr.dto.CstmrListSearchDto" resultType="kr.fingate.gs.sales.cstmr.dto.CstmrListDto">
+    <select id="getCstmrList" parameterType="CstmrListSearchDto" resultType="CstmrListDto">
         /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getCstmrList */
-        SELECT CSTMR_NO
-        FROM GS_CSTMR
-        <include refid="includeSelCstmrList"/>
+        SELECT CS.CSTMR_NO
+            , CS.CSTMR_NAME
+            , CS.CLPHN_NO
+            , CS.IDNTN_NO
+            , CS.GENDER
+            , CS.BRTHD
+            , CS.CSTMR_TYPE
+            , CS.PRVCY_USE_AGRMN_YN
+            , CS.MRKTN_RCV_AGRMN_YN
+            , CS.RSPNS_USER_NO
+            , U.USER_NAME AS RSPNS_USER_NAME
+            , U.ORGNZ_NO AS RSPNS_ORGNZ_NO
+            , U.ORGNZ_NAME AS RSPNS_ORGNZ_NAME
+        FROM TB_CSTMR CS
+        JOIN TB_USER U ON CS.RSPNS_USER_NO = U.USER_NO
+        <include refid="includeGetCstmrList"/>
+    </select>
+
+    <select id="getCstmr" parameterType="CstmrListSearchDto" resultType="CstmrSearchDto">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getCstmr */
+        SELECT CS.CSTMR_NO
+        , CS.CSTMR_NAME
+        , CS.CLPHN_NO
+        , CS.IDNTN_NO
+        , CS.GENDER
+        , CS.BRTHD
+        , CS.CSTMR_TYPE
+        , CS.PRVCY_USE_AGRMN_YN
+        , CS.MRKTN_RCV_AGRMN_YN
+        , CS.RSPNS_USER_NO
+        , U.USER_NAME AS RSPNS_USER_NAME
+        , U.ORGNZ_NO AS RSPNS_ORGNZ_NO
+        , U.ORGNZ_NAME AS RSPNS_ORGNZ_NAME
+        FROM TB_CSTMR CS
+        JOIN TB_USER U ON CS.RSPNS_USER_NO = U.USER_NO
+        <include refid="includeGetCstmrList"/>
+    </select>
+
+    <select id="getDuplicateCstmr" resultType="DupCstmrDto" parameterType="DupCstmrSearchDto">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getDuplicateCstmr */
+        SELECT CS.CLIENT_NO, CS.CSTMR_NO, CS.CSTMR_NAME, CS.RSPNS_USER_NO, CS.CLPHN_NO, DATE_FORMAT(CS.REG_DATE, '%Y%m%d%H%i%S' ) AS REG_DATE
+        FROM TB_CSTMR CS
+        WHERE CS.DATA_STATE = 'A'
+          AND CS.CLIENT_NO = #{clientNo}
+          AND CS.RSPNS_USER_NO = #{rspnsUserNo}
+          <choose>
+              <when test="searchType eq 'C'">
+                  AND CS.CLPHN_NO = #{endClphnNo}
+              </when>
+              <when test="searchType eq 'I'">
+                  AND CS.IDNTN_NO = #{encIdntnNo}
+              </when>
+              <otherwise>
+                  AND CS.IDNTN_NO = #{encIdntnNo}
+              </otherwise>
+          </choose>
+        ORDER BY CS.REG_DATE DESC
+        LIMIT 1
+    </select>
+
+    <select id="getCstmrMemoList" resultType="CstmrMemoListDto" parameterType="CstmrSearchDto">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getCstmrMemoList*/
+        SELECT CSM.MEMO_SEQ
+             , CSM.CSTMR_NO
+             , CSM.PRCSN_CLASS
+             , CSM.MEMO
+             , DATE_FORMAT(CSM.REG_DATE, '%Y%m%d%H%i%S') AS REG_DATE
+             , CSM.REG_USER_NO
+             , U.USER_NAME AS REG_USER_NAME
+             , U.ORGNZ_NO AS REG_ORGNZ_NO
+             , U.ORGNZ_NAME AS REG_ORGNZ_NAME
+         FROM TB_CSTMR_MEMO CSM
+         JOIN TB_USER U ON CSM.REG_USER_NO = U.USER_NO
+        WHERE CSM.DATA_STATE = 'A'
+          AND CSM.CSTMR_NO = #{cstmrNo}
+        ORDER BY CSM.REG_DATE DESC
+    </select>
+
+
+    <select id="getSmsAuthNo" resultType="java.lang.String">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getSmsAuthNo */
+        SELECT RM
+        FROM (
+                 SELECT LPAD(CAST( CAST( RAND()*100000 AS UNSIGNED) AS CHAR), 5, '0') AS RM
+                 UNION
+                 SELECT LPAD(CAST( CAST( RAND()*100000 AS UNSIGNED) AS CHAR), 5, '0') AS RM
+             ) A
+        WHERE NOT EXISTS
+                  (
+                      SELECT 1
+                      FROM TB_CSTMR_SMS_AUTH CSSA
+                      WHERE CSSA.AUTH_NO  = RM
+                        AND CSSA.REG_DATE  >= NOW()-1/24/12
+                        AND CSSA.REG_DATE <![CDATA[ <= ]]> NOW() + 1/24/12
+                  )
+        LIMIT 1
+    </select>
+
+    <select id="getCstmrSmsAuth" resultType="CstmrSmsAuthVO" parameterType="CstmrSmsAuthVO">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getCstmrSmsAuth */
+        SELECT CSSA.SMS_AGRMN_SEQ
+        , CSSA.AUTH_NO
+        , CSSA.RCV_TLPHN_NO
+        , CSTMR_NO
+        , CSSA.SEND_TLPHN_NO
+        , SEND_USER_NO
+        , MSG
+        , AUTH_YN
+        , AUTH_PRFRM_USER
+        , DATE_FORMAT(AUTH_DT, '%Y%m%d%H%i%S' ) AS AUTH_DT
+        , DATE_FORMAT(REG_DATE, '%Y%m%d%H%i%S' ) AS REG_DATE
+        FROM TB_CSTMR_SMS_AUTH CSSA
+        <where>
+            <if test="cstmrNo != null and cstmrNo > 0">
+                AND CSTMR_NO = #{cstmrNo}
+            </if>
+            <if test="smsAgmtSeq != null and smsAgmtSeq > 0">
+                AND SMS_AGRMN_SEQ = #{smsAgrmnSeq}
+            </if>
+            <if test="authNo != null and !authNo.equal('')">
+                AND AUTH_NO = #{authNo}
+            </if>
+        </where>
+        ORDER BY SMS_AGRMN_SEQ DESC
+        LIMIT 1
+    </select>
+
+    <sql id="includeGetCstmrRspnsChange">
+        SELECT CSRC.CHANGE_SEQ
+        , CSRC.CSTMR_NO
+        , CSRC.EXSTN_RSPNS_USER_NO
+        , U1.USER_NAME AS EXSTN_RSPNS_USER_NAME
+        , U1.ORGNZ_NO AS EXSTN_RSPNS_ORGNZ_NO
+        , U1.ORGNZ_NAME AS EXSTN_RSPNS_ORGNZ_NAME
+        , CSRC.CRNT_RSPNS_USER_NO
+        , U2.USER_NAME AS CRNT_RSPNS_USER_NAME
+        , U2.ORGNZ_NO AS CRNT_RSPNS_ORGNZ_NO
+        , U2.ORGNZ_NAME AS CRNT_RSPNS_ORGNZ_NAME
+        , CSRC.CHANGE_REASON
+        , CSRC.CHANGE_TYPE
+        , CSRC.REG_USER_NO
+        , U2.USER_NAME AS REG_USER_NAME
+        , U2.ORGNZ_NO AS REG_ORGNZ_NO
+        , U2.ORGNZ_NAME AS REG_ORGNZ_NAME
+        , DATE_FORMAT(CSRC.REG_DATE, '%Y%m%d%H%i%S') AS REG_DATE
+        FROM TB_CSTMR_RSPNS_CHANGE CSRC
+        JOIN TB_USER U1 ON CSRC.EXSTN_RSPNS_USER_NO = U1.USER_NO
+        JOIN TB_USER U2 ON CSRC.CRNT_RSPNS_USER_NO = U2.USER_NO
+        JOIN TB_USER U3 ON CSRC.REG_USER_NO = U3.USER_NO
+        <where>
+            AND CSRC.CSTMR_NO = #{cstmrNo}
+            <if test="prcsnState != null and !prcsnState.equal('')">
+                AND CSRC.PRCSN_STATE = #{prcsnState}
+            </if>
+            <if test="changeSeq != null and changeSeq > 0">
+                AND CSRC.CHANGE_SEQ = #{changeSeq}
+            </if>
+        </where>
+    </sql>
+    <select id="getCstmrRspnsChangeList" resultType="CstmrRspnsChangeDto" parameterType="CstmrRspnsChangeSearchDto">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getCstmrRspnsChangeList */
+        <include refid="includeGetCstmrRspnsChange" />
+        ORDER BY CSRC.CHANGE_SEQ DESC
+    </select>
+    <select id="getCstmrRspnsChange" resultType="CstmrRspnsChangeDto" parameterType="CstmrRspnsChangeSearchDto">
+        /* kr.fingate.gs.sales.cstmr.dao.CstmrDao.getCstmrRspnsChange */
+        <include refid="includeGetCstmrRspnsChange" />
+        ORDER BY CSRC.CHANGE_SEQ DESC
+        LIMIT 1
     </select>
 </mapper>

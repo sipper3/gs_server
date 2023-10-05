@@ -1,13 +1,15 @@
 package kr.fingate.gs.sales.vo;
 
-import kr.fingate.gs.comon.annotation.Info;
-import kr.fingate.gs.comon.vo.BaseVO;
+import org.apache.ibatis.type.Alias;
+import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@Alias("PolicyReisuAttachVO")
 public class PolicyReisuAttachVO extends BaseVO {
 
     @Info(value="재발행순번")

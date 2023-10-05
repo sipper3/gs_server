@@ -1,10 +1,9 @@
 package kr.fingate.gs.auth.role.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import kr.fingate.gs.auth.vo.RoleItemMapVO;
 import kr.fingate.gs.auth.vo.RoleVO;
-import kr.fingate.gs.comon.annotation.Info;
+import kr.fingate.gs.common.annotation.Info;
 import lombok.*;
 
 import java.util.List;

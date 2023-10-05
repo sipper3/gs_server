@@ -31,9 +31,9 @@ jar {
     enabled = true
 }
 
-//build {
-//    dependsOn 'generateDocs'
-//}
+build {
+    dependsOn 'generateDocs'
+}
 
 openapi3 {
     title = "${project.name} project API Documentation"

@@ -2,8 +2,8 @@ package kr.fingate.gs.auth.signup.service;
 
 import kr.fingate.gs.auth.signup.dao.SignupDao;
 import kr.fingate.gs.auth.signup.dto.SignupDto;
-import kr.fingate.gs.comon.consts.enums.SocialType;
-import kr.fingate.gs.comon.util.ObjectUtil;
+import kr.fingate.gs.common.consts.enums.SocialType;
+import kr.fingate.gs.common.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;

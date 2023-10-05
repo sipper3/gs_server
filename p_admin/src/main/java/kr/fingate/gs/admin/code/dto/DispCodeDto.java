@@ -2,7 +2,7 @@ package kr.fingate.gs.admin.code.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import kr.fingate.gs.comon.vo.code.CodeVO;
+import kr.fingate.gs.common.vo.code.CodeVO;
 import lombok.Getter;
 
 @Getter

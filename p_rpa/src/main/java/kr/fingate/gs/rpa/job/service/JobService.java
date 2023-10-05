@@ -2,7 +2,6 @@ package kr.fingate.gs.rpa.job.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import kr.fingate.gs.comon.exception.BizException;
 import kr.fingate.gs.rpa.job.dao.JobDao;
 import kr.fingate.gs.rpa.job.dto.JobDto;
 import lombok.RequiredArgsConstructor;

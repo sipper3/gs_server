@@ -2,7 +2,7 @@ package kr.fingate.gs.rpa.job.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import kr.fingate.gs.comon.dto.PageInfoDto;
+import kr.fingate.gs.common.dto.PageInfoDto;
 import kr.fingate.gs.core.dto.file.FileDto;
 import kr.fingate.gs.core.util.FileUtil;
 import kr.fingate.gs.rpa.job.dto.JobDto;

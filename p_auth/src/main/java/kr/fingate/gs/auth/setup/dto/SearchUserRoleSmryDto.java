@@ -1,6 +1,6 @@
 package kr.fingate.gs.auth.setup.dto;
 
-import kr.fingate.gs.comon.vo.PageVO;
+import kr.fingate.gs.common.vo.PageVO;
 import org.apache.ibatis.type.Alias;
 
 import java.util.List;

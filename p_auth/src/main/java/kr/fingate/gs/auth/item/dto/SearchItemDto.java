@@ -1,7 +1,7 @@
 package kr.fingate.gs.auth.item.dto;
 
-import kr.fingate.gs.comon.consts.CommonConst;
-import kr.fingate.gs.comon.vo.PageVO;
+import kr.fingate.gs.common.consts.CommonConst;
+import kr.fingate.gs.common.vo.PageVO;
 import lombok.Getter;
 import lombok.Setter;
 

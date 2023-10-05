@@ -1,8 +1,6 @@
 package kr.fingate.gs.rpa.job.dto;
 
-import kr.fingate.gs.comon.vo.PageVO;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class JobDto {

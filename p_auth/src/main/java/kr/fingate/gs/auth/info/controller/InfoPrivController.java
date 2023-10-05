@@ -1,8 +1,6 @@
 package kr.fingate.gs.auth.info.controller;
 
-import kr.fingate.gs.auth.role.dto.SearchRoleDto;
-import kr.fingate.gs.comon.dto.PageInfoDto;
-import kr.fingate.gs.comon.dto.code.OrgnzDto;
+import kr.fingate.gs.common.dto.code.OrgnzDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

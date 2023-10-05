@@ -2,8 +2,8 @@ package kr.fingate.gs.auth.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import kr.fingate.gs.comon.annotation.Info;
-import kr.fingate.gs.comon.vo.BaseVO;
+import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.type.Alias;

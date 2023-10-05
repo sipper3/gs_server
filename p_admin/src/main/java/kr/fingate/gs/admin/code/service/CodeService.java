@@ -2,9 +2,9 @@ package kr.fingate.gs.admin.code.service;
 
 import kr.fingate.gs.admin.code.dao.CodeDao;
 import kr.fingate.gs.admin.code.dto.DispCodeDto;
-import kr.fingate.gs.comon.consts.enums.RedisKey;
-import kr.fingate.gs.comon.util.ObjectUtil;
-import kr.fingate.gs.comon.util.RedisUtil;
+import kr.fingate.gs.common.consts.enums.RedisKey;
+import kr.fingate.gs.common.util.ObjectUtil;
+import kr.fingate.gs.common.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
