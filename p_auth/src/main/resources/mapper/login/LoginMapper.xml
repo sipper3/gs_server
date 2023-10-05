@@ -44,7 +44,7 @@
          INNER JOIN GA_USER_AUTH UA ON U.USER_NO = UA.USER_NO
            AND U.CLIENT_NO = #{clientNo}
            AND U.LOGIN_ID = #{loginId}
-           AND UA.LOGIN_PSWRD = #{loginPswrd}
+           AND UA.LOGIN_PSWRD = PASSWORD(#{loginPswrd})
     </select>
 
 </mapper>
