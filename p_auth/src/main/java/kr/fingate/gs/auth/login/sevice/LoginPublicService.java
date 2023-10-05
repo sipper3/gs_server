@@ -55,7 +55,7 @@ public class LoginPublicService {
             throw new BizException(BizError.LOGN_EXPIRE_USER);
         }
 
-        String fg = EncryptionUtil.aes256Encode(ssoLoginDto.getClientNo() + ":" + ssoLoginDto.getLoginId(), encryptionKey);
+        String fg = EncryptionUtil.aesEncode(ssoLoginDto.getClientNo() + ":" + ssoLoginDto.getLoginId(), encryptionKey);
 
         LoginDto loginDto = new LoginDto();
         loginDto.setLoginId(ssoLoginDto.getLoginId());
@@ -100,7 +100,7 @@ public class LoginPublicService {
             }
 
             // clientNo : loginId
-            String decodeStr = EncryptionUtil.aes256Decode(cookieValue, encryptionKey);
+            String decodeStr = EncryptionUtil.aesDecode(cookieValue, encryptionKey);
             String[] info = decodeStr.split(":");
             result.setClientNo(Long.parseLong(info[0]));
             result.setLoginId(info[1]);
