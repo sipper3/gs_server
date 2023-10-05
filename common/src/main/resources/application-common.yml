@@ -1,4 +1,7 @@
 pagehelper:
   reasonable: true
   supportMethodsArguments: true
-
+spring:
+  h2:
+    console:
+      enabled: false

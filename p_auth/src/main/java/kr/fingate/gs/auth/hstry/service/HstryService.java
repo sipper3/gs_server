@@ -13,7 +13,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class HstryService {
-    final static Logger logger = LoggerFactory.getLogger(HstryService.class);
 
     final HstryDao hstryDao;
     final HstryModDao hstryModDao;
@@ -24,6 +23,10 @@ public class HstryService {
         if (hstryList.isEmpty()) return;
         hstryModDao.insRoleHstry(hstryList);
 
+    }
+
+    public List<HstryDto> getRoleHstryList(HstryDto hstryDto) throws Exception {
+        return hstryDao.getRoleHstryList(hstryDto);
     }
 
 }

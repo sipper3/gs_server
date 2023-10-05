@@ -10,13 +10,13 @@
 			AND RH.ENTTY_KEY1 = #{enttyKey1}
 		</where>
 	</sql>
-	<select id="getRoleHstryList_COUNT" parameterType="kr.fingate.gs.comon.dto.hstry.HstryDto" resultType="long">
+	<select id="getRoleHstryList_COUNT" parameterType="HstryDto" resultType="long">
 		SELECT COUNT(RH.HSTRY_SEQ)
 		FROM GA_ROLE_HSTRY RH
 		<include refid="includeRoleHstryList" />
 	</select>
 	
-	<select id="getRoleHstryList" parameterType="kr.fingate.gs.comon.dto.hstry.HstryDto" resultType="kr.fingate.gs.comon.dto.hstry.HstryDto">
+	<select id="getRoleHstryList" parameterType="HstryDto" resultType="HstryDto">
 		/* kr.fingate.gs.auth.hstry.dao.HstryDao.getRoleHstryList */
 		SELECT
 		RH.HSTRY_SEQ
@@ -42,7 +42,7 @@
 		</if>
 		GROUP BY RH.ENTTY_KEY1, RH.ENTTY_KEY2, RH.REASON_NO
 	</sql>
-	<select id="getUserRoleHstryList_COUNT" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="long">
+	<select id="getUserRoleHstryList_COUNT" parameterType="SearchUserRoleDto" resultType="long">
 		SELECT COUNT(CNT.HIST_SEQ)
 		FROM (
 			SELECT RH.HSTRY_SEQ
@@ -51,7 +51,7 @@
 			<include refid="includeUserRoleHstryList"/>
 		) CNT
 	</select>
-	<select id="getUserRoleHstryList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.hstry.dto.RoleHstryDto">
+	<select id="getUserRoleHstryList" parameterType="SearchUserRoleDto" resultType="RoleHstryDto">
 		/* kr.fingate.gs.auth.hstry.dao.UserRoleHstryDao.getUserRoleHstryList*/
 		SELECT 'I' AS ROLE_TYPE
 		, R.ROLE_NAME
@@ -85,7 +85,7 @@
 		</if>
 		GROUP BY RH.ENTTY_KEY1, RH.ENTTY_KEY2, RH.REASON_NO
 	</sql>
-	<select id="getUserRoleGroupHstryList_COUNT" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="long">
+	<select id="getUserRoleGroupHstryList_COUNT" parameterType="SearchUserRoleDto" resultType="long">
 		SELECT COUNT(CNT.HIST_SEQ)
 		FROM (
 			SELECT RH.HSTRY_SEQ
@@ -95,7 +95,7 @@
 		) CNT
 	</select>
 
-	<select id="getUserRoleGroupHstryList" parameterType="kr.fingate.gs.auth.setup.dto.SearchUserRoleDto" resultType="kr.fingate.gs.auth.hstry.dto.RoleHstryDto">
+	<select id="getUserRoleGroupHstryList" parameterType="SearchUserRoleDto" resultType="RoleHstryDto">
 		/* kr.fingate.gs.auth.hstry.dao.UserRoleHstryDao.getUserRoleGroupHstryList */
 		SELECT 'G' AS ROLE_TYPE
 

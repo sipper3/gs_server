@@ -2,14 +2,12 @@ package kr.fingate.gs.auth.login.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.fingate.gs.core.security.dto.UserTokenDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
-@Data
+@Setter
+@Getter
 public class LoginInfoDto extends UserTokenDto {
 
     private String orgnzName;

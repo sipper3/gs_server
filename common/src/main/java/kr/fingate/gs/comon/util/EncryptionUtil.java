@@ -1,13 +1,8 @@
-package kr.fingate.gs.core.util;
+package kr.fingate.gs.comon.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.K;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.ApplicationPidFileWriter;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -15,12 +10,11 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.Random;
 
 /**
  * <pre>
@@ -34,7 +28,7 @@ import java.util.Random;
 public class EncryptionUtil {
 	private static String ALG = "AES/CBC/PKCS5Padding";
 	private static String KEY = "20A3B00A12H397E1228C2233J33D311C";
-	private static String IV = "sDaOgZhI4412lkJbH112DyYDSaHsSiF";
+	private static String IV = "sDaOgZhI4412lkJb";
 
 	public static String aesEncode(String str) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
 		return EncryptionUtil.aesEncode(str, EncryptionUtil.KEY);
@@ -51,6 +45,7 @@ public class EncryptionUtil {
 
 		String aes256iv = EncryptionUtil.IV.substring(0, 16);
 		byte[] aes256IvBytes = aes256iv.getBytes(StandardCharsets.UTF_8);
+
 
 		String aes256key = key.substring(0, 32);
 		byte[] aes256KeyBytes = aes256key.getBytes(StandardCharsets.UTF_8);
@@ -85,6 +80,55 @@ public class EncryptionUtil {
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 
 		return new String(cipher.doFinal(textBytes), StandardCharsets.UTF_8);
+	}
+
+
+	private static String charEnMapping(String enStr) {
+
+		enStr = enStr.replaceAll("[/]", "_slash_");
+		enStr = enStr.replaceAll("[+]", "_plus_");
+		enStr = enStr.replaceAll("[:]", "_col_");
+		enStr = enStr.replaceAll("[;]", "_smcol_");
+		enStr = enStr.replaceAll("[&]", "_amper_");
+		enStr = enStr.replaceAll("[$]", "_dol_");
+		enStr = enStr.replaceAll("[']", "_grave_");
+		enStr = enStr.replaceAll("[~]", "_tilde_");
+		enStr = enStr.replaceAll("[!]", "_exmark_");
+		enStr = enStr.replaceAll("[@]", "_at_");
+		enStr = enStr.replaceAll("[#]", "_sharp_");
+		enStr = enStr.replaceAll("[%]", "_per_");
+		enStr = enStr.replaceAll("[*]", "_ast_");
+		enStr = enStr.replaceAll("[\"]", "_quot_");
+		enStr = enStr.replaceAll("[']", "_apost_");
+		enStr = enStr.replaceAll("[?]", "_quest_");
+		enStr = enStr.replaceAll("[-]", "_min_");
+		enStr = enStr.replaceAll("[=]", "_eq_");
+
+		return enStr;
+	}
+
+	private static String charDeMapping(String enStr) {
+
+		enStr = enStr.replaceAll("_slash_", "/");
+		enStr = enStr.replaceAll("_plus_", "+");
+		enStr = enStr.replaceAll("_col_", ":");
+		enStr = enStr.replaceAll("_smcol_", ";");
+		enStr = enStr.replaceAll("_amper_", "&");
+		enStr = enStr.replaceAll("_dol_", "$");
+		enStr = enStr.replaceAll("_grave_", "'");
+		enStr = enStr.replaceAll("_tilde_", "~");
+		enStr = enStr.replaceAll("_exmark_", "!");
+		enStr = enStr.replaceAll("_at_", "@");
+		enStr = enStr.replaceAll("_sharp_", "#");
+		enStr = enStr.replaceAll("_per_", "%");
+		enStr = enStr.replaceAll("_ast_", "*");
+		enStr = enStr.replaceAll("_quot_", "\"");
+		enStr = enStr.replaceAll("_apost_", "'");
+		enStr = enStr.replaceAll("_quest_", "?");
+		enStr = enStr.replaceAll("_min_", "-");
+		enStr = enStr.replaceAll("_eq_", "=");
+
+		return enStr;
 	}
 
 	public static void main(String[] args) {
