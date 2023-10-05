@@ -6,10 +6,12 @@ import kr.fingate.gs.comon.annotation.Info;
 import kr.fingate.gs.comon.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Alias("RoleVO")
 public class RoleVO extends BaseVO {
 
     // 역할번호

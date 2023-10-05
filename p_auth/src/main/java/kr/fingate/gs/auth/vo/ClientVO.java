@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.fingate.gs.comon.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
+@Alias("ClientVO")
 public class ClientVO extends BaseVO {
 
     // 클라이언트번호

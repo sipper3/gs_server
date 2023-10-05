@@ -3,9 +3,11 @@ package kr.fingate.gs.auth.vo;
 import kr.fingate.gs.comon.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
+@Alias("OrgnzVO")
 public class OrgnzVO extends BaseVO {
 
     // 조직번호

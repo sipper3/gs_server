@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.fingate.gs.comon.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
+@Alias("UserRoleVO")
 public class UserRoleVO extends BaseVO {
 
     // 사용자번호

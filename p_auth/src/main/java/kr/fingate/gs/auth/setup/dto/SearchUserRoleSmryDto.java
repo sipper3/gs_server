@@ -1,9 +1,11 @@
 package kr.fingate.gs.auth.setup.dto;
 
 import kr.fingate.gs.comon.vo.PageVO;
+import org.apache.ibatis.type.Alias;
 
 import java.util.List;
 
+@Alias("SearchUserRoleSmryDto")
 public class SearchUserRoleSmryDto extends PageVO {
 
     private long userNo;

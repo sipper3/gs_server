@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.fingate.gs.comon.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
+@Alias("RoleGroupMapVO")
 public class RoleGroupMapVO extends BaseVO {
 
     // 역할그룹번호

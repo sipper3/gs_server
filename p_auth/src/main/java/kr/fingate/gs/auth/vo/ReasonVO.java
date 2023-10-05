@@ -3,9 +3,11 @@ package kr.fingate.gs.auth.vo;
 import kr.fingate.gs.comon.vo.BaseVO;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
+@Alias("ReasonVO")
 public class ReasonVO extends BaseVO {
 
     // 이력순번
