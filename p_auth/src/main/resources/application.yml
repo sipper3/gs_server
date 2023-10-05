@@ -2,7 +2,7 @@ project:
   name: auth
 spring:
   profiles:
-    default: local     # default profile
+    active: local
     include:
       - core
       - common
