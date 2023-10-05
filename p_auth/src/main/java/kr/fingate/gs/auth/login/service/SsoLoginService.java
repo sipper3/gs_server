@@ -1,4 +1,4 @@
-package kr.fingate.gs.auth.login.sevice;
+package kr.fingate.gs.auth.login.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.fingate.gs.auth.login.dao.SsoLoginDao;

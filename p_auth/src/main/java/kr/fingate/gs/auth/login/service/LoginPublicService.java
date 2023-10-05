@@ -1,4 +1,4 @@
-package kr.fingate.gs.auth.login.sevice;
+package kr.fingate.gs.auth.login.service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

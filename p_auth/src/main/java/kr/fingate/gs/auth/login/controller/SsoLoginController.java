@@ -2,7 +2,7 @@ package kr.fingate.gs.auth.login.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
-import kr.fingate.gs.auth.login.sevice.SsoLoginService;
+import kr.fingate.gs.auth.login.service.SsoLoginService;
 import kr.fingate.gs.comon.consts.CommonConst;
 import kr.fingate.gs.comon.util.ObjectUtil;
 import kr.fingate.gs.core.security.dto.UserTokenDto;

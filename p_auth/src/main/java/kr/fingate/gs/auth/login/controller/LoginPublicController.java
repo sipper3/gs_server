@@ -4,18 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.fingate.gs.auth.login.dto.LoginDto;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
-import kr.fingate.gs.auth.login.sevice.LoginPublicService;
-import kr.fingate.gs.auth.login.sevice.LoginService;
+import kr.fingate.gs.auth.login.service.LoginPublicService;
 import kr.fingate.gs.comon.consts.CommonConst;
 import kr.fingate.gs.comon.exception.BizError;
 import kr.fingate.gs.comon.exception.BizException;
 import kr.fingate.gs.comon.util.ObjectUtil;
-import kr.fingate.gs.core.security.dto.UserTokenDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RequestMapping("/${project.name}/api/sso")
