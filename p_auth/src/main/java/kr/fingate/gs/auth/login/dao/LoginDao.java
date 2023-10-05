@@ -11,5 +11,8 @@ public interface LoginDao {
 
     LoginInfoDto getLogin(SsoLoginDto ssoLoginDto);
     LoginInfoDto getLoginUserInfo(UserTokenDto userTokenDto);
+    SsoLoginDto getCheckPswad(SsoLoginDto loginDto);
+    SsoLoginDto updPswrd(SsoLoginDto loginDto);
+    SsoLoginDto updLock(SsoLoginDto loginDto);
 
 }

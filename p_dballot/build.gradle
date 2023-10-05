@@ -1,9 +1,10 @@
+
 plugins {
     id 'java'
     id 'war'
 }
 
-group = 'kr.fingate.gs.auth'
+group = 'kr.fingate.gs'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
@@ -22,7 +23,6 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-
 bootWar {
     enabled = true
 }
@@ -31,19 +31,13 @@ jar {
     enabled = true
 }
 
+//build {
+//    dependsOn 'generateDocs'
+//}
+
 openapi3 {
-    server = 'http://192.168.0.28:9017'
-    title = '권한관리 API'
-    description = 'GS AUTH API'
-    version = '0.0.1-SNAPSHOT'
-    format = 'json'
-
-    copy {
-        from 'build/api-spec'
-        into 'src/main/resources/static/docs'
-    }
-}
-
-build {
-    dependsOn 'generateDocs'
+    title = "${project.name} project API Documentation"
+    description = 'Spring REST Docs with SwaggerUI.'
+    version = '1.0.1'
+    server = 'http://localhost:9090'
 }

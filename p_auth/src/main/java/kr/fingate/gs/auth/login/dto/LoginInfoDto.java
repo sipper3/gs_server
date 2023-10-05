@@ -18,7 +18,6 @@ public class LoginInfoDto extends UserTokenDto {
     private String dutyCode;
     private String bsnsCode;
 
-    @JsonIgnore
     private String lockYn;
 
     @JsonIgnore
