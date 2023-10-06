@@ -31,13 +31,6 @@ jar {
     enabled = true
 }
 
-//build {
-//    dependsOn 'generateDocs'
-//}
-
 openapi3 {
-    title = "${project.name} project API Documentation"
-    description = 'Spring REST Docs with SwaggerUI.'
-    version = '1.0.1'
     server = 'http://localhost:9090'
 }

@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +91,6 @@ public class LoginPublicService {
     }
 
     public UserTokenDto getSessionUser(HttpServletRequest request) throws Exception {
-
         UserTokenDto result = new UserTokenDto();
         try {
 
@@ -100,7 +101,8 @@ public class LoginPublicService {
             }
 
             // clientNo : loginId
-            String decodeStr = EncryptionUtil.aesDecode(cookieValue, encryptionKey);
+            String decodeCookie = URLDecoder.decode(cookieValue, StandardCharsets.UTF_8);
+            String decodeStr = EncryptionUtil.aesDecode(decodeCookie, encryptionKey);
             String[] info = decodeStr.split(":");
             result.setClientNo(Long.parseLong(info[0]));
             result.setLoginId(info[1]);

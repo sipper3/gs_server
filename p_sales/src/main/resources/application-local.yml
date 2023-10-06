@@ -17,4 +17,4 @@ datasources:
 
 logging:
   file:
-    path: /data/gs_server/sales/
+    path: /Users/data/workspace/java/logs

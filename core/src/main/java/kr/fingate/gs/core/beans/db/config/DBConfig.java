@@ -58,16 +58,19 @@ public class DBConfig implements BeanDefinitionRegistryPostProcessor, Applicatio
 
 
 	static final String PROPERTY_DB_LIST_PREFIX = "datasources";
+	static final String PROPERTY_DB_COMMON_LIST_PREFIX = "datasources-common";
 	static final String CONFIG_LOCALTION = "classpath:mybatis-config.xml";
 	static final String MAPPER_LOCALTION = "/mapper/**/*.xml";
 
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-		DataSourceList datasourceList = DataSourceList.init(context.getEnvironment(), DBConfig.PROPERTY_DB_LIST_PREFIX);
 
-		for(DataSourceProperty datasource : datasourceList) {
-			registerBeans(registry, datasource);
-		}
+		DataSourceList.init(context.getEnvironment(), DBConfig.PROPERTY_DB_COMMON_LIST_PREFIX)
+				.forEach(datasource -> registerBeans(registry, datasource));
+
+		DataSourceList.init(context.getEnvironment(), DBConfig.PROPERTY_DB_LIST_PREFIX)
+				.forEach(datasource -> registerBeans(registry, datasource));
+
 	}
 
 	private void registerBeans(BeanDefinitionRegistry registry, DataSourceProperty datasource) {
@@ -122,7 +125,7 @@ public class DBConfig implements BeanDefinitionRegistryPostProcessor, Applicatio
 				.genericBeanDefinition(SqlSessionFactoryBean.class)
 				.addPropertyReference("dataSource", datasource.getName(DBConfig.BEAN_TYPE.DATASOURCE))
 				.addPropertyValue("configLocation", CONFIG_LOCALTION)
-				.addPropertyValue("mapperLocations", "classpath:" + baseMapper)
+				.addPropertyValue("mapperLocations", "classpath*:" + baseMapper)
 				.addPropertyValue("typeAliasesPackage", "kr.fingate.gs.*.vo;kr.fingate.gs.**.dto;")
 				.getBeanDefinition();
 

@@ -1,7 +1,22 @@
-pagehelper:
-  reasonable: true
-  supportMethodsArguments: true
 spring:
   h2:
     console:
       enabled: false
+
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+
+datasources-common:
+  - name: h2
+    base-package: kr.fingate.gs.common.h2.dao
+    data-source:
+      driverClassName: org.h2.Driver
+      jdbcUrl: jdbc:h2:mem:test;
+      username: sa
+      password:

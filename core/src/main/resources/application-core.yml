@@ -18,5 +18,4 @@ jwt:
       /*/api-docs/json/swagger-config,
       /error/**,
       /static/**,
-      /favicon.ico,
-      /h2-console/**
+      /favicon.ico
