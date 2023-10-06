@@ -2,19 +2,13 @@ package kr.fingate.gs.sales.cstmr.dto;
 
 import kr.fingate.gs.common.annotation.Info;
 import kr.fingate.gs.sales.vo.CstmrVO;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
-@Builder
 @Alias("CstmrDto")
 public class CstmrDto extends CstmrVO {
-
-    @Info("담당자")
-    private long rspnsUserNo;
 
     @Info("담당자명")
     private String rspnsUserName;

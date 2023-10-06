@@ -1,5 +1,6 @@
 package kr.fingate.gs.sales.cstmr.dao;
 
+import kr.fingate.gs.common.annotation.PrivateSql;
 import kr.fingate.gs.sales.vo.CstmrAdtnInfoVO;
 import kr.fingate.gs.sales.vo.CstmrMemoVO;
 import kr.fingate.gs.sales.vo.CstmrSmsAuthVO;
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface CstmrModDao {
 
+    @PrivateSql
     void insCstmr(CstmrVO cstmrVO);
 
     int updCstmr(CstmrVO cstmrVO);

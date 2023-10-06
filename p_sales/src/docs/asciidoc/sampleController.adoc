@@ -1,3 +1,0 @@
-== sample-controller-test
-=== 상담조회
-operation::base-sample-controller-test/get-cnsl[snippets='http-request,request-fields,http-response,response-fields-data']

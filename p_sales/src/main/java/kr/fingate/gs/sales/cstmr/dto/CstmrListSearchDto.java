@@ -3,18 +3,13 @@ package kr.fingate.gs.sales.cstmr.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.fingate.gs.common.annotation.Info;
 import kr.fingate.gs.common.vo.PageVO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.util.List;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @Alias("CstmrListSearchDto")
 public class CstmrListSearchDto extends PageVO {
 
