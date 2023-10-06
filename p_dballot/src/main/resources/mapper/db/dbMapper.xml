@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.dballot.db.dao.DbDao">
+
+    <select id="getDbList" parameterType="DbSearchDto" resultType="DbListDto">
+        /* kr.fingate.gs.dballot.db.dao.DbDao.getDbList */
+        SELECT D.DB_NO
+             , D.DB_TYPE
+             , D.DUP_YN
+             , D.DB_DSTRB_STATE
+             , (SELECT ALTMN_REASON FROM TB_DB_DSTRB_EXCPT_LOG DE WHERE DE.DB_NO = D.DB_NO ORDER BY PRCSN_EXCPT_LOG_NO DESC LIMIT 1 ) AS ALTMN_REASON
+             , D.ALTMN_USER_NO
+             , D.INFLOW_DT
+             , D.FINAL_ALTMN_DATE
+             , D.CNSL_NO
+             , D.PRDCT_KIND
+             , D.MEDIA_CODE
+             , D.CNSL_APLCT_TYPE
+             , D.NAME
+             , D.CLPHN_NO
+             , D.BRTHD
+             , D.GENDER
+             , D.REG_DATE
+          FROM TB_DB D
+    </select>
+
+
+</mapper>
