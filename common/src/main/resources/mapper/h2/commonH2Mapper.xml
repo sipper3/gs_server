@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.common.h2.dao.H2Dao">
+    <insert id="createH2Aeskey">
+        CREATE TABLE AESKEY (
+            TYPE VARCHAR(10)
+            , AKEY VARCHAR(32)
+            , IV VARCHAR(32)
+            , PRIMARY KEY (TYPE)
+        )
+    </insert>
+
+    <select id="getH2Aeskey" resultType="AesKeyVO">
+        SELECT TYPE
+             , AKEY
+             , IV
+        FROM AESKEY
+        WHERE TYPE = 'GS'
+    </select>
+
+    <insert id="insH2Aeskey" parameterType="AesKeyVO">
+        INSERT INTO AESKEY (
+               TYPE
+             , AKEY
+             , IV
+                 ) VALUES
+            (#{type}
+            , #{akey}
+            , #{iv}
+            )
+    </insert>
+
+</mapper>
