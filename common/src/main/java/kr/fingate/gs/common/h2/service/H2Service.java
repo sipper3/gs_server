@@ -14,14 +14,12 @@ public class H2Service {
     final H2Dao h2Dao;
     final EncryptionService encryptionService;
 
-    public AesKeyVO getH2AesKey() throws Exception {
-        AesKeyVO aesKeyVO = null;
-        try {
-            aesKeyVO = h2Dao.getH2Aeskey();
-        } catch (Exception e) {
-            h2Dao.createH2Aeskey();
-        }
+    public void createH2Aeskey() throws Exception {
+        h2Dao.createH2Aeskey();
+    }
 
+    public AesKeyVO getH2AesKey() throws Exception {
+        AesKeyVO aesKeyVO = h2Dao.getH2Aeskey();
         if(ObjectUtils.isEmpty(aesKeyVO)) {
             aesKeyVO = encryptionService.getAeskey();
             h2Dao.insH2Aeskey(aesKeyVO);

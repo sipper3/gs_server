@@ -32,6 +32,8 @@ public class EncryptionUtil {
 
 	@PostConstruct
 	private void initialize() throws Exception {
+		h2Service.createH2Aeskey();
+
 		AesKeyVO aesKeyVO = h2Service.getH2AesKey();
 		KEY = aesKeyVO.getAkey();
 		IV = aesKeyVO.getIv();
