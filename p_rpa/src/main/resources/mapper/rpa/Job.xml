@@ -3,12 +3,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.fingate.gs.rpa.job.dao.JobDao">
-    <select id="getNextJob" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
+    <select id="getJob" parameterType="kr.fingate.gs.rpa.job.dto.JobDto" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
         SELECT
             JOB_ID
              , RJ.SCEN_ID
              , RS.SCEN_SCRIPT
              , UPLOAD_FILE
+             , UPLOAD_PATH
+             , ORG_FILE_NAME
+             , T_UPLOAD_FILE
+             , T_UPLOAD_PATH
+             , T_ORG_FILE_NAME
              , P_RATE
              , JOB_COUNT
              , JOB_STATE
@@ -18,10 +23,16 @@
              , REG_DATE
              , UPD_DATE
         FROM RP_JOB RJ INNER JOIN RP_SCENARIO RS ON RJ.SCEN_ID = RS.SCEN_ID
-        WHERE
-            JOB_STATE = 101
+        <where>
+            <if test="jobState != null and jobState != ''">
+                JOB_STATE = #{jobState}
+            </if>
+            <if test="jobId != null and jobId != ''">
+                JOB_ID = #{jobId}
+            </if>
+        </where>
         ORDER BY REG_DATE ASC
-            LIMIT 1
+        LIMIT 1
     </select>
 
     <sql id="includeJobList">
@@ -34,20 +45,27 @@
             </if>
         </where>
     </sql>
-    <select id="getJobList_COUNT" resultType="long">
+    <select id="getJobList_COUNT" parameterType="kr.fingate.gs.rpa.job.dto.SearchJobDto" resultType="long">
         SELECT COUNT(JOB_ID)
         FROM RP_JOB RJ INNER JOIN RP_SCENARIO RS ON RJ.SCEN_ID = RS.SCEN_ID
         <include refid="includeJobList" />
     </select>
-    <select id="getJobList" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
+    <select id="getJobList" parameterType="kr.fingate.gs.rpa.job.dto.SearchJobDto" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
         SELECT
             JOB_ID
+             , JOB_NAME
              , RJ.SCEN_ID
              , RS.SCEN_SCRIPT
              , UPLOAD_FILE
+             , UPLOAD_PATH
+             , ORG_FILE_NAME
+             , T_UPLOAD_FILE
+             , T_UPLOAD_PATH
+             , T_ORG_FILE_NAME
              , P_RATE
              , JOB_COUNT
              , JOB_STATE
+             , LOGIN_SCRIPT
              , REG_ID
              , START_DATE
              , END_DATE
@@ -58,10 +76,67 @@
         ORDER BY REG_DATE DESC
     </select>
 
-    <select id="updJobStatus" resultType="kr.fingate.gs.rpa.job.dto.JobDto">
+    <insert id="insJob" parameterType="kr.fingate.gs.rpa.job.dto.JobDto" useGeneratedKeys="true" keyProperty="jobId">
+        INSERT INTO RP_JOB (
+                            SCEN_ID
+                           , JOB_NAME
+                           , UPLOAD_FILE
+                           , UPLOAD_PATH
+                           , ORG_FILE_NAME
+                           , P_RATE
+                           , JOB_COUNT
+                           , JOB_STATE
+                           , LOGIN_SCRIPT
+                           , REG_ID
+                           , REG_DATE
+        )
+        VALUES(
+               #{scenId}
+               , #{jobName}
+               , #{uploadFile}
+               , #{uploadPath}
+               , #{orgFileName}
+               , 0
+               , 0
+               , #{jobState}
+               , #{loginScript}
+               , #{regId}
+               , DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
+             )
+    </insert>
+
+    <update id="updJob" parameterType="kr.fingate.gs.rpa.job.dto.JobDto">
+        UPDATE RP_JOB SET
+            UPD_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
+            <if test="jobName != null and jobName != ''">
+               , JOB_NAME = #{jobName}
+            </if>
+            <if test="uploadFile != null and uploadFile != ''">
+               , UPLOAD_FILE = #{uploadFile}
+               , UPLOAD_PATH = #{uploadPath}
+               , ORG_FILE_NAME = #{orgFileName}
+            </if>
+            <if test="jobName != null and jobName != ''">
+               , JOB_STATE = #{jobState}
+            </if>
+            <if test="jobName != null and jobName != ''">
+               , LOGIN_SCRIPT = #{loginScript}
+            </if>
+        WHERE
+            JOB_ID = #{jobId}
+    </update>
+
+    <delete id="delJob" parameterType="long">
+        DELETE FROM RP_JOB WHERE JOB_ID = #{jobId}
+    </delete>
+
+    <update id="updJobStatus" parameterType="kr.fingate.gs.rpa.job.dto.JobDto">
         UPDATE RP_JOB SET
              P_RATE = #{pRate}
              , JOB_STATE = #{jobState}
+            <if test="jobCount != 0">
+                , JOB_COUNT = #{jobCount}
+            </if>
             <if test="jobState == 200">
                 , START_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
             </if>
@@ -71,8 +146,30 @@
              , UPD_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
         WHERE
             JOB_ID = #{jobId}
-    </select>
+    </update>
 
+    <update id="updJobTerminate" parameterType="kr.fingate.gs.rpa.job.dto.JobDto">
+        UPDATE RP_JOB SET
+            P_RATE = #{pRate}
+            , T_UPLOAD_FILE = #{tUploadFile}
+            , T_UPLOAD_PATH = #{tUploadPath}
+            , T_ORG_FILE_NAME = #{tOrgFileName}
+            , JOB_STATE = #{jobState}
+            , END_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
+            , UPD_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
+        WHERE
+        JOB_ID = #{jobId}
+    </update>
+
+    <select id="getScenarioList" resultType="kr.fingate.gs.rpa.job.dto.ScenarioDto">
+        SELECT
+            SCEN_ID
+            , SCEN_SCRIPT
+            , SCEN_NAME
+            , INS_CODE
+            , INS_NAME
+        FROM RP_SCENARIO
+    </select>
 <!--    <insert id="insSeanario" parameterType="Map">-->
 <!--        INSERT INTO RP_SEANARIO (SEAN_SCRIPT, SEAN_NAME)-->
 <!--        VALUES(#{seanScript},#{seanName})-->

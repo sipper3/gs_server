@@ -6,6 +6,8 @@ import kr.fingate.gs.common.dto.PageInfoDto;
 import kr.fingate.gs.core.dto.file.FileDto;
 import kr.fingate.gs.core.util.FileUtil;
 import kr.fingate.gs.rpa.job.dto.JobDto;
+import kr.fingate.gs.rpa.job.dto.ScenarioDto;
+import kr.fingate.gs.rpa.job.dto.SearchJobDto;
 import kr.fingate.gs.rpa.job.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -32,19 +34,54 @@ public class JobController {
 
 
     @RequestMapping(value="/nextjob", method = {RequestMethod.GET, RequestMethod.POST})
-    public JobDto getNextJob() throws Exception {
-        logger.info(SYSTEM_DIR);
-
-        return jobService.getNextJob();
+    public JobDto getNextJob(@RequestParam int jobState) throws Exception {
+        JobDto jobDto = new JobDto();
+        jobDto.setJobState(jobState);
+        return jobService.getJob(jobDto);
     }
 
     @RequestMapping(value="/list", method = {RequestMethod.GET, RequestMethod.POST})
-    public PageInfoDto<JobDto> getJobList() throws Exception {
-        logger.info(SYSTEM_DIR);
-
-        return new PageInfoDto<>(jobService.getJobList());
+    public PageInfoDto<JobDto> getJobList(@RequestBody SearchJobDto searchJob) throws Exception {
+        return new PageInfoDto<>(jobService.getJobList(searchJob));
     }
 
+    @RequestMapping(value="/scenlist", method = {RequestMethod.GET, RequestMethod.POST})
+    public List<ScenarioDto> getScenarioList() throws Exception {
+        return jobService.getScenarioList();
+    }
+
+    @PostMapping(value = "/ins")
+    public int insJob(MultipartHttpServletRequest request,
+                                     @ModelAttribute JobDto regJob,
+                                     HttpServletResponse response) throws Exception {
+        return jobService.insJob(request, regJob);
+
+    }
+
+    @PostMapping(value = "/terminate")
+    public int terminateJob(MultipartHttpServletRequest request,
+                      @ModelAttribute JobDto regJob,
+                      HttpServletResponse response) throws Exception {
+        return jobService.terminateJob(request, regJob);
+
+    }
+
+    @RequestMapping(value="/upd/state", method = {RequestMethod.GET, RequestMethod.POST})
+    public int updJobState(@RequestBody JobDto jobDto) throws Exception {
+        return jobService.updJobStatus(jobDto);
+    }
+
+    @RequestMapping(value="/upd", method = {RequestMethod.GET, RequestMethod.POST})
+    public int updJob(MultipartHttpServletRequest request,
+                      @ModelAttribute JobDto jobDto,
+                      HttpServletResponse response) throws Exception {
+        return jobService.updJob(request, jobDto);
+    }
+
+    @RequestMapping(value="/del", method = {RequestMethod.GET, RequestMethod.POST})
+    public int delJob(@RequestBody JobDto jobDto) throws Exception {
+        return jobService.delJob(jobDto.getJobId());
+    }
     @PostMapping(value = "/upload")
     public List<FileDto> excelUpload(MultipartHttpServletRequest request,
                                      @ModelAttribute JobDto regJob,
@@ -57,12 +94,15 @@ public class JobController {
     @RequestMapping(value = "/download", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView excelDownload(int jobId) throws Exception {
 
-        String destPath = SYSTEM_DIR;
+        JobDto jobDto = new JobDto();
+        jobDto.setJobId(jobId);
+        jobDto = jobService.getJob(jobDto);
         FileDto fileDto = new FileDto();
-        fileDto.setFileName("edade2f2-5030-4e78-b5ca-e80e29f6d40a.xlsx");
-        fileDto.setFilePath("C:\\home\\fingate\\files\\rpa");
-        fileDto.setOriginFileName("testfile.xlsx");
-
+        if (jobDto != null) {
+            fileDto.setFileName(jobDto.getUploadFile());
+            fileDto.setFilePath(jobDto.getUploadPath());
+            fileDto.setOriginFileName(jobDto.getOrgFileName());
+        }
         return new ModelAndView("downloadView", "downloadFile", fileDto);
     }
 
