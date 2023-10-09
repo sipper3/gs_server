@@ -137,10 +137,10 @@
             <if test="jobCount != 0">
                 , JOB_COUNT = #{jobCount}
             </if>
-            <if test="jobState == 200">
+            <if test="jobState == 103 and test=pRate == 0">
                 , START_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
             </if>
-            <if test="jobState == 203">
+            <if test="jobState == 200">
                 , END_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
             </if>
              , UPD_DATE = DATE_FORMAT(NOW(), '%Y%m%d%H%i%S')
@@ -150,8 +150,7 @@
 
     <update id="updJobTerminate" parameterType="kr.fingate.gs.rpa.job.dto.JobDto">
         UPDATE RP_JOB SET
-            P_RATE = #{pRate}
-            , T_UPLOAD_FILE = #{tUploadFile}
+            T_UPLOAD_FILE = #{tUploadFile}
             , T_UPLOAD_PATH = #{tUploadPath}
             , T_ORG_FILE_NAME = #{tOrgFileName}
             , JOB_STATE = #{jobState}

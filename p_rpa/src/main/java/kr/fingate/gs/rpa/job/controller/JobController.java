@@ -106,4 +106,19 @@ public class JobController {
         return new ModelAndView("downloadView", "downloadFile", fileDto);
     }
 
+    @RequestMapping(value = "/terminate/download", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView excelTerminateDownload(int jobId) throws Exception {
+
+        JobDto jobDto = new JobDto();
+        jobDto.setJobId(jobId);
+        jobDto = jobService.getJob(jobDto);
+        FileDto fileDto = new FileDto();
+        if (jobDto != null) {
+            fileDto.setFileName(jobDto.getTUploadFile());
+            fileDto.setFilePath(jobDto.getTUploadPath());
+            fileDto.setOriginFileName(jobDto.getOrgFileName());
+        }
+        return new ModelAndView("downloadView", "downloadFile", fileDto);
+    }
+
 }

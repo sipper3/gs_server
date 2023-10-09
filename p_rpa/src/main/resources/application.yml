@@ -22,4 +22,4 @@ jwt:
       /rpa/ignore/get/rpa
       /rpa/api/**
     permit.module: >
-      /rpa/api/**
+#      /rpa/api/**
