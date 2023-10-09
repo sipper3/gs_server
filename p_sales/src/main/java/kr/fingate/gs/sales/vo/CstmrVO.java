@@ -1,14 +1,17 @@
 package kr.fingate.gs.sales.vo;
 
-import org.apache.ibatis.type.Alias;
+import kr.fingate.gs.common.annotation.Encrypt;
 import kr.fingate.gs.common.annotation.Info;
 import kr.fingate.gs.common.vo.BaseVO;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.apache.ibatis.type.Alias;
 
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Alias("CstmrVO")
 public class CstmrVO extends BaseVO {
 
@@ -30,11 +33,12 @@ public class CstmrVO extends BaseVO {
     @Info(value="성별")
     private String gender;
 
+    @Encrypt
     @Info(value="휴대전화번호")
     private String clphnNo;
 
     @Info(value="휴대전화번호4자리")
-    private String clphnNo4Dgt;
+    private String clphnNo4dgt;
 
     @Info(value="휴대전화인증여부")
     private String clphnAuthYn;
@@ -43,13 +47,13 @@ public class CstmrVO extends BaseVO {
     private String tlphnNo;
 
     @Info(value="자택전화번호4자리")
-    private String tlphnNo4Dgt;
+    private String tlphnNo4dgt;
 
     @Info(value="추가전화번호")
     private String adtnTlphnNo;
 
     @Info(value="추가전화번호4자리")
-    private String adtnTlphnNo4Dgt;
+    private String adtnTlphnNo4dgt;
 
     @Info(value="이메일")
     private String email;
@@ -134,5 +138,4 @@ public class CstmrVO extends BaseVO {
 
     @Info(value="데이터상태")
     private String dataState;
-
 }

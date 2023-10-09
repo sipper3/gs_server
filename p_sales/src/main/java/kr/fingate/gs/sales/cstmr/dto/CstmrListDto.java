@@ -1,6 +1,9 @@
 package kr.fingate.gs.sales.cstmr.dto;
 
+import kr.fingate.gs.common.annotation.Decrypt;
 import kr.fingate.gs.common.annotation.Info;
+import kr.fingate.gs.common.annotation.MaskingType;
+import kr.fingate.gs.common.annotation.Masking;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
@@ -16,9 +19,13 @@ public class CstmrListDto {
     @Info("고객명")
     private String cstmrName;
 
+    @Decrypt
+    @Masking(value = MaskingType.TEL)
     @Info("휴대전화번호")
     private String clphnNo;
 
+    @Decrypt
+    @Masking(value = MaskingType.IDNTN)
     @Info("주민등록번호")
     private String idntnNo;
 

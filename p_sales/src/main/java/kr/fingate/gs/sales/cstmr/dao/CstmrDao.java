@@ -1,6 +1,7 @@
 package kr.fingate.gs.sales.cstmr.dao;
 
 import com.github.pagehelper.Page;
+import kr.fingate.gs.common.annotation.PrivateSql;
 import kr.fingate.gs.sales.cstmr.dto.*;
 import kr.fingate.gs.sales.vo.CstmrSmsAuthVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -9,9 +10,10 @@ import java.util.List;
 
 @Mapper
 public interface CstmrDao {
+    @PrivateSql
     Page<CstmrListDto> getCstmrList(CstmrListSearchDto cstmrListSearchDto);
 
-    CstmrListDto getCstmr(CstmrSearchDto cstmrSearchDto);
+    CstmrDto getCstmr(CstmrSearchDto cstmrSearchDto);
 
     DupCstmrDto getDuplicateCstmr(DupCstmrSearchDto dupCstmrSearchDto);
 

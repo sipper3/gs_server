@@ -2,7 +2,7 @@ server:
   port: 9127
 
 datasources:
-  - name: gs_auth
+  - name: gs_sales
     base-package: kr.fingate.gs.*.**.dao
     aop-execution: kr.fingate.gs..service.*.*(..)
     data-source:
@@ -17,4 +17,4 @@ datasources:
 
 logging:
   file:
-    path: /Users/data/workspace/java/logs
+    path:
