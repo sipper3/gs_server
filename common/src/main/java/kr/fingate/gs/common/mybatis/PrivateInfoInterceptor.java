@@ -59,10 +59,10 @@ public class PrivateInfoInterceptor implements Interceptor {
                     if(resultSet != null) {
                         if(resultSet instanceof List<?> list) {
                             for(Object obj : list) {
-                                privateInfoMark(obj);
+                                privateInfoMark(obj, privateSqlAn);
                             }
                         } else {
-                            privateInfoMark(resultSet);
+                            privateInfoMark(resultSet, privateSqlAn);
                         }
                     }
                     return resultSet;
@@ -75,7 +75,7 @@ public class PrivateInfoInterceptor implements Interceptor {
         return invocation.proceed();
     }
 
-    private void privateInfoMark(Object obj) {
+    private void privateInfoMark(Object obj, PrivateSql privateAqlAn) {
 
         Field[] fields = getFields(obj.getClass());
 
@@ -92,40 +92,44 @@ public class PrivateInfoInterceptor implements Interceptor {
 
                                 value = (String)f.get(obj);
 
-                                /* 복호화 annotation이 있으면 복호화 처리 */
-                                Decrypt decryptAn = f.getDeclaredAnnotation(Decrypt.class);
-                                if(decryptAn != null && decryptAn.value()){
-                                    value = EncryptionUtil.aesDecode(value);
+                                if(privateAqlAn.decrypt()) {
+                                    /* 복호화 annotation이 있으면 복호화 처리 */
+                                    Decrypt decryptAn = f.getDeclaredAnnotation(Decrypt.class);
+                                    if(decryptAn != null && decryptAn.value()){
+                                        value = EncryptionUtil.aesDecode(value);
+                                    }
+                                }else if(privateAqlAn.encrypt()) {
+                                    /* 암호화 annotation이 있으면 암호화 처리 */
+                                    Encrypt encryptAn = f.getDeclaredAnnotation(Encrypt.class);
+                                    if(encryptAn != null && encryptAn.value()){
+                                        value = EncryptionUtil.aesEncode(value);
+                                    }
                                 }
 
-                                /* 암호화 annotation이 있으면 암호화 처리 */
-                                Encrypt encryptAn = f.getDeclaredAnnotation(Encrypt.class);
-                                if(encryptAn != null && encryptAn.value()){
-                                    value = EncryptionUtil.aesEncode(value);
-                                }
+                                if(privateAqlAn.masking()) {
+                                    /* Masking annotation이 있으면 Masking 처리 */
+                                    Masking piAn = f.getDeclaredAnnotation(Masking.class);
+                                    if(piAn == null) {
+                                        return;
+                                    }
 
-                                /* Masking annotation이 있으면 Masking 처리 */
-                                Masking piAn = f.getDeclaredAnnotation(Masking.class);
-                                if(piAn == null) {
-                                    return;
-                                }
-
-                                if (piAn.value() == MaskingType.IDNTN) {
-                                    value = MaskingUtil.maskIdntn(value);
-                                } else if (piAn.value() == MaskingType.TEL) {
-                                    value = MaskingUtil.maskTel(value);
-                                } else if (piAn.value() == MaskingType.LINE_TEL) {
-                                    value = MaskingUtil.maskTel(value);
-                                } else if (piAn.value() == MaskingType.NAME) {
-                                    value = MaskingUtil.maskName(value);
-                                } else if (piAn.value() == MaskingType.CARD) {
-                                    value = MaskingUtil.maskCard(value);
-                                } else if (piAn.value() == MaskingType.ACCOUNT) {
-                                    value = MaskingUtil.maskAccount(value);
-                                } else if(piAn.value() == MaskingType.EMAIL) {
-                                    value = MaskingUtil.maskEmail(value);
-                                } else if (piAn.value() == MaskingType.ADRES) {
-                                    value = MaskingUtil.maskAdres(value);
+                                    if (piAn.value() == MaskingType.IDNTN) {
+                                        value = MaskingUtil.maskIdntn(value);
+                                    } else if (piAn.value() == MaskingType.TEL) {
+                                        value = MaskingUtil.maskTel(value);
+                                    } else if (piAn.value() == MaskingType.LINE_TEL) {
+                                        value = MaskingUtil.maskTel(value);
+                                    } else if (piAn.value() == MaskingType.NAME) {
+                                        value = MaskingUtil.maskName(value);
+                                    } else if (piAn.value() == MaskingType.CARD) {
+                                        value = MaskingUtil.maskCard(value);
+                                    } else if (piAn.value() == MaskingType.ACCOUNT) {
+                                        value = MaskingUtil.maskAccount(value);
+                                    } else if(piAn.value() == MaskingType.EMAIL) {
+                                        value = MaskingUtil.maskEmail(value);
+                                    } else if (piAn.value() == MaskingType.ADRES) {
+                                        value = MaskingUtil.maskAdres(value);
+                                    }
                                 }
                             }
 
