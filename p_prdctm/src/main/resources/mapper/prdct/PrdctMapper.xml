@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.kr.fingate.gs.prdctm.prdct.dao.PrdctDao">
+
+    <select id="getPrdctInfoList_COUNT" parameterType="SearchPrdctDto" resultType="long">
+        /* kr.kr.fingate.gs.prdct.item.dao.prdctDao.getPrdctInfoList_COUNT */
+        SELECT COUNT(1) AS CNT
+        FROM TB_PRDCT P
+        WHERE P.DATA_STATE = 'A'
+    </select>
+
+    <select id="getPrdctInfoList" parameterType="SearchPrdctDto" resultType="PrdctInfoDto">
+        /* kr.kr.fingate.gs.prdct.item.dao.prdctDao.getPrdctInfoList */
+        SELECT
+            P.PRDCT_NO
+            , P.RPRSN_PRDCT_CODE
+            , P.INSRR_CODE
+            , P.PRDCT_NAME
+            , P.PRDCT_NCKNM
+
+            , DATE_FORMAT(P.SALE_START_DATE,'%Y%m%d') AS SALE_START_DATE
+            , DATE_FORMAT(P.SALE_END_DATE,'%Y%m%d') AS SALE_END_DATE
+            , P.SALE_CHNL
+            , P.PRDCT_STATE
+
+            , RP.PRDCT_CLASS
+            , RP.PRDCT_KIND
+            , RP.PRDCT_GROUP
+            , RP.PRDCT_SALE_TYPE
+            , RP.PRDCT_EXPSR_YN
+            , RP.PRDCT_SALE_START_DATE
+            , RP.PRDCT_SALE_END_DATE
+
+        FROM TB_PRDCT P
+        LEFT OUTER JOIN TB_RPRSN_PRDCT RP ON P.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE
+        WHERE P.DATA_STATE = 'A'
+    </select>
+
+    <select id="getRprsnPrdctList" parameterType="SearchPrdctDto"  resultType="RprsnPrdctDto">
+        /* kr.kr.fingate.gs.prdct.item.dao.prdctDao.getRprsnPrdctList */
+        SELECT
+            RP.RPRSN_PRDCT_CODE
+            , RP.INSRR_CODE
+            , RP.RPRSN_PRDCT_NAME
+            , RP.RPRSN_PRDCT_NCKNM
+            , RP.PRDCT_CLASS
+            , RP.PRDCT_KIND
+            , RP.PRDCT_GROUP
+            , RP.PRDCT_SALE_TYPE
+            , RP.PRDCT_EXPSR_YN
+            , DATE_FORMAT(RP.PRDCT_SALE_START_DATE,'%Y%m%d') AS PRDCT_SALE_START_DATE
+            , DATE_FORMAT(RP.PRDCT_SALE_END_DATE,'%Y%m%d') AS PRDCT_SALE_END_DATE
+            , RP.PREV_RPRSN_PRDCT_CODE
+            , RP.REG_DATE
+            , RP.REG_USER_NO
+            , RP.MOD_DATE
+            , RP.MOD_USER_NO
+        FROM TB_RPRSN_PRDCT RP
+        WHERE RP.DATA_STATE = 'A'
+    </select>
+
+    <insert id="insRprsnPrdct" parameterType="RprsnPrdctVO">
+        /* kr.kr.fingate.gs.prdct.item.dao.prdctDao.insRprsnPrdct */
+        INSERT INTO TB_RPRSN_PRDCT (
+             INSRR_CODE
+             , RPRSN_PRDCT_NAME
+             , RPRSN_PRDCT_NCKNM
+             , PRDCT_CLASS
+             , PRDCT_KIND
+             , PRDCT_GROUP
+             , PRDCT_SALE_TYPE
+             , PRDCT_EXPSR_YN
+             , PRDCT_SALE_START_DATE
+             , PRDCT_SALE_END_DATE
+             , PREV_RPRSN_PRDCT_CODE
+             , REG_DATE
+             , REG_USER_NO
+             , MOD_DATE
+             , MOD_USER_NO ) VALUES
+            (
+                #{insrrCode}
+            , #{rprsnPrdctName}
+            , #{rprsnPrdctNcknm}
+            , #{prdctClass}
+            , #{prdctKind}
+            , #{prdctGroup}
+            , #{prdctSaleType}
+            , #{prdctExpsrYn}
+            , #{prdctSaleStartDate}
+            , #{prdctSaleEndDate}
+            , #{prevRprsnPrdctCode}
+            , NOW()
+            , #{regUserNo}
+            , NOW()
+            , #{modUserNo} )
+        <selectKey keyProperty="rprsnPrdctCode" resultType="long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <update id="updRprsnPrdct" parameterType="RprsnPrdctVO">
+        /* kr.kr.fingate.gs.prdct.item.dao.prdctDao.updRprsnPrdct */
+        UPDATE TB_RPRSN_PRDCT SET
+        INSRR_CODE = #{insrrCode}
+        , RPRSN_PRDCT_NAME = #{rprsnPrdctName}
+        , RPRSN_PRDCT_NCKNM = #{rprsnPrdctNcknm}
+        , PRDCT_CLASS = #{prdctClass}
+        , PRDCT_KIND = #{prdctKind}
+        , PRDCT_GROUP = #{prdctGroup}
+        , PRDCT_SALE_TYPE = #{prdctSaleType}
+        , PRDCT_EXPSR_YN = #{prdctExpsrYn}
+        , PRDCT_SALE_START_DATE = #{prdctSaleStartDate}
+        , PRDCT_SALE_END_DATE = #{prdctSaleEndDate}
+        , PREV_RPRSN_PRDCT_CODE = #{prevRprsnPrdctCode}
+        , MOD_DATE = NOW()
+        , MOD_USER_NO = #{modUserNo}
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </update>
+
+</mapper>

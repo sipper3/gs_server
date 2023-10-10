@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group = 'kr.fingate.gs.prdct'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    implementation project(':core')
+    implementation project(':common')
+    testImplementation testFixtures(project(':common'))
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootWar {
+    enabled = true
+}
+
+jar {
+    enabled = true
+}
+
+openapi3 {
+    server = 'http://192.168.0.28:9412'
+    title = '상품관리 API'
+    description = 'GS PRDCT API'
+    version = '0.0.1-SNAPSHOT'
+    format = 'json'
+
+    copy {
+        from 'build/api-spec'
+        into 'src/main/resources/static/docs'
+    }
+}
+
+build {
+    dependsOn 'generateDocs'
+}
