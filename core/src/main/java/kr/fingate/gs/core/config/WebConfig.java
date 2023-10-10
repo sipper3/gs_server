@@ -69,7 +69,6 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		return resolver;
 	}
 
-	@Profile("local")
 	@Bean
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
