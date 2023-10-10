@@ -3,7 +3,7 @@ plugins {
     id 'war'
 }
 
-group = "kr.fingate.gs"
+group = "kr.fingate.gs.rpa"
 version = "0.0.1-SNAPSHOT"
 
 repositories {
