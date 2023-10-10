@@ -4,4 +4,22 @@ spring:
       on-profile: dev
 
 server:
-  name2: sample-dev
+  port: 9512
+
+logging:
+  file:
+    path: /home/fingate/logs/logback/rpa/
+
+datasources:
+  - name: gs_rpa
+    base-package: kr.fingate.gs.*.**.dao
+    aop-execution: kr.fingate.gs..service.*.*(..)
+    data-source:
+      driverClassName: org.mariadb.jdbc.Driver
+      jdbcUrl: jdbc:mariadb://192.168.0.16:3306/gs_rpa?characterEncoding=UTF-8&serverTimezone=UTC&noAccessToProcedureBodies=true&useSSL=false&allowMultiQueries=true&autoReconnect=true
+      username: gs_rpa
+      password: fingate123!
+      maximumPoolSize: 30  # max pool size (엑셀파일 참조)
+      minimumIdle: 15  # min pool size (엑셀파일 참조)
+      autoCommit: false
+      connectionTimeout: 30000
