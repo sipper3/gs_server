@@ -1,6 +1,6 @@
 spring:
   data:
     redis:
-      password: admin1234
+      password: fingate!234
       port: 6379
-      host: 3.37.126.80
+      host: 192.168.0.27
