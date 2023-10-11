@@ -97,4 +97,10 @@ public class ObjectUtil {
     public static boolean isNumEn(String s) {
         return !isEmpty(s) && Pattern.compile("^[0-9a-zA-Z]*$").matcher(s).matches();
     }
+    /**
+     * 날짜형식인지 검사
+     */
+    public static boolean isDate(String s) {
+        return !isEmpty(s) && Pattern.compile("^(19|20)[\\\\d]{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$").matcher(s).matches();
+    }
 }
