@@ -44,6 +44,7 @@
 		<logger name="org.apache.tomcat" level="OFF"/>
 		<logger name="org.apache.tomcat.util.net" level="OFF"/>
 		<logger name="com.zaxxer.hikari.pool.HikariPool" level="OFF"/>
+		<logger name="org.springframework" level="debug"/>
 		<root level="debug">
 			<appender-ref ref="STDOUT" />
 			<appender-ref ref="LOG_FILE" /> <!-- 필요할시 활성 -->
