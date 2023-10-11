@@ -1,5 +1,6 @@
 package kr.fingate.gs.sales.cstmr.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import kr.fingate.gs.common.annotation.Encrypt;
@@ -15,11 +16,11 @@ import org.apache.ibatis.type.Alias;
 @Alias("CstmrInsDto")
 public class CstmrModDto extends CstmrVO {
 
-    @NotNull(message = "고객명은 필수 입력 입니다.")
+    @Min(value = 0, groups = CstmrVG.Ins.class)
     @Info("고객명")
     private long cstmrNo;
 
-    @NotNull(groups = CstmrVG.class.)
+    @NotNull
     @Info("고객명")
     private String cstmrName;
 

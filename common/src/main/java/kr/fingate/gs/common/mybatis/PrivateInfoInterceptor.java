@@ -33,40 +33,45 @@ import java.util.List;
 public class PrivateInfoInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        String methodName = invocation.getMethod().getName();
-        /* dao method에 Encrypt annotation이 있는지 체크하여 annotation이 있는 경우에만 암호화 여부 체크 */
-        Object[] args = invocation.getArgs();
-        MappedStatement mapped = (MappedStatement) args[0];
-        String mappedId = mapped.getId();
-        String className = mappedId.substring(0, mappedId.lastIndexOf("."));
-        String daoMethodName = mappedId.substring(mappedId.lastIndexOf(".") + 1);
+        try{
+            String methodName = invocation.getMethod().getName();
+            /* dao method에 Encrypt annotation이 있는지 체크하여 annotation이 있는 경우에만 암호화 여부 체크 */
+            Object[] args = invocation.getArgs();
+            MappedStatement mapped = (MappedStatement) args[0];
+            String mappedId = mapped.getId();
+            String className = mappedId.substring(0, mappedId.lastIndexOf("."));
+            String daoMethodName = mappedId.substring(mappedId.lastIndexOf(".") + 1);
 
-        log.debug("className : {}", className);
-        log.debug("methodName : {}", daoMethodName);
-        Class c = Class.forName(className);
-        Method[] methods = c.getDeclaredMethods();
-        Method daoMethod = Arrays.stream(methods).filter(method1 -> method1.getName().equals(daoMethodName)).findAny().orElse(null);
+            log.debug("className : {}", className);
+            log.debug("methodName : {}", daoMethodName);
+            Class c = Class.forName(className);
+            Method[] methods = c.getDeclaredMethods();
+            Method daoMethod = Arrays.stream(methods).filter(method1 -> method1.getName().equals(daoMethodName)).findAny().orElse(null);
 
-        assert daoMethod != null;
-        PrivateSql privateSqlAn = daoMethod.getDeclaredAnnotation(PrivateSql.class);
-        if(!(privateSqlAn == null || (!privateSqlAn.masking() && !privateSqlAn.encrypt() && !privateSqlAn.decrypt()))) {
-            if(privateSqlAn.encrypt()) {
-                Object param = args[1];
-                encrypt(param);
-            }
-            if(methodName.equals("query")) {
-                Object resultSet = invocation.proceed();
-                if(resultSet != null) {
-                    if(resultSet instanceof List<?> list) {
-                        for(Object obj : list) {
-                            privateInfoMark(obj, privateSqlAn);
-                        }
-                    } else {
-                        privateInfoMark(resultSet, privateSqlAn);
-                    }
+            assert daoMethod != null;
+            PrivateSql privateSqlAn = daoMethod.getDeclaredAnnotation(PrivateSql.class);
+            if(!(privateSqlAn == null || (!privateSqlAn.masking() && !privateSqlAn.encrypt() && !privateSqlAn.decrypt()))) {
+                if(privateSqlAn.encrypt()) {
+                    Object param = args[1];
+                    encrypt(param);
                 }
-                return resultSet;
+                if(methodName.equals("query")) {
+                    Object resultSet = invocation.proceed();
+                    if(resultSet != null) {
+                        if(resultSet instanceof List<?> list) {
+                            for(Object obj : list) {
+                                privateInfoMark(obj, privateSqlAn);
+                            }
+                        } else {
+                            privateInfoMark(resultSet, privateSqlAn);
+                        }
+                    }
+                    return resultSet;
+                }
             }
+
+        }catch (Exception e) {
+            log.error("", e);
         }
         return invocation.proceed();
     }
