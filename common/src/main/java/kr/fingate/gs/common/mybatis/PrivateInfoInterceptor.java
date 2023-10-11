@@ -48,7 +48,6 @@ public class PrivateInfoInterceptor implements Interceptor {
             Method[] methods = c.getDeclaredMethods();
             Method daoMethod = Arrays.stream(methods).filter(method1 -> method1.getName().equals(daoMethodName)).findAny().orElse(null);
 
-            assert daoMethod != null;
             PrivateSql privateSqlAn = daoMethod.getDeclaredAnnotation(PrivateSql.class);
             if(!(privateSqlAn == null || (!privateSqlAn.masking() && !privateSqlAn.encrypt() && !privateSqlAn.decrypt()))) {
                 if(privateSqlAn.encrypt()) {
