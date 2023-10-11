@@ -16,7 +16,7 @@ dependencies {
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 //    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
