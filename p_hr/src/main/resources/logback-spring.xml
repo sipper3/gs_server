@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+	<property name="PROJECT_NAME" value="admin" />
+
+	<!-- SERVER -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %cyan(%-45logger{36}) %highlight(%-6level) %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}${PROJECT_NAME}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}${PROJECT_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	          <maxFileSize>100MB</maxFileSize>
+	        </timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springframework" level="ERROR"/>
+
+	<springProfile name="local">
+		<logger name="jdbc" level="OFF"/>
+		<logger name="jdbc.sqlonly" level="DEBUG"/>
+		<logger name="jdbc.sqltiming" level="OFF"/>
+		<logger name="jdbc.audit" level="OFF"/>
+		<logger name="jdbc.resultsettable" level="OFF"/>
+		<logger name="jdbc.connection" level="OFF"/>
+		<logger name="org.apache.tomcat" level="OFF"/>
+		<logger name="org.apache.tomcat.util.net" level="OFF"/>
+		<logger name="com.zaxxer.hikari.pool.HikariPool" level="OFF"/>
+		<root level="debug">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="LOG_FILE" /> <!-- 필요할시 활성 -->
+		</root>
+	</springProfile>
+
+	<springProfile name="dev">
+		<logger name="jdbc" level="OFF"/>
+		<logger name="jdbc.sqlonly" level="debug"/>
+		<logger name="jdbc.sqltiming" level="OFF"/>
+		<logger name="jdbc.audit" level="OFF"/>
+		<logger name="jdbc.resultset" level="OFF"/>
+		<logger name="jdbc.resultsettable" level="OFF"/>
+		<logger name="jdbc.connection" level="OFF"/>
+		<logger name="org.apache.tomcat" level="OFF"/>
+		<logger name="org.apache.tomcat.util.net" level="OFF"/>
+		<logger name="org.springframework.web.client.RestTemplate" level="OFF"/>
+		<logger name="org.springframework.jdbc.datasource.DataSourceUtils" level="OFF"/>
+		<logger name="com.zaxxer.hikari.pool.HikariPool" level="INFO"/>
+		<root level="debug">
+			<appender-ref ref="LOG_FILE" />
+		</root>
+	</springProfile>
+
+	<springProfile name="real">
+		<logger name="jdbc" level="OFF"/>
+		<logger name="jdbc.sqlonly" level="DEBUG"/>
+		<logger name="jdbc.sqltiming" level="OFF"/>
+		<logger name="jdbc.audit" level="OFF"/>
+		<logger name="jdbc.resultset" level="OFF"/>
+		<logger name="jdbc.resultsettable" level="OFF"/>
+		<logger name="jdbc.connection" level="OFF"/>
+		<logger name="org.apache.tomcat" level="OFF"/>
+		<logger name="org.apache.tomcat.util.net" level="OFF"/>
+		<logger name="org.springframework.web.client.RestTemplate" level="OFF"/>
+		<root level="ERROR">
+			<appender-ref ref="LOG_FILE" />
+		</root>
+	</springProfile>
+</configuration>

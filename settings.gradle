@@ -10,5 +10,7 @@ include 'p_admin'
 include 'p_rpa'
 include 'p_sales'
 include 'p_dballot'
+include 'p_hr'
+
 include 'p_prdctm'
 

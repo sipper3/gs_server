@@ -1,0 +1,44 @@
+project:
+  name: hr
+spring:
+  profiles:
+    active: local
+    include:
+      - core
+      - common
+    group:
+      local: core-${spring.profiles.active},common-${spring.profiles.active}
+      dev: core-${spring.profiles.active},common-${spring.profiles.active}
+      prod: core-${spring.profiles.active},common-${spring.profiles.active}
+  pid:
+    file: auth.pid
+
+server:
+  port: 9222
+  mq-hosts:
+    - v-host: hr
+      user: hr
+      pass: hr
+      listener:
+        concurrent-consumers: 2 # 리스너 실행에 사용할 최소 스레드 수 설정
+        retry:
+          enabled: true         # 재시도를 활성화할지 여부, (기본값 false 비활성화)
+          initial-interval: 1   # 첫번째 전송과 두번쨰 전송 사이의 시간 간격 (기본값 1초)
+          max-attempts: 3       # 메시지 전송 재시도 횟수 (기본값 3)
+          max-interval: 5       # 메시지 전송 재시도 간 최대 간격 (기본값 10초)
+          multiplier: 2         # 이전 재시도 간격에서 횟수가 증가될 때마다 가중되는 비율 (기본값 1.0)
+      publisher:
+        enabled: true
+        confirms: true
+
+pagehelper:
+  helper-dialect: oracledb
+
+# permit.module > 인증없이 테스트용
+jwt:
+  request:
+    login: /auth/api/sso/login
+    ignore.module: >
+      /auth/api/signup/**,
+      /auth/api/sso/login
+

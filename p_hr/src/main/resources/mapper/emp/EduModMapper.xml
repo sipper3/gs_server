@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.hr.emp.edu.dao.EduModDao">
+
+    <!-- 피고용인 가족정보등록 -->
+    <insert id="insEdu" parameterType="EmpEduVO">
+        <selectKey keyProperty="eduSeq" resultType="int" order="BEFORE">
+            <![CDATA[
+			SELECT NVL (MAX(A.EDU_SEQ), 0) + 1 AS EDU_SEQ
+			  FROM TB_EMP_EDU a
+			     , TB_EMP B
+			 WHERE A.EMP_NO = #{empNo}
+			   AND B.CLIENT_NO = #{clientNo}
+			   AND A.EMP_NO = B.EMP_NO
+     	    ]]>
+        </selectKey>
+
+        INSERT INTO TB_EMP_EDU (
+              EMP_NO
+            , EDU_SEQ
+            , EDU_INSTT
+            , EDU_PRCSS
+            , EDU_START_DATE
+            , EDU_END_DATE
+            , CMPLT_STATE
+            , CMPLT_NO
+            , CMPLT_DATE
+            , EDU_CLASS
+            , DATA_STATE
+            , REG_DATE
+            , REG_USER_NO
+            , VRTL_ID
+        )
+        SELECT ${empNo}
+             , ${eduSeq}
+             , TRIM(${eduInstt})
+             , TRIM(${eduPrcss})
+             , REPLACE(TRIM(${eduStartDate}), '/')
+             , REPLACE(TRIM(${eduEndDate}), '/')
+             , TRIM(${cmpltState})
+             , TRIM(${cmpltNo})
+             , REPLACE(TRIM(${cmpltDate}, '/')
+             , ${eduClass}
+             , 'A'
+             , SYSDATE
+             , ${regUserNo}
+             , SYSTIMESTAMP
+          FROM DUAL;
+    </insert>
+
+    <!-- 피고용인 교육정보수정 -->
+    <update id="updEdu" parameterType="EmpEduVO">
+        UPDATE TB_EMP_EDU A
+        SET EDU_INSTT = TRIM(#{eduInstt}),
+            EDU_PRCSS = TRIM(#{eduPrcss}),
+            EDU_START_DATE = REPLACE(TRIM(#{eduStartDate}), '/'),
+            EDU_END_DATE = REPLACE(TRIM(#{eduEndDate}), '/'),
+            CMPLT_STATE = TRIM(#{cmpltState}),
+            CMPLT_NO = TRIM(#{cmpltNo}),
+            CMPLT_DATE = REPLACE(TRIM(#{cmpltDate}), '/'),
+            EDU_CLASS = #{eduClass}
+        WHERE A.EMP_NO = #{empNo}
+          AND A.EDU_SEQ = #{eduSeq}
+    </update>
+
+    <!-- 피고용인 가족정보삭제 -->
+    <delete id="delEdu" parameterType="EmpEduVO">
+        UPDATE TB_EMP_EDU
+           SET DATA_STATE = 'D'
+        WHERE EMP_NO = #{empNo}
+          AND EDU_SEQ = #{eduSeq}
+    </delete>
+</mapper>

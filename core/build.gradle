@@ -12,6 +12,7 @@ repositories {
 dependencies {
 //    api 'com.oracle.database.jdbc:ojdbc8'
 //    api 'com.oracle.ojdbc:orai18n:19.3.0.0'
+    implementation group: 'com.oracle.database.jdbc', name: 'ojdbc11', version: '23.2.0.0'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

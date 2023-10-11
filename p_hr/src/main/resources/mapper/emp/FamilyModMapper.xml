@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.hr.emp.family.dao.FamilyModDao">
+
+    <!-- 피고용인 가족정보등록 -->
+    <insert id="insFamily" parameterType="EmpFamilyVO">
+        <selectKey keyProperty="familySeq" resultType="int" order="BEFORE">
+            <![CDATA[
+			SELECT NVL (MAX(A.FAMILY_SEQ), 0) + 1 AS FAMILY_SEQ
+			  FROM TB_EMP_FAMILY a
+			     , TB_EMP B
+			 WHERE A.EMP_NO = #{empNo}
+			   AND B.CLIENT_NO = #{clientNo}
+			   AND A.EMP_NO = B.EMP_NO
+     	    ]]>
+        </selectKey>
+
+		INSERT INTO TB_EMP_FAMILY (
+              EMP_NO
+            , FAMILY_SEQ
+            , RLTN
+            , NAME
+            , IDNTN_NO
+            , REAL_BRTHD
+            , BRTHD_LUNAR_YN
+            , CHBTT_YN
+            , JOB
+            , OFFICE
+            , OFFICE_PSTN
+            , CLPHN_NO
+            , HOME_TLPHN_NO
+            , OFFICE_TLPHN_NO
+            , DATA_STATE
+            , REG_DATE
+            , REG_USER_NO
+            , MOD_DATE
+            , MOD_USER_NO
+            , VRTL_ID
+        )
+        SELECT #{empNo}
+            , #{familySeq}
+            , #{rltn}
+            , TRIM(#{name})
+            , FN_ENC(REPLACE(TRIM(#{idntnNo}), '-'))
+            , #{realBrthd}
+            , NVL(#{brthdLunarYn},'N')
+            , TRIM(#{CHBTT_YN})
+            , TRIM(#{job})
+            , TRIM(#{OFFICE})
+            , TRIM(#{officePstn})
+            , FN_ENC(TRIM(#{clphnNo}))
+            , FN_ENC(TRIM(#{homeTlphnNo}))
+            , FN_ENC(TRIM(#{officeTlphnNo}))
+            , 'A'
+            , SYSDATE
+            , #{regUserNo}
+            , SYSDATE
+            , #{modUserNo}
+            , SYSTIMESTAMP
+        FROM DUAL
+    </insert>
+
+    <!-- 피고용인 가족정보수정 -->
+    <update id="updFamily" parameterType="EmpFamilyVO">
+        UPDATE TB_EMP_FAMILY A
+        SET RLTN = #{rltn}
+          , NAME = TRIM(#{name})
+          , IDNTN_NO = FN_ENC(REPLACE(TRIM(#{idntnNo}), '-'))
+          , REAL_BRTHD = TRIM(#{realBrthd})
+          , BRTHD_LUNAR_YN = #{brthdLunarYn}
+          , CHBTT_YN = TRIM(#{chbttYn})
+          , JOB = TRIM(#{job})
+          , OFFICE = TRIM(#{office})
+          , OFFICE_PSTN = TRIM(#{officePstn})
+          , CLPHN_NO = FN_ENC(TRIM(#{clphnNo}))
+          , HOME_TLPHN_NO = FN_ENC(TRIM(#{homeTlphnNo}))
+          , OFFICE_TLPHN_NO = FN_ENC(TRIM(#{officeTlphnNo}))
+          , MOD_DATE = SYSDATE
+          , MOD_USER_NO = #{modUserNo}
+        WHERE A.EMP_NO = #{empNo}
+          AND A.FAMILY_SEQ = #{fmlySeq}
+    </update>
+
+    <!-- 피고용인 가족정보삭제 -->
+    <delete id="delFamily" parameterType="EmpFamilyVO">
+        UPDATE TB_EMP_FAMILY
+           SET DATA_STATE = 'D'
+             , MOD_DATE = SYSDATE
+             , MOD_USER_NO = #{modUserNo}
+        WHERE EMP_NO = #{empNo}
+          AND FAMILY_SEQ = #{fmlySeq}
+    </delete>
+</mapper>
