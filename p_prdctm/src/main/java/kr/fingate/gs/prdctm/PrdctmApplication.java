@@ -16,15 +16,15 @@ import org.springframework.context.annotation.ComponentScan;
         , DataSourceAutoConfiguration.class
 })
 @ComponentScan(basePackages = {"kr.fingate.gs"})
-public class PrdctApplication extends SpringBootServletInitializer {
+public class PrdctmApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder ab) {
-        return ab.sources(PrdctApplication.class);
+        return ab.sources(PrdctmApplication.class);
     }
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(PrdctApplication.class);
+        SpringApplication app = new SpringApplication(PrdctmApplication.class);
         app.addListeners(new ApplicationPidFileWriter()); // ApplicationPidFileWriter 설정
         app.run(args);
     }

@@ -7,9 +7,8 @@ import org.apache.ibatis.type.Alias;
 
 @Setter
 @Getter
-@Alias("PrdctVO")
+@Alias("PrdctDtlitVO")
 public class PrdctDtlitVO extends BaseVO {
-
 
     // 상품세목코드
     private String prdctDtlitCode;

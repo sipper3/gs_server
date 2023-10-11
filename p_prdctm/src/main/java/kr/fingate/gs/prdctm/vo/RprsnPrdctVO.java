@@ -8,7 +8,7 @@ import org.apache.ibatis.type.Alias;
 
 @Setter
 @Getter
-@Alias("PrdctVO")
+@Alias("RprsnPrdctVO")
 public class RprsnPrdctVO extends BaseVO {
 
     // 대표상품코드

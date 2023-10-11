@@ -1,4 +1,4 @@
-package kr.fingate.gs.prdctm.prdct.dto;
+package kr.fingate.gs.prdctm.rprsn.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import kr.fingate.gs.prdctm.vo.RprsnPrdctVO;
