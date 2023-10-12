@@ -2,7 +2,7 @@ project:
   name: hr
 spring:
   profiles:
-    active: local
+    default: local
     include:
       - core
       - common
@@ -11,7 +11,7 @@ spring:
       dev: core-${spring.profiles.active},common-${spring.profiles.active}
       prod: core-${spring.profiles.active},common-${spring.profiles.active}
   pid:
-    file: auth.pid
+    file: hr.pid
 
 server:
   port: 9222
@@ -32,13 +32,6 @@ server:
         confirms: true
 
 pagehelper:
-  helper-dialect: oracledb
+  helper-dialect: oracle
 
-# permit.module > 인증없이 테스트용
-jwt:
-  request:
-    login: /auth/api/sso/login
-    ignore.module: >
-      /auth/api/signup/**,
-      /auth/api/sso/login
 
