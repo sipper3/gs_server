@@ -14,7 +14,6 @@
              , PRDCT_KIND
              , PRDCT_GROUP
              , PRDCT_SALE_TYPE
-             , PRDCT_EXPSR_YN
              , PRDCT_SALE_START_DATE
              , PRDCT_SALE_END_DATE
              , PREV_RPRSN_PRDCT_CODE
@@ -30,7 +29,6 @@
             , #{prdctKind}
             , #{prdctGroup}
             , #{prdctSaleType}
-            , #{prdctExpsrYn}
             , #{prdctSaleStartDate}
             , #{prdctSaleEndDate}
             , #{prevRprsnPrdctCode}
@@ -53,7 +51,6 @@
             , PRDCT_KIND = #{prdctKind}
             , PRDCT_GROUP = #{prdctGroup}
             , PRDCT_SALE_TYPE = #{prdctSaleType}
-            , PRDCT_EXPSR_YN = #{prdctExpsrYn}
             , PRDCT_SALE_START_DATE = #{prdctSaleStartDate}
             , PRDCT_SALE_END_DATE = #{prdctSaleEndDate}
             , PREV_RPRSN_PRDCT_CODE = #{prevRprsnPrdctCode}

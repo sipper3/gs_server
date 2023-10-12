@@ -38,9 +38,6 @@ public class RprsnPrdctVO extends BaseVO {
     // 상품판매여부
     private String prdctSaleYn;
 
-    // 상품노출여부
-    private String prdctExpsrYn;
-
     // 상품판매시작일
     private String prdctSaleStartDate;
 
