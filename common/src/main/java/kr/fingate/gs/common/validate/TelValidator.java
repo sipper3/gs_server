@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.logging.log4j.util.Strings;
 
-public class TelValidator implements ConstraintValidator<TEL, String> {
+public class TelValidator implements ConstraintValidator<Tel, String> {
 
 
     @Override
