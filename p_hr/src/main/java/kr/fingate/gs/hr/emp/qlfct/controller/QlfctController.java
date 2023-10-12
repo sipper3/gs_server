@@ -33,7 +33,7 @@ public class QlfctController {
     /**
      * 피고용인 자격등록
      * @param params
-     * @return PageInfo<EmpQlfctDto>
+     * @return
      * @throws Exception
      */
     @RequestMapping(value = "/insQlfct", method = RequestMethod.POST)
@@ -44,7 +44,7 @@ public class QlfctController {
     /**
      * 피고용인 자격수정
      * @param params
-     * @return PageInfo<EmpQlfctDto>
+     * @return
      * @throws Exception
      */
     @RequestMapping(value = "/updQlfct", method = RequestMethod.POST)
@@ -55,7 +55,7 @@ public class QlfctController {
     /**
      * 피고용인 자격삭제
      * @param params
-     * @return PageInfo<EmpQlfctDto>
+     * @return
      * @throws Exception
      */
     @RequestMapping(value = "/delQlfct", method = RequestMethod.POST)

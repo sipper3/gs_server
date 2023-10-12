@@ -18,4 +18,13 @@ public class QlfctDto extends EmpQlfctVO {
 
     @Info(value="발급기관명")
     private String issueInsttName;
+
+    @Info(value="자격등록여부")
+    private String regCheck;
+
+    @Info(value="자격번호수정여부")
+    private String regUpdateCheck;
+
+    @Info(value="자격유효여부")
+    private String dateCheck;
 }

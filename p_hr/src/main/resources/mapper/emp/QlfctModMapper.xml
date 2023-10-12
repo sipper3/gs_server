@@ -38,12 +38,12 @@
             , TRIM(#{qlfctNo})
             , TRIM(#{issueInstt})
             , TRIM(#{grad})
-            , REPLACE(TRIM(#{exrtDate}), '/')
+            , REPLACE(TRIM(#{exprtDate}), '/')
             , REPLACE(TRIM(#{passDate}), '/')
-            , REPLACE(TRIM(#{pbctDate}), '/')
+            , REPLACE(TRIM(#{pblctDate}), '/')
             , 'A'
             , SYSDATE
-            , #{rgstUserNo}
+            , #{regUserNo}
             , SYSTIMESTAMP
         FROM DUAL
     </insert>
@@ -67,6 +67,6 @@
         UPDATE TB_EMP_Qlfct
            SET DATA_STATE = 'D'
          WHERE EMP_NO = #{empNo}
-           AND Qlfct_SEQ = #{fmlySeq}
+           AND Qlfct_SEQ = #{qlfctSeq}
     </delete>
 </mapper>

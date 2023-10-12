@@ -33,19 +33,19 @@
             , REG_USER_NO
             , VRTL_ID
         )
-        SELECT ${empNo}
-             , ${eduSeq}
-             , TRIM(${eduInstt})
-             , TRIM(${eduPrcss})
-             , REPLACE(TRIM(${eduStartDate}), '/')
-             , REPLACE(TRIM(${eduEndDate}), '/')
-             , TRIM(${cmpltState})
-             , TRIM(${cmpltNo})
-             , REPLACE(TRIM(${cmpltDate}, '/')
-             , ${eduClass}
+        SELECT #{empNo}
+             , #{eduSeq}
+             , TRIM(#{eduInstt})
+             , TRIM(#{eduPrcss})
+             , REPLACE(TRIM(#{eduStartDate}), '/')
+             , REPLACE(TRIM(#{eduEndDate}), '/')
+             , TRIM(#{cmpltState})
+             , TRIM(#{cmpltNo})
+             , REPLACE(TRIM(#{cmpltDate}, '/')
+             , #{eduClass}
              , 'A'
              , SYSDATE
-             , ${regUserNo}
+             , #{regUserNo}
              , SYSTIMESTAMP
           FROM DUAL;
     </insert>

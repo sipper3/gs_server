@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.hr.emp.memo.dao.MemoDao">
+
+    <sql id="getMemoListWhere">
+        <where>
+            AND A.EMP_NO = #{empNo}
+            AND B.CLIENT_NO = #{clientNo}
+            AND A.EMP_NO = B.EMP_NO
+            AND A.DATA_STATE <![CDATA[<>]]> 'D'
+        </where>
+    </sql>
+
+    <select id="getMemoList_COUNT" parameterType="EmpSearchDto" resultType="long">
+      SELECT COUNT(1)
+        FROM TB_EMP_QLFCT A
+           , TB_EMP B
+        <include refid="getMemoListWhere"/>
+    </select>
+
+    <!-- 피고용인 메모정보조회 -->
+    <select id="getMemoList" parameterType="EmpSearchDto" resultType="MemoDto">
+        SELECT A.EMP_NO
+             , A.MEMO_SEQ
+             , A.MEMO_CLASS
+             , FN_CODE_NAME(B.CLIENT_NO, 'EMP_MEMO_CLAS', MEMO_CLASS) AS MEMO_CLASS_NM
+             , A.MEMO
+             , A.DATA_STATE
+             , A.REG_DATE
+             , A.REG_USER_NO
+         FROM TB_EMP_MEMO A
+            , TB_EMP B
+            <include refid="getMemoListWhere"/>
+        ORDER BY A.MEMO_SEQ DESC
+    </select>
+
+</mapper>

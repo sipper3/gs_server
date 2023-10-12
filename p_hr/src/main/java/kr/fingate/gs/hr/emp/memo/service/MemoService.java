@@ -1,4 +1,4 @@
-package kr.fingate.gs.hr.emp.edu.service;
+package kr.fingate.gs.hr.emp.memo.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -7,10 +7,10 @@ import kr.fingate.gs.common.exception.BizException;
 import kr.fingate.gs.core.security.dto.UserTokenDto;
 import kr.fingate.gs.core.service.CoreService;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
-import kr.fingate.gs.hr.emp.edu.dao.EduDao;
-import kr.fingate.gs.hr.emp.edu.dao.EduModDao;
-import kr.fingate.gs.hr.emp.edu.dto.EduDto;
-import kr.fingate.gs.hr.vo.EmpEduVO;
+import kr.fingate.gs.hr.emp.memo.dao.MemoDao;
+import kr.fingate.gs.hr.emp.memo.dao.MemoModDao;
+import kr.fingate.gs.hr.emp.memo.dto.MemoDto;
+import kr.fingate.gs.hr.vo.EmpMemoVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,29 +19,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EduService {
+public class MemoService {
 
-    private final EduDao eduDao;
-    private final EduModDao eduModDao;
+    private final MemoDao memoDao;
+    private final MemoModDao memoModDao;
 
-    // 피고용인 교육정보조회
-    public Page<EduDto> getEduList(@RequestBody EmpSearchDto params) throws Exception {
+    // 피고용인 메모정보조회
+    public Page<MemoDto> getMemoList(@RequestBody EmpSearchDto params) throws Exception {
         try {
             UserTokenDto userTokenDto = CoreService.getUserInfo();
             long clientNo = userTokenDto.getClientNo();
             params.setClientNo(clientNo);
 
             PageHelper.startPage(params.getPageNum(), params.getPageSize());
-            return eduDao.getEduList(params);
+            return memoDao.getMemoList(params);
 
         } catch (Exception e) {
-            log.error("EduService.getEduList Exception : {}", e.getMessage(), e);
+            log.error("MemoService.getMemoList Exception : {}", e.getMessage(), e);
             throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    // 피고용인 교육정보등록
-    public void insEdu(EmpEduVO params) throws Exception {
+    // 피고용인 메모정보등록
+    public void insMemo(EmpMemoVO params) throws Exception {
         try {
             UserTokenDto userTokenDto = CoreService.getUserInfo();
             long clientNo = userTokenDto.getClientNo();
@@ -49,29 +49,29 @@ public class EduService {
             params.setClientNo(clientNo);
             params.setRegUserNo(tokenUserNo);
 
-            eduModDao.insEdu(params);
+            memoModDao.insMemo(params);
         } catch (Exception e) {
-            log.error("EduService.insEdu Exception : {}", e.getMessage(), e);
+            log.error("MemoService.insMemo Exception : {}", e.getMessage(), e);
             throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    // 피고용인 교육정보수정
-    public void updEdu(EmpEduVO params) throws Exception {
+    // 피고용인 메모정보수정
+    public void updMemo(EmpMemoVO params) throws Exception {
         try {
-            eduModDao.updEdu(params);
+            memoModDao.updMemo(params);
         } catch (Exception e) {
-            log.error("EduService.updEdu Exception : {}", e.getMessage(), e);
+            log.error("MemoService.updMemo Exception : {}", e.getMessage(), e);
             throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    // 피고용인 교육정보삭제
-    public void delEdu(EmpEduVO params) throws Exception {
+    // 피고용인 메모정보삭제
+    public void delMemo(EmpMemoVO params) throws Exception {
         try {
-            eduModDao.delEdu(params);
+            memoModDao.delMemo(params);
         } catch (Exception e) {
-            log.error("EduService.delEdu Exception : {}", e.getMessage(), e);
+            log.error("MemoService.delMemo Exception : {}", e.getMessage(), e);
             throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
         }
     }
