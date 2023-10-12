@@ -37,8 +37,7 @@ pagehelper:
 # permit.module > 인증없이 테스트용
 jwt:
   request:
-    login: /auth/api/sso/login
     ignore.module: >
-      /auth/api/signup/**,
-      /auth/api/sso/login
+      /auth/api/sso/get/login,
+      /auth/api/sso/get/token
 

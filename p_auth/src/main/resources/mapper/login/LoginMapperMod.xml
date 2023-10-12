@@ -9,13 +9,15 @@
         UPDATE GA_USER_AUTH UA
          INNER JOIN GA_USER U ON U.USER_NO = UA.USER_NO
            SET UA.MOD_DATE = NOW()
+             , UA.LAST_CHANGE_DATE = NOW()
              , UA.MOD_USER_NO = #{modUserNo}
              , UA.LOGIN_PSWRD = PASSWORD(#{newLoginPswrd})
-         WHERE UA.LOGIN_PSWRD = PASSWORD(#{loginPswrd})
+         WHERE UA.USER_NO = #{userNo}
+           AND UA.LOGIN_PSWRD = PASSWORD(#{loginPswrd})
     </update>
 
     <update id="UpdLock" parameterType="kr.fingate.gs.auth.login.dto.LockDto">
-        /* kr.fingate.gs.auth.auth.dao.LoginModDao.updPswrd */
+        /* kr.fingate.gs.auth.auth.dao.LoginModDao.UpdLock */
         UPDATE GA_USER_AUTH UA
          INNER JOIN GA_USER U ON U.USER_NO = UA.USER_NO
            SET UA.MOD_DATE = NOW()
