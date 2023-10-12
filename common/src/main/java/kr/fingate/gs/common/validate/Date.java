@@ -11,11 +11,13 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = {TelValidator.class})
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TEL {
-    String message() default "연락처 형식에 맞지 않습니다.";
+public @interface Date {
+    String message() default "날짜 형식에 맞지 않습니다.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    String pattern() default "yyyyMMdd";
 
 }
