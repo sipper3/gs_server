@@ -4,14 +4,20 @@
 
 <mapper namespace="kr.fingate.gs.common.encryption.dao.EncryptionDao">
 
-    <select id="getAeskey" resultType="AesKeyVO">
+    <select id="getAeskeyM" resultType="AesKeyVO">
         SELECT TYPE
              , AKEY
              , IV
         FROM common.tb_aeskey
         WHERE TYPE = 'GS'
-        LIMIT 1
     </select>
 
+    <select id="getAeskeyO" resultType="AesKeyVO">
+        SELECT SYSTYPE AS TYPE
+             , KEY AS AKEY
+             , IV
+        FROM SYS.TB_AESKEY
+        WHERE SYSTYPE = 'GC'
+    </select>
 
 </mapper>
