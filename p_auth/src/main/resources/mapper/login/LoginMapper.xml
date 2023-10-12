@@ -18,7 +18,7 @@
     </select>
 
     <select id="getLoginUserInfo" parameterType="kr.fingate.gs.core.security.dto.UserTokenDto" resultType="kr.fingate.gs.auth.login.dto.LoginInfoDto">
-        /* SsoLoginDao.getLogin */
+        /* SsoLoginDao.getLoginUserInfo */
         SELECT U.USER_NO
              , U.LOGIN_ID
              , U.USER_NAME
@@ -37,8 +37,8 @@
             AND U.LOGIN_ID = #{loginId}
     </select>
 
-    <select id="getCheckPswad" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.auth.login.dto.SsoLoginDto">
-        /* SsoLoginDao.getLogin */
+    <select id="getCheckPswrd" parameterType="kr.fingate.gs.auth.login.dto.SsoLoginDto" resultType="kr.fingate.gs.auth.login.dto.SsoLoginDto">
+        /* SsoLoginDao.getCheckPswrd */
         SELECT U.LOGIN_ID
           FROM GA_USER U
          INNER JOIN GA_USER_AUTH UA ON U.USER_NO = UA.USER_NO
