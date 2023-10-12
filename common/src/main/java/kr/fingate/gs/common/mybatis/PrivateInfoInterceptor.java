@@ -48,6 +48,10 @@ public class PrivateInfoInterceptor implements Interceptor {
             Method[] methods = c.getDeclaredMethods();
             Method daoMethod = Arrays.stream(methods).filter(method1 -> method1.getName().equals(daoMethodName)).findAny().orElse(null);
 
+            //selectkey 등 mapper내의 쿼리의 method id인 경우 제외
+            if(daoMethodName.contains("!")) {
+                return invocation.proceed();
+            }
             PrivateSql privateSqlAn = daoMethod.getDeclaredAnnotation(PrivateSql.class);
             if(!(privateSqlAn == null || (!privateSqlAn.masking() && !privateSqlAn.encrypt() && !privateSqlAn.decrypt()))) {
                 if(privateSqlAn.encrypt()) {
