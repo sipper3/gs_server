@@ -2,7 +2,7 @@ project:
   name: hr
 spring:
   profiles:
-    default: local
+    active: local
     include:
       - core
       - common

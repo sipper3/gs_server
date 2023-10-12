@@ -1,16 +1,14 @@
 package kr.fingate.gs.hr.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.apache.ibatis.type.Alias;
 import kr.fingate.gs.common.annotation.Info;
 import kr.fingate.gs.common.vo.BaseVO;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.ibatis.type.Alias;
 
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Alias("EmpQlfctVO")

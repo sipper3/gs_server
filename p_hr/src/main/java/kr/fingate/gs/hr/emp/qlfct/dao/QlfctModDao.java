@@ -7,11 +7,11 @@ import org.apache.ibatis.annotations.Mapper;
 public interface QlfctModDao {
 
     // 피고용인 자격정보등록
-    void insQlfct(EmpQlfctVO params) throws Exception;
+    public void insQlfct(EmpQlfctVO params) throws Exception;
 
     // 피고용인 자격정보수정
-    void updQlfct(EmpQlfctVO params) throws Exception;
+    public void updQlfct(EmpQlfctVO params) throws Exception;
 
     // 피고용인 자격정보삭제
-    void delQlfct(EmpQlfctVO params) throws Exception;
+    public void delQlfct(EmpQlfctVO params) throws Exception;
 }
