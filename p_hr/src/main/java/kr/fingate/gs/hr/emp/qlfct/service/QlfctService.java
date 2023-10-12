@@ -4,6 +4,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import kr.fingate.gs.common.exception.BizError;
 import kr.fingate.gs.common.exception.BizException;
+import kr.fingate.gs.core.security.dto.UserTokenDto;
+import kr.fingate.gs.core.service.CoreService;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
 import kr.fingate.gs.hr.emp.qlfct.dao.QlfctDao;
 import kr.fingate.gs.hr.emp.qlfct.dao.QlfctModDao;
@@ -27,13 +29,15 @@ public class QlfctService {
     private final QlfctModDao qlfctModDao;
 
     // 피고용인 자격정보조회
-    public Page<QlfctDto> getQlfctList(@RequestBody EmpSearchDto empSearchDto) throws Exception {
+    public Page<QlfctDto> getQlfctList(@RequestBody EmpSearchDto params) throws Exception {
         try {
-            PageHelper.startPage(empSearchDto.getPageNum(), empSearchDto.getPageSize());
-            return qlfctDao.getQlfctList(empSearchDto);
-        } catch (BizException e) {
-            log.error("QlfctService.getQlfctList BizException : {}", e.getMessage());
-            throw new BizException(e.getMessage());
+            UserTokenDto userTokenDto = CoreService.getUserInfo();
+            long clientNo = userTokenDto.getClientNo();
+            params.setClientNo(clientNo);
+
+            PageHelper.startPage(params.getPageNum(), params.getPageSize());
+            return qlfctDao.getQlfctList(params);
+
         } catch (Exception e) {
             log.error("QlfctService.getQlfctList Exception : {}", e.getMessage(), e);
             throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
@@ -44,6 +48,11 @@ public class QlfctService {
     // 피고용인 자격정보등록
     public void insQlfct(EmpQlfctVO params) throws Exception {
         try {
+            UserTokenDto userTokenDto = CoreService.getUserInfo();
+            long clientNo = userTokenDto.getClientNo();
+            long tokenUserNo = userTokenDto.getUserNo();
+            params.setClientNo(clientNo);
+            params.setRegUserNo(tokenUserNo);
 
             getQlfctDupCheck(params, "ins");
             qlfctModDao.insQlfct(params);
