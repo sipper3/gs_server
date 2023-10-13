@@ -29,7 +29,7 @@ public class QlfctService {
     private final QlfctModDao qlfctModDao;
 
     // 피고용인 자격정보조회
-    public Page<QlfctDto> getQlfctList(@RequestBody EmpSearchDto params) throws Exception {
+    public Page<EmpQlfctVO> getQlfctList(@RequestBody EmpSearchDto params) throws Exception {
         try {
             UserTokenDto userTokenDto = CoreService.getUserInfo();
             long clientNo = userTokenDto.getClientNo();

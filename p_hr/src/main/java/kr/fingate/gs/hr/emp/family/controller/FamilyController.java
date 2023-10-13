@@ -1,7 +1,6 @@
 package kr.fingate.gs.hr.emp.family.controller;
 
 import kr.fingate.gs.common.dto.PageInfoDto;
-import kr.fingate.gs.hr.emp.family.dto.FamilyDto;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
 import kr.fingate.gs.hr.emp.family.service.FamilyService;
 import kr.fingate.gs.hr.vo.EmpFamilyVO;
@@ -22,12 +21,12 @@ public class FamilyController {
     /**
      * 피고용인 가족조회
      * @param params
-     * @return PageInfo<FamilyDto>
+     * @return PageInfo<EmpFamilyVO>
      * @throws Exception
      */
     @RequestMapping(value = "/getFamilyList", method = RequestMethod.POST)
-    public PageInfoDto<FamilyDto> getFamilyList(@RequestBody EmpSearchDto params) throws Exception {
-        return new PageInfoDto<FamilyDto>(familyService.getFamilyList(params));
+    public PageInfoDto<EmpFamilyVO> getFamilyList(@RequestBody EmpSearchDto params) throws Exception {
+        return new PageInfoDto<EmpFamilyVO>(familyService.getFamilyList(params));
     }
 
     /**

@@ -1,7 +1,6 @@
 package kr.fingate.gs.hr.emp.qlfct.controller;
 
 import kr.fingate.gs.common.dto.PageInfoDto;
-import kr.fingate.gs.hr.emp.qlfct.dto.QlfctDto;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
 import kr.fingate.gs.hr.emp.qlfct.service.QlfctService;
 import kr.fingate.gs.hr.vo.EmpQlfctVO;
@@ -22,12 +21,12 @@ public class QlfctController {
     /**
      * 피고용인 자격정보조회
      * @param params
-     * @return PageInfo<EmpQlfctDto>
+     * @return PageInfo<EmpQlfctVO>
      * @throws Exception
      */
     @RequestMapping(value = "/getQlfctList", method = RequestMethod.POST)
-    public PageInfoDto<QlfctDto> getQlfctList(@RequestBody EmpSearchDto params) throws Exception {
-        return new PageInfoDto<QlfctDto>(empQlfctService.getQlfctList(params));
+    public PageInfoDto<EmpQlfctVO> getQlfctList(@RequestBody EmpSearchDto params) throws Exception {
+        return new PageInfoDto<EmpQlfctVO>(empQlfctService.getQlfctList(params));
     }
 
     /**

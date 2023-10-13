@@ -21,11 +21,10 @@
     </select>
 
     <!-- 피고용인 메모정보조회 -->
-    <select id="getMemoList" parameterType="EmpSearchDto" resultType="MemoDto">
+    <select id="getMemoList" parameterType="EmpSearchDto" resultType="EmpMemoVO">
         SELECT A.EMP_NO
              , A.MEMO_SEQ
              , A.MEMO_CLASS
-             , FN_CODE_NAME(B.CLIENT_NO, 'EMP_MEMO_CLAS', MEMO_CLASS) AS MEMO_CLASS_NM
              , A.MEMO
              , A.DATA_STATE
              , A.REG_DATE

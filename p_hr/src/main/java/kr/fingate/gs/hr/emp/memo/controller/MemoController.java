@@ -2,7 +2,6 @@ package kr.fingate.gs.hr.emp.memo.controller;
 
 import kr.fingate.gs.common.dto.PageInfoDto;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
-import kr.fingate.gs.hr.emp.memo.dto.MemoDto;
 import kr.fingate.gs.hr.emp.memo.service.MemoService;
 import kr.fingate.gs.hr.vo.EmpMemoVO;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +21,12 @@ public class MemoController {
     /**
      * 피고용인 메모정보조회
      * @param params
-     * @return PageInfo<MemoDto>
+     * @return PageInfo<EmpMemoVO>
      * @throws Exception
      */
     @RequestMapping(value = "/getMemoList", method = RequestMethod.POST)
-    public PageInfoDto<MemoDto> getMemoList(@RequestBody EmpSearchDto params) throws Exception {
-        return new PageInfoDto<MemoDto>(memoService.getMemoList(params));
+    public PageInfoDto<EmpMemoVO> getMemoList(@RequestBody EmpSearchDto params) throws Exception {
+        return new PageInfoDto<EmpMemoVO>(memoService.getMemoList(params));
     }
 
     /**

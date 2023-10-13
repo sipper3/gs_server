@@ -9,7 +9,6 @@ import kr.fingate.gs.core.service.CoreService;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
 import kr.fingate.gs.hr.emp.memo.dao.MemoDao;
 import kr.fingate.gs.hr.emp.memo.dao.MemoModDao;
-import kr.fingate.gs.hr.emp.memo.dto.MemoDto;
 import kr.fingate.gs.hr.vo.EmpMemoVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class MemoService {
     private final MemoModDao memoModDao;
 
     // 피고용인 메모정보조회
-    public Page<MemoDto> getMemoList(@RequestBody EmpSearchDto params) throws Exception {
+    public Page<EmpMemoVO> getMemoList(@RequestBody EmpSearchDto params) throws Exception {
         try {
             UserTokenDto userTokenDto = CoreService.getUserInfo();
             long clientNo = userTokenDto.getClientNo();

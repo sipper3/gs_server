@@ -2,7 +2,6 @@ package kr.fingate.gs.hr.emp.edu.controller;
 
 import kr.fingate.gs.common.dto.PageInfoDto;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
-import kr.fingate.gs.hr.emp.edu.dto.EduDto;
 import kr.fingate.gs.hr.emp.edu.service.EduService;
 import kr.fingate.gs.hr.vo.EmpEduVO;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +21,12 @@ public class EduController {
     /**
      * 피고용인 교육정보조회
      * @param params
-     * @return PageInfo<EduDto>
+     * @return PageInfo<EmpEduVO>
      * @throws Exception
      */
     @RequestMapping(value = "/getEduList", method = RequestMethod.POST)
-    public PageInfoDto<EduDto> getEduList(@RequestBody EmpSearchDto params) throws Exception {
-        return new PageInfoDto<EduDto>(eduService.getEduList(params));
+    public PageInfoDto<EmpEduVO> getEduList(@RequestBody EmpSearchDto params) throws Exception {
+        return new PageInfoDto<EmpEduVO>(eduService.getEduList(params));
     }
 
     /**
