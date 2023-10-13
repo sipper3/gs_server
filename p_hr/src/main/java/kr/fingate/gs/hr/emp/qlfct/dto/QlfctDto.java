@@ -13,12 +13,6 @@ import org.apache.ibatis.type.Alias;
 @NoArgsConstructor
 @Alias("QlfctDto")
 public class QlfctDto extends EmpQlfctVO {
-    @Info(value="자격코드명")
-    private String qlfctCodeName;
-
-    @Info(value="발급기관명")
-    private String issueInsttName;
-
     @Info(value="자격등록여부")
     private String regCheck;
 

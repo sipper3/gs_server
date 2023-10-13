@@ -20,18 +20,16 @@
     </select>
 
     <!-- 피고용인 가족정보조회 -->
-    <select id="getFamilyList" parameterType="EmpSearchDto" resultType="FamilyDto">
+    <select id="getFamilyList" parameterType="EmpSearchDto" resultType="EmpFamilyVO">
         SELECT A.EMP_NO
              , A.FAMILY_SEQ
              , A.RLTN
              , A.NAME
-             , FN_CODE_NAME(B.CLIENT_NO, 'RLTN',A.RLTN) AS RLTN_NM
              , FN_MASK_IDNTF( FN_DEC(A.IDNTN_NO)) AS IDNTN_NO
              , A.REAL_BRTHD
              , A.BRTHD_LUNAR_YN
              , A.CHBTT_YN
              , A.JOB
-             , FN_CODE_NAME(B.CLIENT_NO, 'JOB',A.JOB) AS JOB_NM
              , A.OFFICE
              , A.OFFICE_PSTN
              , FN_MASK_TLPHN(FN_DEC(A.CLPHN_NO)) AS CLPHN_NO

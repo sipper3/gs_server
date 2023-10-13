@@ -9,7 +9,6 @@ import kr.fingate.gs.core.service.CoreService;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
 import kr.fingate.gs.hr.emp.edu.dao.EduDao;
 import kr.fingate.gs.hr.emp.edu.dao.EduModDao;
-import kr.fingate.gs.hr.emp.edu.dto.EduDto;
 import kr.fingate.gs.hr.vo.EmpEduVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class EduService {
     private final EduModDao eduModDao;
 
     // 피고용인 교육정보조회
-    public Page<EduDto> getEduList(@RequestBody EmpSearchDto params) throws Exception {
+    public Page<EmpEduVO> getEduList(@RequestBody EmpSearchDto params) throws Exception {
         try {
             UserTokenDto userTokenDto = CoreService.getUserInfo();
             long clientNo = userTokenDto.getClientNo();

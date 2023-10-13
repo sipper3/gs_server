@@ -21,15 +21,13 @@
     </select>
 
     <!-- 피고용인 자격정보조회 -->
-    <select id="getQlfctList" parameterType="EmpSearchDto" resultType="QlfctDto">
+    <select id="getQlfctList" parameterType="EmpSearchDto" resultType="EmpQlfctVO">
         SELECT A.EMP_NO
              , A.QLFCT_SEQ
              , A.QLFCT_CODE
              , A.QLFCT_NAME
              , A.QLFCT_NO
              , A.ISSUE_INSTT
-             , FN_CODE_NAME(B.CLIENT_NO, 'LICS', A.QLFCT_CODE) AS QLFCT_CODE_NAME
-             , FN_CODE_NAME(B.CLIENT_NO, 'GNRT_ISTU', A.ISSUE_INSTT) AS ISSUE_INSTT_NAME
              , A.GRAD
              , TO_CHAR(TO_DATE(A.EXPRT_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS EXPRT_DATE
              , TO_CHAR(TO_DATE(A.PASS_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS PASS_DATE

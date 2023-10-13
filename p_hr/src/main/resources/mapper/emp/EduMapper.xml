@@ -21,7 +21,7 @@
     </select>
 
     <!-- 피고용인 교육정보조회 -->
-    <select id="getEduList" parameterType="EmpSearchDto" resultType="EduDto">
+    <select id="getEduList" parameterType="EmpSearchDto" resultType="EmpEduVO">
         SELECT EMP_NO
              , EDU_SEQ
              , EDU_INSTT
@@ -32,10 +32,8 @@
              , CMPLT_NO
              , TO_CHAR(TO_DATE(CMPLT_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS CMPLT_DATE
              , EDU_CLASS
-             , FN_CODE_NAME(B.CLIENT_NO, 'EDU_CLASS', EDU_CLASS) AS EDU_CLASS_NM
              , TO_CHAR(REG_DATE,'YYYY/MM/DD HH24:MI') AS REG_DATE
              , REG_USER_NO
-             , VRTL_ID
           FROM TB_EMP_EDU A
              , TB_EMP B
             <include refid="getEduListWhere"/>

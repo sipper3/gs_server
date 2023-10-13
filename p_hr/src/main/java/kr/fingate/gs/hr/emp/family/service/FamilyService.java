@@ -9,7 +9,6 @@ import kr.fingate.gs.core.service.CoreService;
 import kr.fingate.gs.hr.emp.dto.EmpSearchDto;
 import kr.fingate.gs.hr.emp.family.dao.FamilyDao;
 import kr.fingate.gs.hr.emp.family.dao.FamilyModDao;
-import kr.fingate.gs.hr.emp.family.dto.FamilyDto;
 import kr.fingate.gs.hr.vo.EmpFamilyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class FamilyService {
     private final FamilyModDao familyModDao;
 
     // 피고용인 가족정보조회 - 항목 전체 리스트
-    public Page<FamilyDto> getFamilyList(@RequestBody EmpSearchDto params) throws Exception {
+    public Page<EmpFamilyVO> getFamilyList(@RequestBody EmpSearchDto params) throws Exception {
         try {
             UserTokenDto userTokenDto = CoreService.getUserInfo();
             long clientNo = userTokenDto.getClientNo();
