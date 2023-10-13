@@ -1,6 +1,7 @@
 package kr.fingate.gs.auth.login.service;
 
 import kr.fingate.gs.auth.login.dao.LoginDao;
+import kr.fingate.gs.auth.login.dao.LoginModDao;
 import kr.fingate.gs.auth.login.dto.SsoLoginDto;
 import kr.fingate.gs.core.aop.exception.BizException;
 import kr.fingate.gs.core.aop.response.ResponseCode;
@@ -11,13 +12,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LoginService {
 
-//    private final JwtService jwtService;
     private final LoginDao loginDao;
+    private final LoginModDao loginModDao;
 
 
-    public void getCheckPswad(SsoLoginDto loginDto) {
+    public SsoLoginDto getCheckPswrd(SsoLoginDto loginDto) {
 
-        SsoLoginDto ssoLoginDto = loginDao.getCheckPswad(loginDto);
+        SsoLoginDto ssoLoginDto = loginDao.getCheckPswrd(loginDto);
 
         if(ssoLoginDto == null){
             throw new BizException(ResponseCode.LOGN_NOT_USER);
@@ -27,33 +28,28 @@ public class LoginService {
             throw new BizException(ResponseCode.LOGN_NOT_USER);
         }
 
+        return ssoLoginDto;
     }
 
-    public void updPswrd(SsoLoginDto loginDto) {
+    public int updPswrd(SsoLoginDto loginDto) {
 
-        SsoLoginDto ssoLoginDto = loginDao.updPswrd(loginDto);
+        int updCnt = loginModDao.updPswrd(loginDto);
 
-        if(ssoLoginDto == null){
+        if(updCnt == 0){
             throw new BizException(ResponseCode.LOGN_NOT_USER);
         }
 
-        if(ssoLoginDto.getLoginId().equals("")){
-            throw new BizException(ResponseCode.LOGN_NOT_USER);
-        }
-
+        return updCnt;
     }
 
-    public void UpdLock(SsoLoginDto loginDto) {
+    public int UpdLock(SsoLoginDto loginDto) {
 
-        SsoLoginDto ssoLoginDto = loginDao.updLock(loginDto);
+        int updCnt = loginModDao.updLock(loginDto);
 
-        if(ssoLoginDto == null){
+        if(updCnt == 0){
             throw new BizException(ResponseCode.LOGN_NOT_USER);
         }
 
-        if(ssoLoginDto.getLoginId().equals("")){
-            throw new BizException(ResponseCode.LOGN_NOT_USER);
-        }
-
+        return updCnt;
     }
 }

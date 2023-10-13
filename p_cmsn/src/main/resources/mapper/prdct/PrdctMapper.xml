@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.cmsn.prdct.dao.PrdctDao">
+
+    <select id="getRprsnPrdctList" parameterType="SearchRprsnPrdctDto" resultType="RprsnPrdctDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getRprsnPrdctList / 대표상품 리스트 */
+        SELECT
+        RP.RPRSN_PRDCT_CODE
+        , RP.RPRSN_PRDCT_NAME
+        , RP.RPRSN_PRDCT_NCKNM
+        , RP.INSRR_CODE
+        , RP.PRDCT_CLASS
+        , RP.PRDCT_GROUP
+        , RP.PRDCT_KIND
+        , RP.PRDCT_SALE_TYPE
+        , RP.PRDCT_SALE_YN
+        , TO_CHAR(TO_DATE(RP.PRDCT_SALE_START_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS PRDCT_SALE_START_DATE
+        , TO_CHAR(TO_DATE(RP.PRDCT_SALE_END_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS PRDCT_SALE_END_DATE
+        , TO_CHAR(RP.REG_DATE,'YYYY/MM/DD HH24:MI') AS REG_DATE
+--         ,(SELECT REPLACE(TRIM(MAX(DECODE(PRDCT_RATE_GROUP, 'RP', 'RP'))||' '||MAX(DECODE(PRDCT_RATE_GROUP, 'RM', 'RM'))||' '||MAX(DECODE(PRDCT_RATE_GROUP, 'HY', 'HY'))),' ','/')
+--             FROM TB_PRDCT_RATE_MNGMN PRM
+--             WHERE PRM.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE
+--             AND APLCT_END_YN <![CDATA[<>]]> 'Y'
+--         ) AS REG_GROUP
+        FROM TB_RPRSN_PRDCT RP
+        WHERE CLIENT_NO = #{clientNo}
+        AND DATA_STATE = 'A'
+        <if test="rprsnPrdctCode > 0">
+            AND RP.RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+        </if>
+        <if test="rprsnPrdctName != null and !rprsnPrdctName.equals('')">
+            AND RP.RPRSN_PRDCT_NAME LIKE '%'||#{rprsnPrdctName}||'%'
+        </if>
+        <if test="insrrCd != null and !insrrCd.equals('')">
+            AND RP.INSRR_CODE = #{insrrCd}
+        </if>
+        <if test="prdctClass != null and !prdctClass.equals('')">
+            AND RP.PRDCT_CLASS = #{prdctClass}
+        </if>
+        <if test="prdctGroup != null and !prdctGroup.equals('')">
+            AND RP.PRDCT_GROUP = #{prdctGroup}
+        </if>
+        <if test="prdctKind != null and !prdctKind.equals('')">
+            AND RP.PRDCT_KIND = #{prdctKind}
+        </if>
+        <if test="prdctSaleYn != null and !prdctSaleYn.equals('')">
+            AND PRDCT_SALE_YN = #{prdctSaleYn}
+        </if>
+        <if test="(startRegDate != null and !startRegDate.equals('')) and (endRegDate != null and !endRegDate.equals(''))">
+                AND REG_DATE BETWEEN TO_DATE(#{startRegDate}, 'YYYYMMDD') AND TO_DATE(#{endRegDate}, 'YYYYMMDD') + .99999
+        </if>
+        <if test="dfntnYn != null and !dfntnYn.equals('')">
+            AND EXISTS (SELECT 1
+                FROM TB_PRDCT_RATE_MNGMN PRM
+                WHERE PRM.CLIENT_NO = #{clientNo}
+                AND PRM.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE
+                AND PRM.DFNTN_YN = #{dfntnYn}
+            )
+        </if>
+    </select>
+
+    <select id="getPrdctRateMngmnList" parameterType="SearchPrdctRateMngmnDto" resultType="PrdctRateMngmnDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getPrdctRateMngmnList / 상품율 리스트 */
+        SELECT  PRM.RPRSN_PRDCT_CODE
+        , PRM.PRDCT_RATE_SEQ
+        , PRM.PRDCT_RATE_GROUP
+        , PRM.DFNTN_YN
+        , PRM.APLCT_END_YN
+        , PRM.ONE_PYMNT_RULT_YN
+        , PRM.ONE_PYMNT_RATE1
+        , PRM.ONE_PYMNT_RATE2
+        , PRM.ONE_PYMNT_EVLTN_FIGURE1
+        , PRM.ONE_PYMNT_EVLTN_FIGURE2
+        , TO_CHAR(TO_DATE(PRM.APLCT_START_DATE, 'YYYYMMDD'), 'YYYY/MM/DD') AS APLCT_START_DATE
+        , TO_CHAR(TO_DATE(PRM.APLCT_END_DATE, 'YYYYMMDD'), 'YYYY/MM/DD') AS APLCT_END_DATE
+
+        , TO_CHAR(PRM.REG_DATE, 'YYYY/MM/DD') AS REG_DATE
+--         , TB_OGNI_USER_F(PRM.REG_USER_NO) AS REG_USER_NAME
+        , PRM.REG_USER_NO
+        , RP.INSRR_CODE
+        , RP.RPRSN_PRDCT_NAME
+        FROM TB_PRDCT_RATE_MNGMN PRM
+        , TB_RPRSN_PRDCT RP
+        WHERE PRM.CLIENT_NO = RP.CLIENT_NO
+        AND PRM.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE
+        AND PRM.CLIENT_NO = #{clientNo}
+        AND PRM.RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+        <if test='aplctEndYn != null and "Y".equals(aplctEndYn)'>	<!-- 적용종료여부 -->
+            AND PRM.APLCT_END_YN <![CDATA[<>]]> 'Y'
+        </if>
+        <if test="prdctRateGroupList != null and prdctRateGroupList.size > 0">	<!-- 상품율군 -->
+            AND PRM.PRDCT_RATE_GROUP IN
+            <foreach item="item" collection="prdctRateGroupList" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY PRM.PRDCT_RATE_SEQ DESC
+    </select>
+
+    <select id="getPrdctEvltnFigureList" parameterType="SearchPrdctRateSeqDto" resultType="PrdctEvltnFigureDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getPrdctEvltnFigureList / 평가계수 */
+        SELECT RPRSN_PRDCT_CODE
+             , PRDCT_RATE_SEQ
+             , PYMNT_PERIOD
+             , EVLTN_FIGURE1
+             , EVLTN_FIGURE2
+             , EVLTN_FIGURE3
+        FROM TB_PRDCT_EVLTN_FIGURE
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+    </select>
+
+    <select id="getPrdctEvltnStdList" parameterType="SearchPrdctRateSeqDto" resultType="PrdctEvltnStdDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getPrdctEvltnStdList / 평가업적산출기준 */
+        SELECT RPRSN_PRDCT_CODE
+             , PRDCT_RATE_SEQ
+             , PYMNT_PERIOD
+             , STD_CHANGE_RATE
+             , INSRN_CHANGE_RATE
+             , PRDCT_CHANGE_RATE
+             , PERIOD_CHANGE_RATE
+        FROM TB_PRDCT_EVLTN_STD_LIST
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+    </select>
+    
+    <select id="getPrdctExtpyAdjstList" parameterType="SearchPrdctRateSeqDto" resultType="PrdctExtpyAdjstDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getPrdctExtpyAdjstList / 수당유형별 조정율 */
+        SELECT PEA.RPRSN_PRDCT_CODE
+             , PEA.PRDCT_RATE_SEQ
+             , PEA.EXTPY_TYPE
+             , PEA.EVLTN_ADJST_RATE
+             , PEA.PRDCT_ADJST_RATE
+             , PEA.INSRR_ADJST_APLCT_YN
+             , PEA.EX_ADPAY_RATE
+             , PEA.EX_ADPAY_TIMES
+        FROM TB_PRDCT_EXTPY_ADJST PEA,
+             TB_CODE C
+        WHERE PEA.RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PEA.PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+          AND PEA.EXTPY_TYPE = C.CODE_ID
+          AND C.CODE_INIT = 'EXTPY_TYPE'
+        ORDER BY C.PRNT_ODER
+    </select>
+
+    <select id="getPrdctIrchList" parameterType="SearchPrdctRateSeqDto" resultType="PrdctIrchDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.selPrdctIrch / 보험사환산 */
+        SELECT RPRSN_PRDCT_CODE
+             , PRDCT_RATE_SEQ
+             , IRCH_SEQ
+             , IRCH_RATE_STD
+             , PYMNT_PERIOD
+             , IRCH_RATE1
+             , IRCH_RATE2
+             , IRCH_RATE3
+        FROM TB_PRDCT_IRCH
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+    </select>
+
+    <select id="getPrdctPeriodExtpyList" parameterType="SearchPrdctRateSeqDto" resultType="PrdctPeriodExtpyDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getPrdctPeriodExtpyList / 납기수수료유형별 조정율 */
+        SELECT RPRSN_PRDCT_CODE
+             , PRDCT_RATE_SEQ
+             , PYMNT_PERIOD
+             , EXTPY_TYPE
+             , RC_ADJST_RATE
+             , RC_RPRSN_PYMNT_RATE
+        FROM TB_PRDCT_PERIOD_EXTPY
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+    </select>
+
+    <select id="getPrdctPymntAlarmList" parameterType="SearchPrdctRateSeqDto" resultType="PrdctPymntAlarmDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getPrdctPymntAlarmList / 지급액공시 */
+        SELECT RPRSN_PRDCT_CODE
+             , PRDCT_RATE_SEQ
+             , REG_CHANGE_YN
+             , REG_CHANGE_RATE
+             , RESULT_ADJST_RATE
+             , EX_ADPAY_TIMES
+             , EX_ADPAY_TIMS2
+             , TOTAL_PYMNT_TIMES
+             , TOTAL_PYMNT_TIMS2
+             , DFNTN_YN
+             , ALARM_MEMO
+--              , REG_DATE
+--              , REG_USER_NO
+        FROM TB_PRDCT_PYMNT_ALARM
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+    </select>
+
+    <select id="getPrdctPymntFigureList" parameterType="SearchPrdctRateSeqDto" resultType="PrdctPymntFigureDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getPrdctPymntFigureList / 상품조정율 */
+        SELECT RPRSN_PRDCT_CODE
+             , PRDCT_RATE_SEQ
+             , PYMNT_PERIOD
+             , PYMNT_RATE1
+             , PYMNT_RATE2
+             , PYMNT_RATE3
+             , OA_HOLD_RATE
+             , PYMNT_ADJST_RATE
+             , PYMNT_ALARM_RATE
+        FROM TB_PRDCT_PYMNT_FIGURE
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+    </select>
+
+
+    <select id="getMaxPrdctRateSeq" parameterType="SearchPrdctRateSeqDto" resultType="java.lang.Integer">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getMaxPrdctRateSeq */
+        SELECT NVL(MAX(PRDCT_RATE_SEQ),0)+1
+        FROM TB_PRDCT_RATE_MNGMN
+        WHERE PRM.CLIENT_NO = #{clientNo}
+          AND PRM.RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </select>
+
+    <select id="getLastDfntnAplctEndDate" parameterType="PrdctRateMngmnDto" resultType="LastDfntnAplctEndDateDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getLastDfntnDate / 최종 확정 적용종료일 */
+        SELECT
+            (
+                SELECT
+                    MAX(APLCT_END_DATE)
+                FROM FI_PRDCT_RATE_MNGMN
+                WHERE CLIENT_NO = #{clientNo}
+                  AND RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+                  AND PRDCT_RATE_SEQ <![CDATA[<>]]> #{prdctRateSeq}
+                  AND PRDCT_RATE_GROUP = #{prdctRateGroup}
+                  AND DFNTN_YN = 'Y'
+                GROUP BY RPRSN_PRDCT_CODE
+            ) AS MAX_APLCT_END_DATE
+             ,(
+            SELECT
+                MIN(APLCT_END_DATE)
+            FROM FI_PRDCT_RATE_MNGMN
+            WHERE CLIENT_NO = #{clientNo}
+              AND RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+              AND PRDCT_RATE_SEQ <![CDATA[<>]]> #{prdctRateSeq}
+              AND PRDCT_RATE_GROUP = #{prdctRateGroup}
+              AND DFNTN_YN = 'Y'
+            GROUP BY RPRSN_PRDCT_CODE
+        )AS MIN_APLCT_END_DATE
+             ,(
+            SELECT DFNTN_YN
+            FROM FI_PRDCT_RATE_MNGMN
+            WHERE CLIENT_NO = #{clientNo}
+              AND RPRSN_PRDCT_CODE     = #{rprsnPrdctCode}
+              AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+              AND PRDCT_RATE_GROUP 	= #{prdctRateGroup}
+        )AS DFNTN_YN
+             ,(
+            SELECT 'Y'
+            FROM FI_PRDCT_RATE_MNGMN
+            WHERE CLIENT_NO = #{clientNo}
+              AND RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+              AND (
+                    #{aplcStDate} BETWEEN APLC_ST_DATE AND APLC_ED_DATE
+                    OR #{aplcEdDate} BETWEEN APLC_ST_DATE AND APLC_ED_DATE
+                )
+              AND PRDCT_RATE_SEQ <![CDATA[<>]]> #{prdctRateSeq}
+              AND PRDCT_RATE_GROUP = #{prdctRateGroup}
+            GROUP BY RPRSN_PRDCT_CODE
+        ) AS INCLS_YN
+        FROM DUAL
+
+    </select>
+
+</mapper>

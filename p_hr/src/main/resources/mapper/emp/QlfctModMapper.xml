@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.hr.emp.qlfct.dao.QlfctModDao">
+
+    <!-- 피고용인 자격정보등록 -->
+    <insert id="insQlfct" parameterType="EmpQlfctVO">
+        <selectKey keyProperty="qlfctSeq" resultType="int" order="BEFORE">
+            <![CDATA[
+			SELECT NVL (MAX(A.QLFCT_SEQ), 0) + 1 AS QLFCT_SEQ
+			  FROM TB_EMP_QLFCT a
+			     , TB_EMP B
+			 WHERE A.EMP_NO = #{empNo}
+			   AND B.CLIENT_NO = #{clientNo}
+			   AND A.EMP_NO = B.EMP_NO
+     	    ]]>
+        </selectKey>
+
+        INSERT INTO TB_EMP_QLFCT (
+              EMP_NO
+            , QLFCT_SEQ
+            , QLFCT_CODE
+            , QLFCT_NO
+            , ISSUE_INSTT
+            , GRAD
+            , EXPRT_DATE
+            , PASS_DATE
+            , PBLCT_DATE
+            , DATA_STATE
+            , REG_DATE
+            , REG_USER_NO
+            , VRTL_ID
+        )
+        SELECT #{empNo}
+            , #{qlfctSeq}
+            , TRIM(#{qlfctCode})
+            , TRIM(#{qlfctNo})
+            , TRIM(#{issueInstt})
+            , TRIM(#{grad})
+            , REPLACE(TRIM(#{exprtDate}), '/')
+            , REPLACE(TRIM(#{passDate}), '/')
+            , REPLACE(TRIM(#{pblctDate}), '/')
+            , 'A'
+            , SYSDATE
+            , #{regUserNo}
+            , SYSTIMESTAMP
+        FROM DUAL
+    </insert>
+
+    <!-- 피고용인 자격정보수정 -->
+    <update id="updQlfct" parameterType="EmpQlfctVO">
+        UPDATE TB_EMP_QLFCT A
+           SET QLFCT_CODE = TRIM(#{qlfctCode})
+             , QLFCT_NO = TRIM(#{qlfctNo})
+             , ISSUE_INSTT = TRIM(#{issueInstt})
+             , GRAD = TRIM(#{grad})
+             , PASS_DATE = REPLACE(TRIM(#{passDate}), '/')
+             , EXPRT_DATE = REPLACE(TRIM(#{exprtDate}), '/')
+             , PBLCT_DATE = REPLACE(TRIM(#{pblctDate}), '/')
+         WHERE EMP_NO = #{empNo}
+           AND QLFCT_SEQ = #{qlfctSeq}
+    </update>
+
+    <!-- 피고용인 자격정보삭제 -->
+    <delete id="delQlfct" parameterType="EmpQlfctVO">
+        UPDATE TB_EMP_Qlfct
+           SET DATA_STATE = 'D'
+         WHERE EMP_NO = #{empNo}
+           AND Qlfct_SEQ = #{qlfctSeq}
+    </delete>
+</mapper>

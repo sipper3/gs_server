@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.prdctm.prdct.dao.PrdctModDao">
+
+    <insert id="insPrdct" parameterType="PrdctVO">
+        /* kr.fingate.gs.prdctm.prdct.dao.PrdctModDao.insPrdct */
+        INSERT INTO TB_PRDCT (
+             RPRSN_PRDCT_CODE
+             , INSRR_CODE
+             , PRDCT_NAME
+             , PRDCT_NCKNM
+             , PRDCT_EXPSR_YN
+             , SALE_START_DATE
+             , SALE_END_DATE
+             , PRDCT_STATE
+             , SALE_CHNL
+             , ELCTR_SBSCR_YN
+             , PREM_CLCLT_YN
+             , PREM_CLCLT_METHOD
+             , PREM_CLCLT_TYPE
+             , CRNCY_TYPE
+             , GRADE_TYPE
+             , PRINT_ORDER
+             , REG_DATE
+             , REG_USER_NO
+             , MOD_DATE
+             , MOD_USER_NO ) VALUES
+            (
+                #{rprsnPrdctCode}
+            , #{insrrCode}
+            , #{prdctName}
+            , #{prdctNcknm}
+            , #{prdctExpsrYn}
+            , #{saleStartDate}
+            , #{saleEndDate}
+            , #{prdctState}
+            , #{saleChnl}
+            , #{elctrSbscrYn}
+            , #{premClcltYn}
+            , #{premClcltMethod}
+            , #{premClcltType}
+            , #{crncyType}
+            , #{gradeType}
+            , #{printOrder}
+            , NOW()
+            , #{regUserNo}
+            , NOW()
+            , #{modUserNo} )
+        <selectKey keyProperty="prdctNo" resultType="long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <update id="updPrdct" parameterType="PrdctVO">
+        /* kr.fingate.gs.prdctm.prdct.dao.PrdctModDao.updPrdct */
+        UPDATE TB_PRDCT SET
+            RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+          , INSRR_CODE = #{insrrCode}
+          , PRDCT_NAME = #{prdctName}
+          , PRDCT_NCKNM = #{prdctNcknm}
+          , PRDCT_EXPSR_YN = #{prdctExpsrYn}
+          , SALE_START_DATE = #{saleStartDate}
+          , SALE_END_DATE = #{saleEndDate}
+          , PRDCT_STATE = #{prdctState}
+          , SALE_CHNL = #{saleChnl}
+          , ELCTR_SBSCR_YN = #{elctrSbscrYn}
+          , PREM_CLCLT_YN = #{premClcltYn}
+          , PREM_CLCLT_METHOD = #{premClcltMethod}
+          , PREM_CLCLT_TYPE = #{premClcltType}
+          , CRNCY_TYPE = #{crncyType}
+          , GRADE_TYPE = #{gradeType}
+          , PRINT_ORDER = #{printOrder}
+            , MOD_DATE = NOW()
+            , MOD_USER_NO = #{modUserNo}
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </update>
+
+    <update id="delPrdct" parameterType="PrdctVO">
+        /* kr.fingate.gs.prdctm.prdct.dao.PrdctModDao.delPrdct */
+        UPDATE TB_PRDCT SET
+            DATA_STATE = 'D'
+            , MOD_DATE = NOW()
+            , MOD_USER_NO = #{modUserNo}
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </update>
+</mapper>

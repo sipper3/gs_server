@@ -20,3 +20,6 @@ datasources-common:
       jdbcUrl: jdbc:h2:mem:test;
       username: sa
       password:
+
+file:
+  baseDir: /home/fingate/upload

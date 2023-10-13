@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.prdctm.rprsn.dao.RprsnPrdctModDao">
+
+    <insert id="insRprsnPrdct" parameterType="RprsnPrdctVO">
+        /* kr.fingate.gs.prdctm.rprsn.dao.RprsnPrdctModDao.insRprsnPrdct */
+        INSERT INTO TB_RPRSN_PRDCT (
+             INSRR_CODE
+             , RPRSN_PRDCT_NAME
+             , RPRSN_PRDCT_NCKNM
+             , PRDCT_CLASS
+             , PRDCT_KIND
+             , PRDCT_GROUP
+             , PRDCT_SALE_TYPE
+             , PRDCT_SALE_START_DATE
+             , PRDCT_SALE_END_DATE
+             , PREV_RPRSN_PRDCT_CODE
+             , REG_DATE
+             , REG_USER_NO
+             , MOD_DATE
+             , MOD_USER_NO ) VALUES
+            (
+                #{insrrCode}
+            , #{rprsnPrdctName}
+            , #{rprsnPrdctNcknm}
+            , #{prdctClass}
+            , #{prdctKind}
+            , #{prdctGroup}
+            , #{prdctSaleType}
+            , #{prdctSaleStartDate}
+            , #{prdctSaleEndDate}
+            , #{prevRprsnPrdctCode}
+            , NOW()
+            , #{regUserNo}
+            , NOW()
+            , #{modUserNo} )
+        <selectKey keyProperty="rprsnPrdctCode" resultType="long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <update id="updRprsnPrdct" parameterType="RprsnPrdctVO">
+        /* kr.fingate.gs.prdctm.rprsn.dao.RprsnPrdctModDao.updRprsnPrdct */
+        UPDATE TB_RPRSN_PRDCT SET
+            INSRR_CODE = #{insrrCode}
+            , RPRSN_PRDCT_NAME = #{rprsnPrdctName}
+            , RPRSN_PRDCT_NCKNM = #{rprsnPrdctNcknm}
+            , PRDCT_CLASS = #{prdctClass}
+            , PRDCT_KIND = #{prdctKind}
+            , PRDCT_GROUP = #{prdctGroup}
+            , PRDCT_SALE_TYPE = #{prdctSaleType}
+            , PRDCT_SALE_START_DATE = #{prdctSaleStartDate}
+            , PRDCT_SALE_END_DATE = #{prdctSaleEndDate}
+            , PREV_RPRSN_PRDCT_CODE = #{prevRprsnPrdctCode}
+            , MOD_DATE = NOW()
+            , MOD_USER_NO = #{modUserNo}
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </update>
+
+    <update id="delRprsnPrdct" parameterType="RprsnPrdctVO">
+        /* kr.fingate.gs.prdctm.rprsn.dao.RprsnPrdctModDao.delRprsnPrdct */
+        UPDATE TB_RPRSN_PRDCT SET
+            DATA_STATE = 'D'
+            , MOD_DATE = NOW()
+            , MOD_USER_NO = #{modUserNo}
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </update>
+</mapper>

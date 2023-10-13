@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.prdctm.rprsn.dao.RprsnPrdctDao">
+
+    <select id="getRprsnPrdctList" parameterType="SearchRprsnPrdctDto"  resultType="RprsnPrdctDto">
+        /* kr.fingate.gs.prdctm.rprsn.dao.RprsnPrdctDao.getRprsnPrdctList */
+        SELECT
+            RP.RPRSN_PRDCT_CODE
+            , RP.INSRR_CODE
+            , RP.RPRSN_PRDCT_NAME
+            , RP.RPRSN_PRDCT_NCKNM
+            , RP.PRDCT_CLASS
+            , RP.PRDCT_KIND
+            , RP.PRDCT_GROUP
+            , RP.PRDCT_SALE_TYPE
+            , RP.PRDCT_EXPSR_YN
+            , DATE_FORMAT(RP.PRDCT_SALE_START_DATE,'%Y%m%d') AS PRDCT_SALE_START_DATE
+            , DATE_FORMAT(RP.PRDCT_SALE_END_DATE,'%Y%m%d') AS PRDCT_SALE_END_DATE
+            , RP.PREV_RPRSN_PRDCT_CODE
+            , RP.REG_DATE
+            , RP.REG_USER_NO
+            , RP.MOD_DATE
+            , RP.MOD_USER_NO
+        FROM TB_RPRSN_PRDCT RP
+        <include refid="includeRprsnPrdctListWhere"></include>
+    </select>
+
+    <select id="getRprsnPrdct" parameterType="SearchRprsnPrdctDto"  resultType="RprsnPrdctDto">
+        /* kr.fingate.gs.prdctm.rprsn.dao.RprsnPrdctDao.getRprsnPrdct */
+        SELECT
+        RP.RPRSN_PRDCT_CODE
+        , RP.INSRR_CODE
+        , RP.RPRSN_PRDCT_NAME
+        , RP.RPRSN_PRDCT_NCKNM
+        , RP.PRDCT_CLASS
+        , RP.PRDCT_KIND
+        , RP.PRDCT_GROUP
+        , RP.PRDCT_SALE_TYPE
+        , RP.PRDCT_EXPSR_YN
+        , DATE_FORMAT(RP.PRDCT_SALE_START_DATE,'%Y%m%d') AS PRDCT_SALE_START_DATE
+        , DATE_FORMAT(RP.PRDCT_SALE_END_DATE,'%Y%m%d') AS PRDCT_SALE_END_DATE
+        , RP.PREV_RPRSN_PRDCT_CODE
+        , RP.REG_DATE
+        , RP.REG_USER_NO
+        , RP.MOD_DATE
+        , RP.MOD_USER_NO
+        FROM TB_RPRSN_PRDCT RP
+        <include refid="includeRprsnPrdctListWhere"></include>
+    </select>
+
+    <sql id="includeRprsnPrdctListWhere">
+        WHERE RP.DATA_STATE = 'A'
+        <if test="rprsnPrdctCode > 0">
+        AND RP.RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+        </if>
+    </sql>
+</mapper>

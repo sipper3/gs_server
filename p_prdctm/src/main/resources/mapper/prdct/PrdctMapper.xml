@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.prdctm.prdct.dao.PrdctDao">
+
+    <select id="getPrdctInfoList_COUNT" parameterType="SearchPrdctDto" resultType="long">
+        /* kr.fingate.gs.prdctm.prdct.dao.PrdctDao.getPrdctInfoList_COUNT */
+        SELECT COUNT(1) AS CNT
+        FROM TB_PRDCT P
+        <include refid="includePrdctInfoListWhere"></include>
+    </select>
+
+    <select id="getPrdctInfoList" parameterType="SearchPrdctDto" resultType="PrdctInfoDto">
+        /* kr.fingate.gs.prdctm.prdct.dao.PrdctDao.getPrdctInfoList */
+        SELECT
+            P.PRDCT_NO
+            , P.RPRSN_PRDCT_CODE
+            , P.INSRR_CODE
+            , P.PRDCT_NAME
+            , P.PRDCT_NCKNM
+
+            , DATE_FORMAT(P.SALE_START_DATE,'%Y%m%d') AS SALE_START_DATE
+            , DATE_FORMAT(P.SALE_END_DATE,'%Y%m%d') AS SALE_END_DATE
+            , P.SALE_CHNL
+            , P.PRDCT_STATE
+
+            , RP.PRDCT_CLASS
+            , RP.PRDCT_KIND
+            , RP.PRDCT_GROUP
+            , RP.PRDCT_SALE_TYPE
+            , RP.PRDCT_EXPSR_YN
+            , RP.PRDCT_SALE_START_DATE
+            , RP.PRDCT_SALE_END_DATE
+
+        FROM TB_PRDCT P
+        LEFT OUTER JOIN TB_RPRSN_PRDCT RP ON P.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE
+        <include refid="includePrdctInfoListWhere"></include>
+    </select>
+
+    <sql id="includePrdctInfoListWhere">
+        WHERE P.DATA_STATE = 'A'
+        <if test="prdctNo > 0">
+        AND P.PRDCT_NO = #{prdctNo}
+        </if>
+    </sql>
+
+    <select id="getPrdctInfo" parameterType="SearchPrdctDto" resultType="PrdctInfoDto">
+        /* kr.fingate.gs.prdctm.prdct.dao.PrdctDao.getPrdctInfo */
+        SELECT
+        P.PRDCT_NO
+        , P.RPRSN_PRDCT_CODE
+        , P.INSRR_CODE
+        , P.PRDCT_NAME
+        , P.PRDCT_NCKNM
+
+        , DATE_FORMAT(P.SALE_START_DATE,'%Y%m%d') AS SALE_START_DATE
+        , DATE_FORMAT(P.SALE_END_DATE,'%Y%m%d') AS SALE_END_DATE
+        , P.SALE_CHNL
+        , P.PRDCT_STATE
+        , P.REG_DATE
+        , P.REG_USER_NO
+        , P.MOD_DATE
+        , P.MOD_USER_NO
+
+        , RP.PRDCT_CLASS
+        , RP.PRDCT_KIND
+        , RP.PRDCT_GROUP
+        , RP.PRDCT_SALE_TYPE
+        , RP.PRDCT_EXPSR_YN
+        , RP.PRDCT_SALE_START_DATE
+        , RP.PRDCT_SALE_END_DATE
+
+        FROM TB_PRDCT P
+        LEFT OUTER JOIN TB_RPRSN_PRDCT RP ON P.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE
+        <include refid="includePrdctInfoListWhere"></include>
+    </select>
+
+</mapper>

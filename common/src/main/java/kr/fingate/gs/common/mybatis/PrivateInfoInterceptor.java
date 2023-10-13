@@ -33,8 +33,8 @@ import java.util.List;
 public class PrivateInfoInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        String methodName = invocation.getMethod().getName();
-        try {
+        try{
+            String methodName = invocation.getMethod().getName();
             /* dao method에 Encrypt annotation이 있는지 체크하여 annotation이 있는 경우에만 암호화 여부 체크 */
             Object[] args = invocation.getArgs();
             MappedStatement mapped = (MappedStatement) args[0];
@@ -48,13 +48,17 @@ public class PrivateInfoInterceptor implements Interceptor {
             Method[] methods = c.getDeclaredMethods();
             Method daoMethod = Arrays.stream(methods).filter(method1 -> method1.getName().equals(daoMethodName)).findAny().orElse(null);
 
-            assert daoMethod != null;
+            //selectkey 등 mapper내의 쿼리의 method id인 경우 제외
+            if(daoMethodName.contains("!")) {
+                return invocation.proceed();
+            }
             PrivateSql privateSqlAn = daoMethod.getDeclaredAnnotation(PrivateSql.class);
             if(!(privateSqlAn == null || (!privateSqlAn.masking() && !privateSqlAn.encrypt() && !privateSqlAn.decrypt()))) {
-                if(methodName.equals("update") && privateSqlAn.encrypt()) {
+                if(privateSqlAn.encrypt()) {
                     Object param = args[1];
                     encrypt(param);
-                }else if(methodName.equals("query")) {
+                }
+                if(methodName.equals("query")) {
                     Object resultSet = invocation.proceed();
                     if(resultSet != null) {
                         if(resultSet instanceof List<?> list) {

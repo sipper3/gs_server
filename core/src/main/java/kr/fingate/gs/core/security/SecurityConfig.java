@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsUtils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -56,7 +57,8 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         String[] JWT_REQUEST_IGNORE = Stream.concat(Arrays.stream(JWT_REQUEST_IGNORE_CORE), Arrays.stream(JWT_REQUEST_IGNORE_MODULE))
                                             .toArray(String[]::new);
-        return (web) -> web.ignoring().requestMatchers(JWT_REQUEST_IGNORE);
+        return (web) -> web.ignoring()
+                .requestMatchers(JWT_REQUEST_IGNORE);
     }
 
     /*
@@ -95,15 +97,18 @@ public class SecurityConfig {
                     String[] JWT_REQUEST_PERMIT = Stream.concat(Arrays.stream(JWT_REQUEST_PERMIT_CORE), Arrays.stream(JWT_REQUEST_PERMIT_MODULE))
                             .toArray(String[]::new);
 
-
                     if(Array.getLength(JWT_REQUEST_PERMIT) > 0){
                         request.requestMatchers(JWT_REQUEST_PERMIT).permitAll()
+                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                                 .anyRequest().authenticated();
                     } else {
 //                    String projectApi = String.format("/%s/api/*", PROJECT_NAME);
 //                    request.requestMatchers(projectApi).authenticated();
-                        request.anyRequest().authenticated();
+                        request.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                                .anyRequest().authenticated();
                     }
+
+
                 });
 
         /* Filter 순서 정의

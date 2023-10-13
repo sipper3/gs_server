@@ -53,14 +53,15 @@ public class LoginPublicService {
             throw new BizException(ResponseCode.LOGN_LOCK_USER);
         }
 
-        if(loginInfoDto.getExpiredYn().equals("Y")){
-            throw new BizException(ResponseCode.LOGN_EXPIRE_USER);
-        }
+//        if(loginInfoDto.getExpiredYn().equals("Y")){
+//            throw new BizException(ResponseCode.LOGN_EXPIRE_USER);
+//        }
 
         String fg = EncryptionUtil.aesEncode(ssoLoginDto.getClientNo() + ":" + ssoLoginDto.getLoginId(), encryptionKey);
 
         LoginDto loginDto = new LoginDto();
         loginDto.setLoginId(ssoLoginDto.getLoginId());
+        loginDto.setExpiredYn(loginInfoDto.getExpiredYn());
         loginDto.setFg(fg);
 
 

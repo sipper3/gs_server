@@ -1,0 +1,22 @@
+project:
+  name: prdctm
+spring:
+  profiles:
+    default: local     # default profile
+    include:
+      - core
+      - common
+    group:
+      local: core-${spring.profiles.active},common-${spring.profiles.active}
+      dev: core-${spring.profiles.active},common-${spring.profiles.active}
+      prod: core-${spring.profiles.active},common-${spring.profiles.active}
+  pid:
+    file: prdct.pid
+
+server:
+  port: 9412
+
+pagehelper:
+  helper-dialect: mariadb
+
+

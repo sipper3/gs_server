@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.cmsn.prdct.dao.PrdctModDao">
+
+    <insert id="insPrdctRateMngmn" parameterType="PrdctRateMngmnVO">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctRateMngmn / 상품율관리 */
+        MERGE INTO TB_PRDCT_RATE_MNGMN
+            USING DUAL ON (
+                        CLIENT_NO = #{clientNo}
+                    AND RPRSN_PRDCT_CODE 		= #{rprsnPrdctCode}
+                    AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
+                )
+            WHEN MATCHED THEN
+                UPDATE SET
+                    PRDCT_RATE_GRUP		    = #{prdtRateGrup}
+                    , APLCT_START_DATE 		= #{aplctStartDate}
+                    , APLCT_END_DATE 		= #{aplctEndDate}
+                    , DFNTN_YN 			    = #{dfntnYn}
+                    , APLCT_END_YN 			= #{aplctEndYn}
+                    , ONE_PYMNT_RULT_YN 	= #{onePymntRultYn}
+                    , ONE_PYMNT_RATE1 		= #{onePymntRate1}
+                    , ONE_PYMNT_EVLTN_FIGURE1	= #{onePymntEvltnFigure1}
+                    , ONE_PYMNT_RATE2 		= #{onePymntRate2}
+                    , ONE_PYMNT_EVLTN_FIGURE2	= #{onePymntEvltnFigure2}
+            WHEN NOT MATCHED THEN
+                INSERT (
+                     CLIENT_NO
+                    , RPRSN_PRDCT_CODE
+                    , PRDCT_RATE_SEQ
+                    , PRDCT_RATE_GRUP
+                    , APLCT_START_DATE
+                    , APLCT_END_DATE
+                    , DFNTN_YN
+                    , APLCT_END_YN
+                    , ONE_PYMNT_RULT_YN
+                    , ONE_PYMNT_RATE1
+                    , ONE_PYMNT_EVLTN_FIGURE1
+                    , ONE_PYMNT_RATE2
+                    , ONE_PYMNT_EVLTN_FIGURE2
+                    , REG_DATE
+                    , REG_USER_NO
+                ) VALUES (
+                    #{clientNo}
+                    , #{rprsnPrdctCode}
+                    , #{prdctRateSeq}
+                    , #{prdtRateGrup}
+                    , #{aplctStartDate}
+                    , #{aplctEndDate}
+                    , #{dfntnYn}
+                    , #{aplctEndYn}
+                    , #{onePymntRultYn}
+                    , #{onePymntRate1}
+                    , #{onePymntEvltnFigure1}
+                    , #{onePymntRate2}
+                    , #{onePymntEvltnFigure2}
+                    , SYSDATE
+                    , #{regUserNo}
+                )
+    </insert>
+
+    <delete id="delPrdctRateMngmn" parameterType="PrdctRateMngmnVO">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.delPrdctRateMngmn */
+        DELETE FROM TB_PRDCT_RATE_MNGMN
+        WHERE CLIENT_NO = #{clientNo}
+          AND RPRSN_PRDCT_CODE 		= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
+    </delete>
+
+    <insert id="insPrdctEvltnFigure" parameterType="java.util.List">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctEvltnFigure / 상품평가계수 */
+        INSERT INTO TB_PRDCT_EVLTN_FIGURE
+            (
+                RPRSN_PRDCT_CODE
+                , PRDCT_RATE_SEQ
+                , PYMNT_PERIOD
+                , EVLTN_FIGURE1
+                , EVLTN_FIGURE2
+                , EVLTN_FIGURE3
+                ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.evltnFigure1}
+            , #{item.evltnFigure2}
+            , #{item.evltnFigure3}
+            )
+        </foreach>
+
+
+    </insert>
+
+    <delete id="delPrdctEvltnFigure" parameterType="PrdctEvltnFigureVO">
+        /* dao.prdct.kr.fingate.gs.cmsn.PrdctModDao.delPrdctEvltnFigure */
+        DELETE FROM TB_PRDCT_EVLTN_FIGURE
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+        AND PRDCT_RATE_SEQ = #{prdctRateSeq}
+        <if test="pymntPeriod > 0">
+            AND PYMNT_PERIOD = #{pymntPeriod}
+        </if>
+    </delete>
+
+    <insert id="insPrdctEvltnStd" parameterType="java.util.List">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctEvltnStd / 평가업적산출기준 */
+        INSERT INTO TB_PRDCT_EVLTN_STD
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , PYMNT_PERIOD
+            , STD_CHANGE_RATE
+            , INSRN_CHANGE_RATE
+            , PRDCT_CHANGE_RATE
+            , PERIOD_CHANGE_RATE
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.stdChangeRate}
+            , #{item.insrnChangeRate}
+            , #{item.prdctChangeRate}
+            , #{item.periodChangeRate}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delPrdctEvltnStd" parameterType="PrdctEvltnStdVO">
+        /* dao.prdct.kr.fingate.gs.cmsn.PrdctModDao.delPrdctEvltnStd */
+        DELETE FROM TB_PRDCT_EVLTN_STD
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+        AND PRDCT_RATE_SEQ = #{prdctRateSeq}
+        <if test="pymntPeriod > 0">
+            AND PYMNT_PERIOD = #{pymntPeriod}
+        </if>
+    </delete>
+
+    <!-- 지급율 조정계수 등록 -->
+    <insert id="insPrdctPymntFigure" parameterType="java.util.List">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdtPayFigu / 지급율 조정계수 */
+        INSERT INTO TB_PRDCT_PYMNT_FIGURE
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , PYMNT_PERIOD
+            , PYMNT_RATE1
+            , PYMNT_RATE2
+            , PYMNT_RATE3
+            , OA_HOLD_RATE
+            , PYMNT_AJMT_RATE
+            , PYMNT_ANUC_RATE
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+               #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.pymntRate1}
+            , #{item.pymntRate2}
+            , #{item.pymntRate3}
+            , #{item.oaHoldRate}
+            , #{item.pymntAdjstRate}
+            , #{item.pymntAlarmRate}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delPrdctPymntFigure" parameterType="PrdctPymntFigureVO">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.delPrdtPayFigu */
+        DELETE FROM TB_PRDCT_PYMNT_FIGURE
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+          AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+    </delete>
+
+    <insert id="insPrdctExtpyAdjst" parameterType="java.util.List">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctExtpyAdjst / 수수료유형별조정율 */
+        INSERT INTO TB_PRDCT_EXTPY_ADJST
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , EXPY_TYPE
+            , EVLU_AJMT_RATE
+            , PRDCT_AJMT_RATE
+            , INSRR_AJMT_APLC_YN
+            , EX_ADPY_RATE
+            , EX_ADPY_TIMS
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.expyType}
+            , #{item.evluAjmtRate}
+            , #{item.prdtAjmtRate}
+            , #{item.insrAjmtAplcYn}
+            , #{item.exAdpyRate}
+            , #{item.exAdpyTims}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delPrdctExtpyAdjst" parameterType="PrdctExtpyAdjstVO">
+        /* dao.prdct.kr.fingate.gs.cmsn.PrdctModDao.delPrdctExtpyAdjst */
+        DELETE FROM TB_PRDCT_EXTPY_ADJST
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+        AND PRDCT_RATE_SEQ = #{prdctRateSeq}
+        <if test="extpyType != null and !extpyType.equals('')">
+            AND EXTPY_TYPE 	= #{extpyType}
+        </if>
+    </delete>
+
+    <insert id="insPrdctPeriodExtpy" parameterType="java.util.List">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdtProdExpy / 납기수수료유형별조정율 */
+        INSERT INTO TB_PRDCT_PERIOD_EXTPY
+        (
+                RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , PYMNT_PERIOD
+            , EXPY_TYPE
+            , RC_AJMT_RATE
+            , RC_RPST_PYMNT_RATE
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.expyType}
+            , #{item.rcAjmtRate}
+            , #{item.rcRpstPayRate}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delPrdctPeriodExtpy" parameterType="PrdctPeriodExtpyVO">
+        /* dao.prdct.kr.fingate.gs.cmsn.PrdctModDao.delPrdtProdExpy */
+        DELETE FROM TB_PRDCT_PERIOD_EXTPY
+        WHERE RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
+        AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+        <if test="extpyType != null and !extpyType.equals('')">
+            AND EXTPY_TYPE 	= #{extpyType}
+        </if>
+        <if test="pymntPeriod > 0">
+            AND PYMNT_PERIOD = #{pymntPeriod}
+        </if>
+    </delete>
+
+    <insert id="insPrdctPymntAlarm" parameterType="java.util.List">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctPymntAlarm / 지급액공시 */
+        INSERT INTO TB_PRDCT_PYMNT_ALARM
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , REG_CHANGE_YN
+            , REG_CHANGE_RATE
+            , RESULT_ADJST_RATE
+            , EX_ADPAY_TIMES
+            , EX_ADPAY_TIMS2
+            , TOTAL_PYMNT_TIMES
+            , TOTAL_PYMNT_TIMS2
+            , DFNTN_YN
+            , ALARM_MEMO
+            , REG_DATE
+            , REG_USER_NO
+
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.regChangeYn}
+            , #{item.regChangeRate}
+            , #{item.resultAdjstRate}
+            , #{item.exAdpayTimes}
+            , #{item.exAdpayTims2}
+            , #{item.totalPymntTimes}
+            , #{item.totalPymntTims2}
+            , #{item.dfntnYn}
+            , #{item.alarmMemo}
+            , SYSDATE
+            , #{item.rgstUserNo}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delPrdctPymntAlarm" parameterType="PrdctPymntAlarmVO">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.delPrdctPymntAlarm */
+        DELETE FROM TB_PRDCT_PYMNT_ALARM
+        WHERE PRDCT_RATE_SEQ = #{prdctRateSeq}
+          AND RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </delete>
+
+    <insert id="insPrdctIrch" parameterType="PrdctIrchVO">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctIrch / 보험사환산 */
+        INSERT INTO TB_PRDCT_IRCH
+        (
+            RPRSN_PRDCT_CODE
+        , PRDCT_RATE_SEQ
+        , IRCH_SEQ
+        , IRCH_RATE_STD
+        , PYMNT_PERIOD
+        , IRCH_RATE1
+        , IRCH_RATE2
+        , IRCH_RATE3
+        ) VALUES (
+            #{rprsnPrdctCode}
+            , #{prdctRateSeq}
+            , (SELECT NVL(MAX(IRCH_SEQ),0)+1
+                FROM TB_PRDCT_IRCH
+                WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+                AND PRDCT_RATE_SEQ=#{prdctRateSeq})
+            , #{irchRateStd}
+            , #{pymntPeriod}
+            , #{irchRate1}
+            , #{irchRate2}
+            , #{irchRate3}
+            )
+    </insert>
+
+    <delete id="delPrdctIrch" parameterType="PrdctIrchVO">
+        /* dao.prdct.kr.fingate.gs.cmsn.PrdctModDao.delPrdctIrch */
+        DELETE FROM TB_PRDCT_IRCH
+        WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+        AND PRDCT_RATE_SEQ = #{prdctRateSeq}
+        <if test="irchSeq > 0">
+            AND IRCH_SEQ = #{irchSeq}
+        </if>
+    </delete>
+
+    <insert id="insPrdctInsrrAdjst" parameterType="PrdctInsrrAdjstVO">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctInsrrAdjst / 보험사조정율 */
+        INSERT INTO TB_PRDCT_INSRR_ADJST
+        (   INSRR_CODE
+            , PRDCT_GROUP
+            , INSRR_ADJST_SEQ
+            , CLIENT_NO
+            , INSRR_ADJST_RATE
+            , APLCT_START_DATE
+            , APLCT_END_DATE
+            , DFNTN_YN
+            , APLCT_END_YN
+            , REG_DATE
+            , REG_USER_NO
+        ) VALUES (
+            #{insrrCode},
+            #{prdctGroup},
+            (
+                SELECT NVL(MAX(INSRR_ADJST_SEQ),0)+1 AS INSRR_ADJST_SEQ
+                FROM TB_PRDCT_INSRR_ADJST
+                WHERE CLIENT_NO = #{clientNo}
+                AND INSRR_CD = #{insrrCd}
+                AND PRDCT_GROUP = #{prdctGroup}
+            ),
+            #{clientNo},
+            #{insrAjmtRate},
+            #{aplctStartDate},
+            #{aplctEndDate},
+            #{dfntnYn},
+            #{aplctEndYn},
+            SYSDATE,
+            #{regUserNo}
+            )
+    </insert>
+
+    <update id="updPrdctInsrrAdjst" parameterType="PrdctInsrrAdjstVO">
+        /* dao.prdct.kr.fingate.gs.cmsn.PrdctModDao.updPrdctInsrrAdjst */
+        UPDATE TB_PRDCT_INSRR_ADJST
+        SET
+            <choose>
+                <when test='dfntnYn != null and dfntnYn.equals("Y")'>
+                    APLCT_END_DATE = #{aplctEndDate},
+                    APLCT_END_YN = #{aplctEndYn}
+                </when>
+                <when test='dfntnYn != null and dfntnYn.equals("N")'>
+                    APLC_ED_DATE = #{aplcEdDate},
+                    APLC_ED_YN = #{aplcEdYn},
+                    INSRR_ADJST_RATE = #{insrrAdjstRate},
+                    APLCT_START_DATE = #{aplctStartDate},
+                    DFNTN_YN = 'N'
+                </when>
+            </choose>
+        WHERE INSRR_CD = #{insrrCd}
+        AND PRDCT_GROUP = #{prdctGroup}
+        AND INSRR_ADJST_SEQ = #{insrrAdjstSeq}
+        AND CLIENT_NO = #{clientNo}
+    </update>
+
+    <delete id="delPrdctInsrrAdjst" parameterType="PrdctInsrrAdjstVO">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.delPrdctInsrrAdjst */
+        DELETE TB_PRDCT_INSRR_ADJST
+		WHERE INSRR_CD = #{insrrCd}
+        AND PRDCT_GROUP = #{prdctGroup}
+        AND INSRR_ADJST_SEQ = #{insrrAdjstSeq}
+        AND CLIENT_NO = #{clientNo}
+    </delete>
+
+</mapper>

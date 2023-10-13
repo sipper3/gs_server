@@ -12,6 +12,8 @@ public enum ResponseCode {
 
     MISSING_PARAMETER(3003, "필수 파라미터가 누락 되었습니다."),
 
+    INVALID_PARAMETER(3004, "파라미터가 올바르지 않습니다."),
+
     // LOGIN ERROR
 	LOGN_NOT_USER(1000, "아이디 또는 비밀번호를 확인해주세요."),
 	LOGN_LOCK_USER(1001, "해당 계정은 잠금 상태 입니다."),

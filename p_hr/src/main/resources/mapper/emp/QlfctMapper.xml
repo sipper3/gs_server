@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.hr.emp.qlfct.dao.QlfctDao">
+
+    <sql id="getQlfctListWhere">
+        <where>
+            AND A.EMP_NO = #{empNo}
+            AND B.CLIENT_NO = #{clientNo}
+            AND A.EMP_NO = B.EMP_NO
+            AND A.DATA_STATE <![CDATA[<>]]> 'D'
+        </where>
+    </sql>
+
+    <select id="getQlfctList_COUNT" parameterType="EmpSearchDto" resultType="long">
+      SELECT COUNT(1)
+        FROM TB_EMP_QLFCT A
+           , TB_EMP B
+        <include refid="getQlfctListWhere"/>
+    </select>
+
+    <!-- 피고용인 자격정보조회 -->
+    <select id="getQlfctList" parameterType="EmpSearchDto" resultType="EmpQlfctVO">
+        SELECT A.EMP_NO
+             , A.QLFCT_SEQ
+             , A.QLFCT_CODE
+             , A.QLFCT_NAME
+             , A.QLFCT_NO
+             , A.ISSUE_INSTT
+             , A.GRAD
+             , TO_CHAR(TO_DATE(A.EXPRT_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS EXPRT_DATE
+             , TO_CHAR(TO_DATE(A.PASS_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS PASS_DATE
+             , TO_CHAR(TO_DATE(A.PBLCT_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS PBLCT_DATE
+             , TO_CHAR(A.REG_DATE,'YYYY/MM/DD HH24:MI') AS REG_DATE
+             , A.REG_USER_NO
+             , FN_ORGNZ_USER(B.CLIENT_NO,A.REG_USER_NO) AS REG_USER_NAME
+             , A.VRTL_ID
+         FROM TB_EMP_QLFCT A
+            , TB_EMP B
+        <include refid="getQlfctListWhere"/>
+        ORDER BY A.QLFCT_SEQ DESC
+    </select>
+
+    <select id="getQlfctDupCheck" parameterType="QlfctDto" resultType="QlfctDto">
+        SELECT (CASE WHEN EXISTS (
+                            SELECT 1
+                              FROM TB_EMP_QLFCT X
+                                 , TB_EMP Y
+                             WHERE X.EMP_NO = Y.EMP_NO
+                               AND Y.CLIENT_NO = #{clientNo}
+                               AND X.QLFCT_CODE = 'I03'
+                               AND X.DATA_STATE = 'A'
+                               AND X.QLFCT_NO = M.QLFCT_NO
+                        )
+                    THEN 'Y'
+                    ELSE 'N'
+                END) AS REG_CHECK
+             , (CASE WHEN EXISTS (
+                            SELECT 1
+                              FROM TB_EMP_QLFCT X
+                                 , TB_EMP Y
+                             WHERE X.EMP_NO = Y.EMP_NO
+                               AND Y.CLIENT_NO = #{clientNo}
+                               AND X.QLFCT_CODE = 'I03'
+                               AND X.DATA_STATE = 'A'
+                               AND X.QLFCT_NO = M.QLFCT_NO
+                               AND X.EMP_NO  = M.EMP_NO
+                               AND X.QLFCT_SEQ = M.QLFCT_SEQ
+                        )
+                    THEN 'Y'
+                    ELSE 'N'
+                END) REG_UPDATE_CHECK
+             , (CASE WHEN EXISTS (
+                            SELECT 1
+                              FROM TB_EMP_QLFCT X
+                                 , TB_EMP Y
+                             WHERE X.EMP_NO = Y.EMP_NO
+                               AND Y.CLIENT_NO = #{clientNo}
+                               AND X.QLFCT_CODE = 'I03'
+                               AND X.DATA_STATE = 'A'
+                               AND M.QLFCT_CODE = 'I03'
+                               AND X.EMP_NO = M.EMP_NO
+                               AND X.QLFCT_SEQ != M.QLFCT_SEQ
+                               AND M.EXPRT_DATE >= X.PASS_DATE
+                               AND M.PASS_DATE <![CDATA[<=]]> X.EXPRT_DATE
+                                )
+                    THEN 'Y'
+                    ELSE 'N'
+                END) AS DATE_CHECK
+        FROM (
+           SELECT #{empNo} AS EMP_NO
+                , #{qlfctSeq} AS QLFCT_SEQ
+                , #{qlfctCode} AS QLFCT_CODE
+                , #{qlfctNo} AS QLFCT_NO
+                , #{passDate} AS PASS_DATE
+                , #{exprtDate} AS EXPRT_DATE
+             FROM DUAL
+        ) M
+    </select>
+
+</mapper>

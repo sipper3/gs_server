@@ -9,6 +9,8 @@ import kr.fingate.gs.core.aop.exception.BizException;
 import kr.fingate.gs.core.aop.response.ResponseCode;
 import kr.fingate.gs.common.consts.CommonConst;
 import kr.fingate.gs.common.util.ObjectUtil;
+import kr.fingate.gs.core.security.dto.UserTokenDto;
+import kr.fingate.gs.core.service.CoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,7 @@ public class LoginPublicController {
 
     private final LoginPublicService loginPublicService;
 
-    @PostMapping("/getLogin")
+    @PostMapping("/get/login")
     public LoginDto getLogin(HttpServletResponse response, @RequestBody SsoLoginDto loginDto) throws Exception {
 
         if(loginDto.getClientNo() < CommonConst.FINPL_CLIENT_NO || ObjectUtil.isEmpty(loginDto.getLoginId()) || ObjectUtil.isEmpty(loginDto.getLoginPswrd())){
@@ -34,9 +36,13 @@ public class LoginPublicController {
         return loginPublicService.getLogin(response, loginDto);
     }
 
-    @PostMapping("/getToken")
+    @PostMapping("/get/token")
     public Map<String, Object> getToken(HttpServletRequest request) throws Exception {
         return loginPublicService.getToken(request);
     }
 
+    @PostMapping("/get/accessuser")
+    public UserTokenDto getAccessUser() throws Exception {
+        return CoreService.getUserInfo();
+    }
 }

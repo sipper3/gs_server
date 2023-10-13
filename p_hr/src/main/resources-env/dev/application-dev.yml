@@ -1,0 +1,20 @@
+server:
+  port: 9222
+
+datasources:
+  - name: gs_hr
+    base-package: kr.fingate.gs.*.**.dao
+    aop-execution: kr.fingate.gs..service.*.*(..)
+    data-source:
+      driverClassName: oracle.jdbc.driver.OracleDriver
+      jdbcUrl: jdbc:oracle:thin:@192.168.0.20:1521/FREE
+      username: gbhruser
+      password: finora615hr
+      maximumPoolSize: 30  # max pool size
+      minimumIdle: 15  # min pool size
+      autoCommit: false
+      connectionTimeout: 30000
+
+logging:
+  file:
+    path: /data/gs_server/hr/logs

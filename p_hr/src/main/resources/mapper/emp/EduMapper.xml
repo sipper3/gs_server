@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.hr.emp.edu.dao.EduDao">
+
+    <sql id="getEduListWhere">
+        <where>
+            AND A.EMP_NO = #{empNo}
+            AND B.CLIENT_NO = #{clientNo}
+            AND A.DATA_STATE <![CDATA[<>]]> 'D'
+            AND A.EMP_NO = B.EMP_NO
+        </where>
+    </sql>
+
+    <select id="getEduList_COUNT" parameterType="EmpSearchDto" resultType="long">
+        SELECT COUNT(1)
+         FROM TB_EMP_EDU A
+            , TB_EMP B
+        <include refid="getEduListWhere"/>
+    </select>
+
+    <!-- 피고용인 교육정보조회 -->
+    <select id="getEduList" parameterType="EmpSearchDto" resultType="EmpEduVO">
+        SELECT EMP_NO
+             , EDU_SEQ
+             , EDU_INSTT
+             , EDU_PRCSS
+             , TO_CHAR(TO_DATE(EDU_START_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS EDU_START_DATE
+             , TO_CHAR(TO_DATE(EDU_END_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS EDU_END_DATE
+             , CMPLT_STATE
+             , CMPLT_NO
+             , TO_CHAR(TO_DATE(CMPLT_DATE,'YYYYMMDD'),'YYYY/MM/DD') AS CMPLT_DATE
+             , EDU_CLASS
+             , TO_CHAR(REG_DATE,'YYYY/MM/DD HH24:MI') AS REG_DATE
+             , REG_USER_NO
+          FROM TB_EMP_EDU A
+             , TB_EMP B
+            <include refid="getEduListWhere"/>
+         ORDER BY EDU_END_DATE DESC
+    </select>
+
+</mapper>
