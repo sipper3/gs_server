@@ -13,19 +13,21 @@ public interface PrdctDao {
 
     List<PrdctRateMngmnDto> getPrdctRateMngmnList(SearchPrdctRateMngmnDto params);
 
-    List<PrdctEvltnFigureDto> getPrdctEvltnFigureList(SearchPrdctRateSeqDto params)  throws Exception;
+    List<PrdctEvltnFigureDto> getPrdctEvltnFigureList(SearchPrdctRateSeqDto params);
 
-    List<PrdctEvltnStdDto> getPrdctEvltnStdList(SearchPrdctRateSeqDto params)  throws Exception;
+    List<PrdctEvltnStdDto> getPrdctEvltnStdList(SearchPrdctRateSeqDto params);
 
-    List<PrdctExtpyAdjstDto> getPrdctExtpyAdjstList(SearchPrdctRateSeqDto params)  throws Exception;
+    List<PrdctExtpyAdjstDto> getPrdctExtpyAdjstList(SearchPrdctRateSeqDto params);
 
-    List<PrdctIrchDto> getPrdctIrchList(SearchPrdctRateSeqDto params)  throws Exception;
+    List<PrdctIrchDto> getPrdctIrchList(SearchPrdctRateSeqDto params);
 
-    List<PrdctPeriodExtpyDto> getPrdctPeriodExtpyList(SearchPrdctRateSeqDto params)  throws Exception;
+    List<PrdctPeriodExtpyDto> getPrdctPeriodExtpyList(SearchPrdctRateSeqDto params);
 
-    List<PrdctPymntAlarmDto> getPrdctPymntAlarmList(SearchPrdctRateSeqDto params)  throws Exception;
+    List<PrdctPymntAlarmDto> getPrdctPymntAlarmList(SearchPrdctRateSeqDto params);
 
-    List<PrdctPymntFigureDto> getPrdctPymntFigureList(SearchPrdctRateSeqDto params)  throws Exception;
+    List<PrdctPymntFigureDto> getPrdctPymntFigureList(SearchPrdctRateSeqDto params);
 
+    int getMaxPrdctRateSeq(SearchPrdctRateSeqDto params);
 
+    LastDfntnAplctEndDateDto getLastDfntnAplctEndDate(PrdctRateMngmnDto params);
 }

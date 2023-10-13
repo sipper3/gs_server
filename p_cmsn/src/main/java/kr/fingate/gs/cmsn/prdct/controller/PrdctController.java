@@ -5,6 +5,7 @@ import kr.fingate.gs.cmsn.prdct.service.PrdctService;
 import kr.fingate.gs.common.dto.PageInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -56,10 +57,40 @@ public class PrdctController {
      * @return
      * @throws Exception
      */
-//    @RequestMapping(value="/insPrdctRate", method=RequestMethod.POST)
-//    public PrdtRateMgmtModel insPrdctRateDtails(@RequestBody PrdtMgmtSaveModel params)  throws Exception {
-//        PrdtRateMgmtModel rateMgmt = prdtMgmtService.insPrdtRateMgmtDtal(params);
-//        return rateMgmt;
-//    }
+    @RequestMapping(value="/insPrdctRate", method=RequestMethod.POST)
+    public PrdctRateMngmnDto savePrdctRateDtails(@RequestBody PrdtRateDtalDto prdtRateDtalDto)  throws Exception {
+        return prdctService.savePrdctRateDtails(prdtRateDtalDto);
+    }
 
+    /**
+     * 상품율관리 확정 종료일 확인(저장 시 validation)
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/getLastDfntnAplctEndDate", method=RequestMethod.POST)
+    @ResponseBody
+    public LastDfntnAplctEndDateDto getLastDfntnAplctEndDate(@RequestBody PrdctRateMngmnDto prdctRateMngmnDto)  throws Exception {
+        return prdctService.getLastDfntnAplctEndDate(prdctRateMngmnDto);
+    }
+
+    /**
+     * 상품율관리 상세 삭제
+     * 필수 : rprsnPrdctCode, prdctRateSeq
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/delPrdctRate", method=RequestMethod.POST)
+    @ResponseBody
+    public void delPrdctRate(@RequestBody PrdctRateMngmnDto prdctRateMngmnDto)  throws Exception {
+        prdctService.delPrdctRate(prdctRateMngmnDto);
+    }
+
+//    @ApiOperation(value = "상품율 업로드 양식 다운로드", notes = "prdtRateGrup")
+
+    @RequestMapping(value="/excel/downPrdctRateTmpl", method=RequestMethod.POST)
+    public ModelAndView downPrdctRateTmpl()  throws Exception {
+        return prdctService.downPrdctRateTmpl();
+    }
 }

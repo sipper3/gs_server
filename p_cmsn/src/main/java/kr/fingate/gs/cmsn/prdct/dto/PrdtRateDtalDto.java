@@ -10,13 +10,29 @@ import java.util.List;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PrdtRateDtalDto {
-    
-    List<PrdctEvltnFigureDto> prdctEvltnFigureList;
-    List<PrdctEvltnStdDto> prdctEvltnStdList;
-    List<PrdctExtpyAdjstDto> prdctExtpyAdjstList;
-    List<PrdctIrchDto> prdctIrchList;
-    List<PrdctPeriodExtpyDto> prdctPeriodExtpyList;
-    List<PrdctPymntAlarmDto> prdctPymntAlarmList;
-    List<PrdctPymntFigureDto> prdctPymntFigureList;
+
+    // 상품율관리
+    private PrdctRateMngmnDto prdctRateMngmn;
+
+    // 평가계수
+    private List<PrdctEvltnFigureDto> prdctEvltnFigureList;
+
+    // 평가업적산출기준
+    private List<PrdctEvltnStdDto> prdctEvltnStdList;
+
+    // 수당유형별 조정율
+    private List<PrdctExtpyAdjstDto> prdctExtpyAdjstList;
+
+    // 보험사환산
+    private List<PrdctIrchDto> prdctIrchList;
+
+    // 납기수수료유형별 조정율
+    private List<PrdctPeriodExtpyDto> prdctPeriodExtpyList;
+
+    // 지급액공시
+    private List<PrdctPymntAlarmDto> prdctPymntAlarmList;
+
+    // 상품조정율
+    private List<PrdctPymntFigureDto> prdctPymntFigureList;
 
 }

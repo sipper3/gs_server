@@ -42,21 +42,21 @@
                     , REG_DATE
                     , REG_USER_NO
                 ) VALUES (
-                   #{clientNo}
-                   , #{rprsnPrdctCode}
-                   , #{prdctRateSeq}
-                   , #{prdtRateGrup}
-                   , #{aplctStartDate}
-                   , #{aplctEndDate}
-                   , #{dfntnYn}
-                   , #{aplctEndYn}
-                   , #{onePymntRultYn}
-                   , #{onePymntRate1}
-                   , #{onePymntEvltnFigure1}
-                   , #{onePymntRate2}
-                   , #{onePymntEvltnFigure2}
-                   , SYSDATE
-                   , #{regUserNo}
+                    #{clientNo}
+                    , #{rprsnPrdctCode}
+                    , #{prdctRateSeq}
+                    , #{prdtRateGrup}
+                    , #{aplctStartDate}
+                    , #{aplctEndDate}
+                    , #{dfntnYn}
+                    , #{aplctEndYn}
+                    , #{onePymntRultYn}
+                    , #{onePymntRate1}
+                    , #{onePymntEvltnFigure1}
+                    , #{onePymntRate2}
+                    , #{onePymntEvltnFigure2}
+                    , SYSDATE
+                    , #{regUserNo}
                 )
     </insert>
 
@@ -68,37 +68,29 @@
           AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
     </delete>
 
-    <insert id="insPrdctEvltnFigure" parameterType="PrdctEvltnFigureVO">
+    <insert id="insPrdctEvltnFigure" parameterType="java.util.List">
         /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctEvltnFigure / 상품평가계수 */
-        MERGE INTO TB_PRDCT_EVLTN_FIGURE
-            USING DUAL ON (
-                        RPRSN_PRDCT_CODE 	= #{rprsnPrdctCode}
-                    AND PRDCT_RATE_SEQ	    = #{prdctRateSeq}
-                    AND PYMNT_PERIOD		= #{pymntPeriod}
-                )
-            WHEN MATCHED THEN
-                UPDATE SET
-                    EVLTN_FIGURE1 = #{evltnFigure1}
-                    , EVLTN_FIGURE2 = #{evltnFigure2}
-                    , EVLTN_FIGURE3 = #{evltnFigure3}
-            WHEN NOT MATCHED THEN
-                INSERT
-                    (
-                     RPRSN_PRDCT_CODE
-                        , PRDCT_RATE_SEQ
-                        , PYMNT_PERIOD
-                        , EVLTN_FIGURE1
-                        , EVLTN_FIGURE2
-                        , EVLTN_FIGURE3
-                        )
-                    VALUES (
-                               #{rprsnPrdctCode}
-                           , #{prdctRateSeq}
-                           , #{pymntPeriod}
-                           , #{evltnFigure1}
-                           , #{evltnFigure2}
-                           , #{evltnFigure3}
-                           )
+        INSERT INTO TB_PRDCT_EVLTN_FIGURE
+            (
+                RPRSN_PRDCT_CODE
+                , PRDCT_RATE_SEQ
+                , PYMNT_PERIOD
+                , EVLTN_FIGURE1
+                , EVLTN_FIGURE2
+                , EVLTN_FIGURE3
+                ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.evltnFigure1}
+            , #{item.evltnFigure2}
+            , #{item.evltnFigure3}
+            )
+        </foreach>
+
+
     </insert>
 
     <delete id="delPrdctEvltnFigure" parameterType="PrdctEvltnFigureVO">
@@ -111,40 +103,29 @@
         </if>
     </delete>
 
-    <insert id="insPrdtEvluStdd" parameterType="PrdctEvltnStdVO">
-        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.delPrdctEvltnStd / 평가업적산출기준 */
-        MERGE INTO	TB_PRDCT_EVLTN_STD
-            USING DUAL ON (
-                        RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
-                    AND PRDCT_RATE_SEQ = #{prdctRateSeq}
-                    AND PYMNT_PERIOD = #{pymntPeriod}
-                )
-            WHEN MATCHED THEN
-                UPDATE SET
-                    STD_CHANGE_RATE = #{stdChangeRate}
-                    , INSRN_CHANGE_RATE = #{insrnChangeRate}
-                    , PRDCT_CHANGE_RATE = #{prdctChangeRate}
-                    , PERIOD_CHANGE_RATE = #{periodChangeRate}
-            WHEN NOT MATCHED THEN
-                INSERT
-                    (
-                     RPRSN_PRDCT_CODE
-                        , PRDCT_RATE_SEQ
-                        , PYMNT_PERIOD
-                        , STD_CHANGE_RATE
-                        , INSRN_CHANGE_RATE
-                        , PRDCT_CHANGE_RATE
-                        , PERIOD_CHANGE_RATE
-                        )
-                    VALUES (
-                               #{rprsnPrdctCode}
-                           , #{prdctRateSeq}
-                           , #{pymntPeriod}
-                           , #{stdChangeRate}
-                           , #{insrnChangeRate}
-                           , #{prdctChangeRate}
-                           , #{periodChangeRate}
-                           )
+    <insert id="insPrdctEvltnStd" parameterType="java.util.List">
+        /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctEvltnStd / 평가업적산출기준 */
+        INSERT INTO TB_PRDCT_EVLTN_STD
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , PYMNT_PERIOD
+            , STD_CHANGE_RATE
+            , INSRN_CHANGE_RATE
+            , PRDCT_CHANGE_RATE
+            , PERIOD_CHANGE_RATE
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.stdChangeRate}
+            , #{item.insrnChangeRate}
+            , #{item.prdctChangeRate}
+            , #{item.periodChangeRate}
+            )
+        </foreach>
     </insert>
 
     <delete id="delPrdctEvltnStd" parameterType="PrdctEvltnStdVO">
@@ -158,46 +139,33 @@
     </delete>
 
     <!-- 지급율 조정계수 등록 -->
-    <insert id="insPrdctPymntFigure" parameterType="PrdctPymntFigureVO">
+    <insert id="insPrdctPymntFigure" parameterType="java.util.List">
         /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdtPayFigu / 지급율 조정계수 */
-        MERGE INTO	TB_PRDCT_PYMNT_FIGURE
-            USING DUAL ON (
-                        RPRSN_PRDCT_CODE 		= #{rprsnPrdctCode}
-                    AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
-                    AND PYMNT_PERIOD		= #{pymntPeriod}
-                )
-            WHEN MATCHED THEN
-                UPDATE SET
-                    PYMNT_RATE1		= #{pymntRate1}
-                    , PYMNT_RATE2		= #{pymntRate2}
-                    , PYMNT_RATE3		= #{pymntRate3}
-                    , OA_HOLD_RATE	= #{oaHoldRate}
-                    , PYMNT_AJMT_RATE	= #{pymntAdjstRate}
-                    , PYMNT_ANUC_RATE	= #{pymntAlarmRate}
-            WHEN NOT MATCHED THEN
-                INSERT
-                    (
-                     RPRSN_PRDCT_CODE
-                        , PRDCT_RATE_SEQ
-                        , PYMNT_PERIOD
-                        , PYMNT_RATE1
-                        , PYMNT_RATE2
-                        , PYMNT_RATE3
-                        , OA_HOLD_RATE
-                        , PYMNT_AJMT_RATE
-                        , PYMNT_ANUC_RATE
-                        )
-                    VALUES (
-                               #{rprsnPrdctCode}
-                           , #{prdctRateSeq}
-                           , #{pymntPeriod}
-                           , #{pymntRate1}
-                           , #{pymntRate2}
-                           , #{pymntRate3}
-                           , #{oaHoldRate}
-                           , #{pymntAdjstRate}
-                           , #{pymntAlarmRate}
-                           )
+        INSERT INTO TB_PRDCT_PYMNT_FIGURE
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , PYMNT_PERIOD
+            , PYMNT_RATE1
+            , PYMNT_RATE2
+            , PYMNT_RATE3
+            , OA_HOLD_RATE
+            , PYMNT_AJMT_RATE
+            , PYMNT_ANUC_RATE
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+               #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.pymntRate1}
+            , #{item.pymntRate2}
+            , #{item.pymntRate3}
+            , #{item.oaHoldRate}
+            , #{item.pymntAdjstRate}
+            , #{item.pymntAlarmRate}
+            )
+        </foreach>
     </insert>
 
     <delete id="delPrdctPymntFigure" parameterType="PrdctPymntFigureVO">
@@ -207,42 +175,31 @@
           AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
     </delete>
 
-    <insert id="insPrdctExtpyAdjst" parameterType="PrdctExtpyAdjstVO">
+    <insert id="insPrdctExtpyAdjst" parameterType="java.util.List">
         /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctExtpyAdjst / 수수료유형별조정율 */
-        MERGE INTO TB_PRDCT_EXTPY_ADJST
-            USING DUAL ON (
-                        RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
-                    AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
-                    AND EXPY_TYPE	= #{expyType}
-                )
-            WHEN MATCHED THEN
-                UPDATE SET
-                    EVLU_AJMT_RATE	= #{evluAjmtRate}
-                    , PRDCT_AJMT_RATE	= #{prdtAjmtRate}
-                    , EX_ADPY_RATE		= #{exAdpyRate}
-                    , EX_ADPY_TIMS		= #{exAdpyTims}
-            WHEN NOT MATCHED THEN
-                INSERT
-                    (
-                     RPRSN_PRDCT_CODE
-                        , PRDCT_RATE_SEQ
-                        , EXPY_TYPE
-                        , EVLU_AJMT_RATE
-                        , PRDCT_AJMT_RATE
-                        , INSRR_AJMT_APLC_YN
-                        , EX_ADPY_RATE
-                        , EX_ADPY_TIMS
-                        )
-                    VALUES (
-                               #{rprsnPrdctCode}
-                           , #{prdctRateSeq}
-                           , #{expyType}
-                           , #{evluAjmtRate}
-                           , #{prdtAjmtRate}
-                           , #{insrAjmtAplcYn}
-                           , #{exAdpyRate}
-                           , #{exAdpyTims}
-                           )
+        INSERT INTO TB_PRDCT_EXTPY_ADJST
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , EXPY_TYPE
+            , EVLU_AJMT_RATE
+            , PRDCT_AJMT_RATE
+            , INSRR_AJMT_APLC_YN
+            , EX_ADPY_RATE
+            , EX_ADPY_TIMS
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.expyType}
+            , #{item.evluAjmtRate}
+            , #{item.prdtAjmtRate}
+            , #{item.insrAjmtAplcYn}
+            , #{item.exAdpyRate}
+            , #{item.exAdpyTims}
+            )
+        </foreach>
     </insert>
 
     <delete id="delPrdctExtpyAdjst" parameterType="PrdctExtpyAdjstVO">
@@ -255,37 +212,27 @@
         </if>
     </delete>
 
-    <insert id="insPrdctPeriodExtpy" parameterType="PrdctPeriodExtpyVO">
+    <insert id="insPrdctPeriodExtpy" parameterType="java.util.List">
         /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdtProdExpy / 납기수수료유형별조정율 */
-        MERGE INTO TB_PRDCT_PERIOD_EXTPY
-            USING DUAL ON (
-                        RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
-                    AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
-                    AND EXTPY_TYPE	= #{extpyType}
-                    AND PYMNT_PERIOD	= #{pymntPeriod}
-                )
-            WHEN MATCHED THEN
-                UPDATE SET
-                    RC_AJMT_RATE = #{rcAjmtRate}
-                    , RC_RPST_PYMNT_RATE = #{rcRpstPayRate}
-            WHEN NOT MATCHED THEN
-                INSERT
-                    (
-                     RPRSN_PRDCT_CODE
-                        , PRDCT_RATE_SEQ
-                        , PYMNT_PERIOD
-                        , EXPY_TYPE
-                        , RC_AJMT_RATE
-                        , RC_RPST_PYMNT_RATE
-                        )
-                    VALUES (
-                               #{rprsnPrdctCode}
-                           , #{prdctRateSeq}
-                           , #{pymntPeriod}
-                           , #{expyType}
-                           , #{rcAjmtRate}
-                           , #{rcRpstPayRate}
-                           )
+        INSERT INTO TB_PRDCT_PERIOD_EXTPY
+        (
+                RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , PYMNT_PERIOD
+            , EXPY_TYPE
+            , RC_AJMT_RATE
+            , RC_RPST_PYMNT_RATE
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.pymntPeriod}
+            , #{item.expyType}
+            , #{item.rcAjmtRate}
+            , #{item.rcRpstPayRate}
+            )
+        </foreach>
     </insert>
 
     <delete id="delPrdctPeriodExtpy" parameterType="PrdctPeriodExtpyVO">
@@ -301,56 +248,42 @@
         </if>
     </delete>
 
-    <insert id="insPrdctPymntAlarm" parameterType="PrdctPymntAlarmVO">
+    <insert id="insPrdctPymntAlarm" parameterType="java.util.List">
         /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctPymntAlarm / 지급액공시 */
-        MERGE INTO TB_PRDCT_PYMNT_ALARM
-            USING DUAL ON (
-                        RPRSN_PRDCT_CODE		= #{rprsnPrdctCode}
-                    AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
-                )
-            WHEN MATCHED THEN
-                UPDATE SET
-                    RGST_CHNG_YN	= #{rgstChngYn}
-                    , RGST_CHNG_RATE	= #{rgstChngRate}
-                    , RSLT_AJMT_RATE	= #{rsltAjmtRate}
-                    , EX_ADPY_TIMS	= #{exAdpyTims}
-                    , TOT_PYMNT_TIMS	= #{totPayTims}
-                    , EX_ADPY_TIMS2   = #{exAdpyTims2}
-                    , TOT_PYMNT_TIMS2   = #{totPayTims2}
-                    , DEFN_YN			= #{defnYn}
-                    , ANUC_MEMO		= #{anucMemo}
-            WHEN NOT MATCHED THEN
-                INSERT
-                    (
-                     RPRSN_PRDCT_CODE
-                        , PRDCT_RATE_SEQ
-                        , RGST_CHNG_YN
-                        , RGST_CHNG_RATE
-                        , RSLT_AJMT_RATE
-                        , EX_ADPY_TIMS
-                        , TOT_PYMNT_TIMS
-                        , EX_ADPY_TIMS2
-                        , TOT_PYMNT_TIMS2
-                        , DEFN_YN
-                        , RGST_DATE
-                        , RGST_USER_NO
-                        , ANUC_MEMO
-                        )
-                    VALUES (
-                               #{rprsnPrdctCode}
-                           , #{prdctRateSeq}
-                           , #{rgstChngYn}
-                           , #{rgstChngRate}
-                           , #{rsltAjmtRate}
-                           , #{exAdpyTims}
-                           , #{totPayTims}
-                           , #{exAdpyTims2}
-                           , #{totPayTims2}
-                           , #{defnYn}
-                           , SYSDATE
-                           , #{rgstUserNo}
-                           , #{anucMemo}
-                           )
+        INSERT INTO TB_PRDCT_PYMNT_ALARM
+        (
+            RPRSN_PRDCT_CODE
+            , PRDCT_RATE_SEQ
+            , REG_CHANGE_YN
+            , REG_CHANGE_RATE
+            , RESULT_ADJST_RATE
+            , EX_ADPAY_TIMES
+            , EX_ADPAY_TIMS2
+            , TOTAL_PYMNT_TIMES
+            , TOTAL_PYMNT_TIMS2
+            , DFNTN_YN
+            , ALARM_MEMO
+            , REG_DATE
+            , REG_USER_NO
+
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+              (
+            #{item.rprsnPrdctCode}
+            , #{item.prdctRateSeq}
+            , #{item.regChangeYn}
+            , #{item.regChangeRate}
+            , #{item.resultAdjstRate}
+            , #{item.exAdpayTimes}
+            , #{item.exAdpayTims2}
+            , #{item.totalPymntTimes}
+            , #{item.totalPymntTims2}
+            , #{item.dfntnYn}
+            , #{item.alarmMemo}
+            , SYSDATE
+            , #{item.rgstUserNo}
+            )
+        </foreach>
     </insert>
 
     <delete id="delPrdctPymntAlarm" parameterType="PrdctPymntAlarmVO">
@@ -362,44 +295,29 @@
 
     <insert id="insPrdctIrch" parameterType="PrdctIrchVO">
         /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctIrch / 보험사환산 */
-        MERGE INTO TB_PRDCT_IRCH
-            USING DUAL ON (
-                        RPRSN_PRDCT_CODE		= #{rprsnPrdctCode}
-                    AND PRDCT_RATE_SEQ	= #{prdctRateSeq}
-                    AND	IRCH_SEQ		= #{irchSeq}
-                )
-            WHEN MATCHED THEN
-                UPDATE SET
-                    IRCH_RATE_STD	= #{irchRateStd}
-                    , PYMNT_PERIOD		= #{pymntPeriod}
-                    , IRCH_RATE1		= #{irchRate1}
-                    , IRCH_RATE2		= #{irchRate2}
-                    , IRCH_RATE3		= #{irchRate3}
-            WHEN NOT MATCHED THEN
-                INSERT
-                    (
-                     RPRSN_PRDCT_CODE
-                        , PRDCT_RATE_SEQ
-                        , IRCH_SEQ
-                        , IRCH_RATE_STD
-                        , PYMNT_PERIOD
-                        , IRCH_RATE1
-                        , IRCH_RATE2
-                        , IRCH_RATE3
-                        )
-                    VALUES (
-                            #{rprsnPrdctCode}
-                           , #{prdctRateSeq}
-                           , (SELECT NVL(MAX(IRCH_SEQ),0)+1
-                              FROM TB_PRDCT_IRCH
-                              WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
-                                AND PRDCT_RATE_SEQ=#{prdctRateSeq})
-                           , #{irchRateStd}
-                           , #{pymntPeriod}
-                           , #{irchRate1}
-                           , #{irchRate2}
-                           , #{irchRate3}
-                           )
+        INSERT INTO TB_PRDCT_IRCH
+        (
+            RPRSN_PRDCT_CODE
+        , PRDCT_RATE_SEQ
+        , IRCH_SEQ
+        , IRCH_RATE_STD
+        , PYMNT_PERIOD
+        , IRCH_RATE1
+        , IRCH_RATE2
+        , IRCH_RATE3
+        ) VALUES (
+            #{rprsnPrdctCode}
+            , #{prdctRateSeq}
+            , (SELECT NVL(MAX(IRCH_SEQ),0)+1
+                FROM TB_PRDCT_IRCH
+                WHERE RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+                AND PRDCT_RATE_SEQ=#{prdctRateSeq})
+            , #{irchRateStd}
+            , #{pymntPeriod}
+            , #{irchRate1}
+            , #{irchRate2}
+            , #{irchRate3}
+            )
     </insert>
 
     <delete id="delPrdctIrch" parameterType="PrdctIrchVO">
@@ -414,28 +332,37 @@
 
     <insert id="insPrdctInsrrAdjst" parameterType="PrdctInsrrAdjstVO">
         /* kr.fingate.gs.prdct.cmsn.prdct.dao.PrdctModDao.insPrdctInsrrAdjst / 보험사조정율 */
-        INSERT INTO TB_PRDCT_INSRR_ADJST(INSRR_CODE, PRDCT_GROUP, INSRR_ADJST_SEQ, CLIENT_NO, INSRR_ADJST_RATE,
-            APLCT_START_DATE, APLCT_END_DATE, DFNTN_YN, APLCT_END_YN, REG_DATE, REG_USER_NO
-        )
-        VALUES (
-                   #{insrrCode},
-                   #{prdctGroup},
-                   (
-                       SELECT NVL(MAX(INSRR_ADJST_SEQ),0)+1 AS INSRR_ADJST_SEQ
-                       FROM TB_PRDCT_INSRR_ADJST
-                       WHERE CLIENT_NO = #{clientNo}
-                         AND INSRR_CD = #{insrrCd}
-                         AND PRDCT_GROUP = #{prdctGroup}
-                   ),
-                   #{clientNo},
-                   #{insrAjmtRate},
-                   #{aplctStartDate},
-                   #{aplctEndDate},
-                   #{dfntnYn},
-                   #{aplctEndYn},
-                   SYSDATE,
-                   #{regUserNo}
-               )
+        INSERT INTO TB_PRDCT_INSRR_ADJST
+        (   INSRR_CODE
+            , PRDCT_GROUP
+            , INSRR_ADJST_SEQ
+            , CLIENT_NO
+            , INSRR_ADJST_RATE
+            , APLCT_START_DATE
+            , APLCT_END_DATE
+            , DFNTN_YN
+            , APLCT_END_YN
+            , REG_DATE
+            , REG_USER_NO
+        ) VALUES (
+            #{insrrCode},
+            #{prdctGroup},
+            (
+                SELECT NVL(MAX(INSRR_ADJST_SEQ),0)+1 AS INSRR_ADJST_SEQ
+                FROM TB_PRDCT_INSRR_ADJST
+                WHERE CLIENT_NO = #{clientNo}
+                AND INSRR_CD = #{insrrCd}
+                AND PRDCT_GROUP = #{prdctGroup}
+            ),
+            #{clientNo},
+            #{insrAjmtRate},
+            #{aplctStartDate},
+            #{aplctEndDate},
+            #{dfntnYn},
+            #{aplctEndYn},
+            SYSDATE,
+            #{regUserNo}
+            )
     </insert>
 
     <update id="updPrdctInsrrAdjst" parameterType="PrdctInsrrAdjstVO">

@@ -209,4 +209,63 @@
           AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
     </select>
 
+
+    <select id="getMaxPrdctRateSeq" parameterType="SearchPrdctRateSeqDto" resultType="java.lang.Integer">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getMaxPrdctRateSeq */
+        SELECT NVL(MAX(PRDCT_RATE_SEQ),0)+1
+        FROM TB_PRDCT_RATE_MNGMN
+        WHERE PRM.CLIENT_NO = #{clientNo}
+          AND PRM.RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+    </select>
+
+    <select id="getLastDfntnAplctEndDate" parameterType="PrdctRateMngmnDto" resultType="LastDfntnAplctEndDateDto">
+        /* kr.fingate.gs.cmsn.prdct.dao.PrdctDao.getLastDfntnDate / 최종 확정 적용종료일 */
+        SELECT
+            (
+                SELECT
+                    MAX(APLCT_END_DATE)
+                FROM FI_PRDCT_RATE_MNGMN
+                WHERE CLIENT_NO = #{clientNo}
+                  AND RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+                  AND PRDCT_RATE_SEQ <![CDATA[<>]]> #{prdctRateSeq}
+                  AND PRDCT_RATE_GROUP = #{prdctRateGroup}
+                  AND DFNTN_YN = 'Y'
+                GROUP BY RPRSN_PRDCT_CODE
+            ) AS MAX_APLCT_END_DATE
+             ,(
+            SELECT
+                MIN(APLCT_END_DATE)
+            FROM FI_PRDCT_RATE_MNGMN
+            WHERE CLIENT_NO = #{clientNo}
+              AND RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+              AND PRDCT_RATE_SEQ <![CDATA[<>]]> #{prdctRateSeq}
+              AND PRDCT_RATE_GROUP = #{prdctRateGroup}
+              AND DFNTN_YN = 'Y'
+            GROUP BY RPRSN_PRDCT_CODE
+        )AS MIN_APLCT_END_DATE
+             ,(
+            SELECT DFNTN_YN
+            FROM FI_PRDCT_RATE_MNGMN
+            WHERE CLIENT_NO = #{clientNo}
+              AND RPRSN_PRDCT_CODE     = #{rprsnPrdctCode}
+              AND PRDCT_RATE_SEQ 	= #{prdctRateSeq}
+              AND PRDCT_RATE_GROUP 	= #{prdctRateGroup}
+        )AS DFNTN_YN
+             ,(
+            SELECT 'Y'
+            FROM FI_PRDCT_RATE_MNGMN
+            WHERE CLIENT_NO = #{clientNo}
+              AND RPRSN_PRDCT_CODE = #{rprsnPrdctCode}
+              AND (
+                    #{aplcStDate} BETWEEN APLC_ST_DATE AND APLC_ED_DATE
+                    OR #{aplcEdDate} BETWEEN APLC_ST_DATE AND APLC_ED_DATE
+                )
+              AND PRDCT_RATE_SEQ <![CDATA[<>]]> #{prdctRateSeq}
+              AND PRDCT_RATE_GROUP = #{prdctRateGroup}
+            GROUP BY RPRSN_PRDCT_CODE
+        ) AS INCLS_YN
+        FROM DUAL
+
+    </select>
+
 </mapper>

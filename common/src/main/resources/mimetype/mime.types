@@ -1,0 +1,48 @@
+# Mime types for DownloadView
+#
+# MIME type (lowercased)                                                    Extensions
+# ========================================================================= ==========
+application/msword															doc dot
+application/vnd.openxmlformats-officedocument.wordprocessingml.document		docx
+application/vnd.openxmlformats-officedocument.wordprocessingml.template		dotx
+application/vnd.ms-word.document.macroEnabled.12							docm
+application/vnd.ms-word.template.macroEnabled.12							dotm
+application/vnd.ms-excel													xls xlt xla
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet			xlsx
+application/vnd.openxmlformats-officedocument.spreadsheetml.template		xltx
+application/vnd.ms-excel.sheet.macroEnabled.12								xlsm
+application/vnd.ms-excel.template.macroEnabled.12							xltm
+application/vnd.ms-excel.addin.macroEnabled.12								xlam
+application/vnd.ms-excel.sheet.binary.macroEnabled.12						xlsb
+application/vnd.ms-powerpoint												ppt pot	pps	ppa
+application/vnd.openxmlformats-officedocument.presentationml.presentation	pptx
+application/vnd.openxmlformats-officedocument.presentationml.template		potx
+application/vnd.openxmlformats-officedocument.presentationml.slideshow		ppsx
+application/vnd.ms-powerpoint.addin.macroEnabled.12							ppam
+application/vnd.ms-powerpoint.presentation.macroEnabled.12					pptm
+application/vnd.ms-powerpoint.template.macroEnabled.12						potm
+application/vnd.ms-powerpoint.slideshow.macroEnabled.12						ppsm
+application/vnd.ms-access		mdb
+application/vnd.ms-xpsdocument	xps
+application/rtf					rtf
+application/pdf					pdf
+application/x-compressed		7z
+application/x-gzip				gz gzip
+application/x-hwp				hwp
+application/zip					zip
+application/postscript			eps
+audio/x-wav						wav
+audio/mpeg3						mp3
+video/mp4						mp4
+video/mpeg						mpeg mpg mpe
+video/quicktime					qt mov
+video/x-msvideo					avi
+text/csv						csv
+text/html						html htm
+text/plain						txt text
+image/gif						gif GIF
+image/jpeg						jpeg jpg jpe JPG
+image/tiff						tiff tif
+image/png						png
+image/bmp						bmp
+message/rfc822					mht

@@ -143,21 +143,20 @@ subprojects {
 		annotationProcessor 'org.projectlombok:lombok'
 		developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-
-//		implementation 'org.mybatis.spring.boot:mybatis-spring-boot'
 		implementation 'org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:2.2.2'
-//
 		implementation 'org.springframework.boot:spring-boot-starter-amqp'
-////		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-////		implementation 'org.springframework.boot:spring-boot-starter-security'
-//		implementation 'org.springframework.boot:spring-boot-starter-web'
-//		compileOnly 'org.projectlombok:lombok'
-//		annotationProcessor 'org.projectlombok:lombok'
-//
-//		implementation 'com.google.code.gson:gson:2.10.1'
-//		implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
-//		implementation 'org.json:json:20230227'
 		implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+		implementation 'commons-beanutils:commons-beanutils:1.9.4'
+		implementation 'com.google.guava:guava:32.1.2-jre'
+		implementation 'com.google.code.gson:gson:2.9.0'
+		implementation 'org.apache.commons:commons-lang3:3.12.0'
+		implementation 'org.apache.commons:commons-collections4:4.4'
+		implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.7'
+		implementation 'jakarta.activation:jakarta.activation-api:2.1.2'
+
+		// Excel
+		implementation 'org.apache.poi:poi:4.1.1'
+		implementation 'org.apache.poi:poi-ooxml:4.1.1'
 
 		//restDoc & openApi
 		asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'

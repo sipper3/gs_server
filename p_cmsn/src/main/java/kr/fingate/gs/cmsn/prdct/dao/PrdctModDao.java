@@ -1,46 +1,49 @@
 package kr.fingate.gs.cmsn.prdct.dao;
 
+import kr.fingate.gs.cmsn.prdct.dto.*;
 import kr.fingate.gs.cmsn.vo.prdct.*;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface PrdctModDao {
 
     // 상품율관리
-    void insPrdctRateMngmn(PrdctRateMngmnVO prdctRateMngmnVO);
-    void delPrdctRateMngmn(PrdctRateMngmnVO prdctRateMngmnVO);
+    void insPrdctRateMngmn(PrdctRateMngmnVO params);
+    void delPrdctRateMngmn(PrdctRateMngmnVO params);
 
     // 상품평가계수
-    void insPrdctEvltnFigure(PrdctEvltnFigureVO prdctEvltnFigureVO);
-    void delPrdctEvltnFigure(PrdctEvltnFigureVO prdctEvltnFigureVO);
+    void insPrdctEvltnFigure(List<PrdctEvltnFigureDto> params);
+    void delPrdctEvltnFigure(PrdctEvltnFigureVO params);
 
     // 평가업적산출기준
-    void insPrdtEvluStdd(PrdctEvltnStdVO prdctEvltnStdVO);
-    void delPrdctEvltnStd(PrdctEvltnStdVO prdctEvltnStdVO);
+    void insPrdctEvltnStd(List<PrdctEvltnStdDto> params);
+    void delPrdctEvltnStd(PrdctEvltnStdVO params);
 
     // 지급율 조정계수
-    void insPrdctPymntFigure(PrdctPymntFigureVO prdctPymntFigureVO);
-    void delPrdctPymntFigure(PrdctPymntFigureVO prdctPymntFigureVO);
+    void insPrdctPymntFigure(PrdctPymntFigureVO params);
+    void delPrdctPymntFigure(PrdctPymntFigureVO params);
 
     // 수수료유형별조정율
-    void insPrdctExtpyAdjst(PrdctExtpyAdjstVO prdctExtpyAdjstVO);
-    void delPrdctExtpyAdjst(PrdctExtpyAdjstVO prdctExtpyAdjstVO);
+    void insPrdctExtpyAdjst(List<PrdctExtpyAdjstDto> params);
+    void delPrdctExtpyAdjst(PrdctExtpyAdjstVO params);
 
     // 납기수수료유형별조정율
-    void insPrdctPeriodExtpy(PrdctPeriodExtpyVO prdctPeriodExtpyVO);
-    void delPrdctPeriodExtpy(PrdctPeriodExtpyVO prdctPeriodExtpyVO);
+    void insPrdctPeriodExtpy(List<PrdctPeriodExtpyDto> params);
+    void delPrdctPeriodExtpy(PrdctPeriodExtpyVO params);
 
     // 지급액공시
-    void insPrdctPymntAlarm(PrdctPymntAlarmVO prdctPymntAlarmVO);
-    void delPrdctPymntAlarm(PrdctPymntAlarmVO prdctPymntAlarmVO);
+    void insPrdctPymntAlarm(List<PrdctPymntAlarmDto> params);
+    void delPrdctPymntAlarm(PrdctPymntAlarmVO params);
 
     // 보험사환산
-    void insPrdctIrch(PrdctIrchVO prdctIrchVO);
-    void delPrdctIrch(PrdctIrchVO prdctIrchVO);
+    void insPrdctIrch(PrdctIrchVO params);
+    void delPrdctIrch(PrdctIrchVO params);
 
     // 보험사조정율
-    void insPrdctInsrrAdjst(PrdctInsrrAdjstVO prdctInsrrAdjstVO);
-    void updPrdctInsrrAdjst(PrdctInsrrAdjstVO prdctInsrrAdjstVO);
-    void delPrdctInsrrAdjst(PrdctInsrrAdjstVO prdctInsrrAdjstVO);
+    void insPrdctInsrrAdjst(PrdctInsrrAdjstVO params);
+    void updPrdctInsrrAdjst(PrdctInsrrAdjstVO params);
+    void delPrdctInsrrAdjst(PrdctInsrrAdjstVO params);
 
 }
