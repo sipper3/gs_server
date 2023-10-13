@@ -9,10 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestControllerAdvice
 public class ExceptionAdvice extends Exception{
@@ -41,18 +38,28 @@ public class ExceptionAdvice extends Exception{
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    protected List<Map<String, Object>> getInValidedList(final BindingResult bindingResult) {
-        final List<Map<String, Object>> fieldList = new ArrayList<>();
+    protected List<Map.Entry<String, List<Map<String, Object>>>> getInValidedList(final BindingResult bindingResult) {
+        Map<String, List<Map<String, Object>>> errCon = new HashMap<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             Map<String, Object> errMap = new HashMap<>();
 
-            errMap.put("field", fieldError.getField());
-            errMap.put("defaultMessage", fieldError.getDefaultMessage());
-//            errMap.put("rejectedValue", fieldError.getRejectedValue()); //사용자 입력값
+            String field = fieldError.getField();
             errMap.put("code", fieldError.getCode());
-            fieldList.add(errMap);
+            errMap.put("message", fieldError.getDefaultMessage());
+//            errMap.put("rejectedValue", fieldError.getRejectedValue()); //사용자 입력값
+            if (Objects.equals(fieldError.getCode(), "Conditional")) {
+                errMap.put("required", Objects.requireNonNull(fieldError.getArguments())[2]);
+            }
+
+            if (errCon.get(field) != null) {
+                errCon.get(field).add(errMap);
+            } else {
+                List<Map<String, Object>> list = new ArrayList<>();
+                list.add(errMap);
+                errCon.put(field, list);
+            }
         }
 
-        return fieldList;
+        return new ArrayList<>(errCon.entrySet());
     }
 }
