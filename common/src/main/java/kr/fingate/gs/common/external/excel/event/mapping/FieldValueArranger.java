@@ -1,8 +1,6 @@
 package kr.fingate.gs.common.external.excel.event.mapping;
 
 
-import kr.fingate.gs.common.exception.BizError;
-import kr.fingate.gs.common.exception.BizException;
 import kr.fingate.gs.common.external.excel.event.mapping.annotation.ExcelDateForm;
 import kr.fingate.gs.common.external.excel.event.mapping.annotation.ImportField;
 import kr.fingate.gs.common.external.excel.event.mapping.annotation.ImportListField;
@@ -187,7 +185,7 @@ public class FieldValueArranger {
 					return valChk;
 				}
 			}else {
-				throw new BizException(BizError.INTERNAL_SERVER_ERROR);
+				throw new Exception();
 			}
 		}
 		return valChk;
@@ -195,14 +193,10 @@ public class FieldValueArranger {
 	//날짜 벨리데이션 체크
 	public static boolean chckDate(String dateForm, String value) throws Exception {
 		boolean res = true;
-		try{
-			SimpleDateFormat dateFormatParser = new SimpleDateFormat(dateForm);
-			dateFormatParser.setLenient(false);
-			dateFormatParser.parse(value);
-			return res;
-		} catch (Exception e){
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR);
-		}
-	}
+        SimpleDateFormat dateFormatParser = new SimpleDateFormat(dateForm);
+        dateFormatParser.setLenient(false);
+        dateFormatParser.parse(value);
+        return res;
+    }
 
 }
