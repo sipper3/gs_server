@@ -1,6 +1,3 @@
-server:
-  port: 9018
-
 datasources:
   - name: gs_public
     base-package: kr.fingate.gs.*.**.dao
