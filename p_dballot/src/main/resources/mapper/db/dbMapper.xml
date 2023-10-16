@@ -11,7 +11,7 @@
              , D.DUP_YN
              , D.DB_DSTRB_STATE
              , (SELECT ALTMN_REASON FROM TB_DB_DSTRB_EXCPT_LOG DE WHERE DE.DB_NO = D.DB_NO ORDER BY PRCSN_EXCPT_LOG_NO DESC LIMIT 1 ) AS ALTMN_REASON
-             , D.ALTMN_USER_NO
+             , U.USER_NAME
              , D.INFLOW_DT
              , D.FINAL_ALTMN_DATE
              , D.CNSL_NO
@@ -24,7 +24,145 @@
              , D.GENDER
              , D.REG_DATE
           FROM TB_DB D
+        <choose>
+        <when test="orgnzList != null and orgnzList !=''">
+          LEFT JOIN (SELECT USER_NO, USER_NAME FROM TB_USER WHERE ORGNZ_NO IN (<foreach collection="orgnzList" item="orgnz" separator=",">#{orgnz}</foreach>)) U ON D.ALTMN_USER_NO = U.USER_NO
+        </when>
+        <otherwise>
+          LEFT OUTER JOIN TB_USER U ON D.ALTMN_USER_NO = U.USER_NO
+        </otherwise>
+        </choose>
+         WHERE D.REG_DATE <![CDATA[>=]]> DATE_FORMAT(#{regStDate}, '%Y%m%d')
+           AND D.REG_DATE <![CDATA[<=]]> DATE_FORMAT(#{regEdDate}, '%Y%m%d')
+        <if test="dbNo != null and dbNo !=''">
+           AND D.DB_NO = #{dbNo}
+        </if>
+        <if test="name != null and name !=''">
+           AND D.NAME = #{name}
+        </if>
+        <if test="clphnNo != null and clphnNo !=''">
+           AND D.CLPHN_NO = #{clphnNo}
+        </if>
+        <if test="dbDstrbState != null and dbDstrbState !=''">
+           AND D.DB_DSTRB_STATE = #{dbDstrbState}
+        </if>
+        <if test="inflowStDt != null and inflowStDt !=''">
+           AND D.INFLOW_DT = #{inflowStDt}
+        </if>
+        <if test="inflowEdDt != null and inflowEdDt !=''">
+           AND D.INFLOW_DT = #{inflowEdDt}
+        </if>
+        <if test="dbType != null and dbType !=''">
+           AND D.DB_TYPE = #{dbType}
+        </if>
+        <if test="prdctKind != null and prdctKind !=''">
+           AND D.PRDCT_KIND = #{prdctKind}
+        </if>
+        <if test="mediaCodeList != null and !mediaCodeList.isEmpty()">
+           AND D.MEDIA_CODE IN (<foreach collection="mediaCodeList" item="mediaCode" separator=",">#{mediaCode}</foreach>)
+        </if>
+        <if test="cnslAplctType != null and cnslAplctType !=''">
+           AND D.CNSL_APLCT_TYPE = #{cnslAplctType}
+        </if>
+        <if test="gender != null and gender !=''">
+           AND D.GENDER = #{gender}
+        </if>
+        <if test="ctprvCode != null and ctprvCode !=''">
+           AND D.CTPRV_CODE = #{ctprvCode}
+        </if>
     </select>
 
+    <select id="getDbInfo" parameterType="DbSearchDto" resultType="DbInfoDto">
+        /* kr.fingate.gs.dballot.db.dao.DbDao.getDbInfo */
+        SELECT D.DB_NO
+        , D.DB_DSTRB_STATE
+        , D.DB_TYPE
+        , D.ALTMN_USER_NO
+        , D.FINAL_ALTMN_DATE
+        , D.CNSL_APLCT_TYPE
+        , D.CNSL_NO
+        , D.INSRR_CODE
+        , D.DB_TARGET_CLASS
+        , D.INFLOW_DT
+        , DCR.PRVCY_USE_AGRMN_YN
+        , DCR.PRVCY_USE_AGRMN_DATE
+        , DCR.PRVCY_USE_AGRMN_PERIOD
+        , DCR.PRVCY_USE_AGRMN_TYPE
+        , DAI.ADTN_INFO1
+        , DAI.ADTN_INFO2
+        , DAI.ADTN_INFO3
+        , DAI.ADTN_INFO4
+        , DAI.ADTN_INFO5
+        , D.NAME
+        , D.EMAIL
+        , D.BRTHD
+        , D.CTPRV_CODE
+        , D.GENDER
+        , (SELECT ALTMN_REASON FROM TB_DB_DSTRB_EXCPT_LOG DE WHERE DE.DB_NO = D.DB_NO ORDER BY PRCSN_EXCPT_LOG_NO DESC LIMIT 1 ) AS ALTMN_REASON
+        , D.CLPHN_NO
+        , D.ADTN_TLPHN_NO
+        FROM TB_DB D
+        LEFT OUTER JOIN TB_DB_CNSL_RQST DCR ON D.DB_NO = DCR.DB_NO
+        LEFT OUTER JOIN TB_DB_ADTN_INFO DAI ON D.DB_NO = DAI.DB_NO
+       WHERE D.DB_NO = #{dbNo}
+    </select>
+
+    <select id="getDstrbList" parameterType="DbSearchDto" resultType="DbDstrbListDto">
+        /* kr.fingate.gs.dballot.db.dao.DbDao.getDstrbList */
+        SELECT DD.DB_TYPE
+             , DD.DB_DSTRB_STATE
+             , U1.USER_NAME AS ALTMN_USER_NAME
+             , DD.RULE_MNGMN_NO
+             , DD.REG_DATE
+             , U2.USER_NAME AS REG_USER_NAME
+        FROM TB_DB_DSTRB DD
+        INNER JOIN TB_USER U1 ON U1.USER_NO = DD.ALTMN_USER_NO
+        INNER JOIN TB_USER U2 ON U2.USER_NO = DD.REG_USER_NO
+        WHERE DD.DB_NO = #{dbNo}
+    </select>
+
+    <select id="getDb" resultType="DbVO">
+        /* kr.fingate.gs.dballot.db.dao.DbDao.getDb */
+        SELECT DB_NO
+             , CLIENT_NO
+             , INFLOW_RQST_CLASS
+             , CNSL_NO
+             , DB_TYPE
+             , DB_TARGET_CLASS
+             , PRTNR_CSTMR_KEY
+             , DB_DSTRB_STATE
+             , FINAL_ALTMN_DATE
+             , ALTMN_USER_NO
+             , FINAL_RECALL_DATE
+             , RULE_MNGMN_NO
+             , MATER_RULE_MNGMN_NO
+             , DUP_YN
+             , DUP_DB_NO
+             , DB_CNFRM_STATE
+             , CNSL_APLCT_TYPE
+             , CNSL_APLCT_TYPE_DTL
+             , MEDIA_CODE
+             , INSRR_CODE
+             , PRDCT_KIND
+             , PRDCT_NAME
+             , INFLOW_DT
+             , NAME
+             , BRTHD
+             , GENDER
+             , CLPHN_NO
+             , ADTN_TLPHN_NO
+             , SAFE_TLPHN_NO
+             , EMAIL
+             , CTPRV_CODE
+             , TWNSH_CODE
+             , WORK_REGION
+             , CHNGV_TARGET_NO
+             , PREV_DB_NO
+             , REG_DATE
+             , REG_USER_NO
+        FROM TB_DB D
+       WHERE D.DATA_STATE = 'A'
+         AND D.DB_NO = #{dbNo}
+    </select>
 
 </mapper>
