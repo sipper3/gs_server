@@ -6,11 +6,14 @@ import kr.fingate.gs.auth.item.dao.ItemDao;
 import kr.fingate.gs.auth.item.dto.ItemDto;
 import kr.fingate.gs.auth.role.dao.RoleDao;
 import kr.fingate.gs.auth.role.dao.RoleModDao;
-import kr.fingate.gs.auth.role.dto.*;
+import kr.fingate.gs.auth.role.dto.RoleDto;
+import kr.fingate.gs.auth.role.dto.RoleGroupInsDto;
+import kr.fingate.gs.auth.role.dto.RoleInfoTopDto;
+import kr.fingate.gs.auth.role.dto.SearchRoleDto;
 import kr.fingate.gs.auth.vo.RoleGroupMapVO;
 import kr.fingate.gs.auth.vo.RoleGroupVO;
-import kr.fingate.gs.common.exception.BizError;
-import kr.fingate.gs.common.exception.BizException;
+import kr.fingate.gs.core.aop.exception.BizException;
+import kr.fingate.gs.core.aop.response.ResponseCode;
 import kr.fingate.gs.core.security.dto.UserTokenDto;
 import kr.fingate.gs.core.service.CoreService;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +55,7 @@ public class RoleGroupService {
 			throw new BizException(e.getMessage());
 		} catch (Exception e) {
 			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 		}
 
 		return roleList;
@@ -73,7 +76,7 @@ public class RoleGroupService {
 			throw new BizException(e.getMessage());
 		} catch (Exception e) {
 			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 		}
 
 		return roleInfoTopDto;
@@ -93,7 +96,7 @@ public class RoleGroupService {
 			throw new BizException(e.getMessage());
 		} catch (Exception e) {
 			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 		}
 
 		return roleDtoList;
@@ -113,7 +116,7 @@ public class RoleGroupService {
 			throw new BizException(e.getMessage());
 		} catch (Exception e) {
 			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 		}
 
 		return itemDtoList;
@@ -133,7 +136,7 @@ public class RoleGroupService {
 //			throw new BizException(e.getMessage());
 //		} catch (Exception e) {
 //			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-//			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+//			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 //		}
 //
 //		return userDtoList;
@@ -166,7 +169,7 @@ public class RoleGroupService {
 			throw new BizException(e.getMessage());
 		} catch (Exception e) {
 			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 		}
 	}
 
@@ -188,7 +191,7 @@ public class RoleGroupService {
 			throw new BizException(e.getMessage());
 		} catch (Exception e) {
 			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 		}
 	}
 
@@ -216,7 +219,7 @@ public class RoleGroupService {
 			throw new BizException(e.getMessage());
 		} catch (Exception e) {
 			logger.error("ItemService.insItem Exception : {}", e.getMessage(), e);
-			throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+			throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
 		}
 	}
 

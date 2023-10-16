@@ -8,10 +8,10 @@ import kr.fingate.gs.auth.setup.dao.UserRoleSetupDao;
 import kr.fingate.gs.auth.setup.dao.UserRoleSetupModDao;
 import kr.fingate.gs.auth.setup.dto.*;
 import kr.fingate.gs.common.dto.hstry.HstryDto;
-import kr.fingate.gs.common.exception.BizError;
-import kr.fingate.gs.common.exception.BizException;
 import kr.fingate.gs.common.util.HistoryUtil;
 import kr.fingate.gs.common.util.RedisUtil;
+import kr.fingate.gs.core.aop.exception.BizException;
+import kr.fingate.gs.core.aop.response.ResponseCode;
 import kr.fingate.gs.core.security.dto.UserTokenDto;
 import kr.fingate.gs.core.service.CoreService;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class UserRoleSetupService {
 
         } catch (Exception e) {
             logger.error("UserRoleSetupService.getUserRoleSmryList Exception : {}", e.getMessage(), e);
-            throw new BizException(BizError.INTERNAL_SERVER_ERROR, e);
+            throw new BizException(ResponseCode.INTERNAL_SERVER_ERROR, e);
         }
         return userRoleList;
     }
