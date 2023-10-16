@@ -12,4 +12,7 @@ public class CommonConst {
     static public final String YES = "Y";
     static public final String NO = "N";
 
+    static public final String CODE = "code";
+    static public final String LIST = "list";
+
 }
