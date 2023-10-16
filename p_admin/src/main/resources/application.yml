@@ -13,6 +13,7 @@ spring:
       prod: core-${spring.profiles.active},common-${spring.profiles.active}
 
 server:
+  port: 9018
   mq-hosts:
     - v-host: code
       user: code
