@@ -9,7 +9,7 @@ import org.apache.ibatis.type.Alias;
 @Getter
 @Setter
 @Alias("CommonOrgnzVO")
-public class CommonOrgnzVO {
+public class ComOrgnzVO {
 
     @Info(value="조직번호")
     private long orgnzNo;
