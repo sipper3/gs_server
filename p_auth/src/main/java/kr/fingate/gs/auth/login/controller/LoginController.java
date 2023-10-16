@@ -19,7 +19,7 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @PostMapping("/get/checkpswrd")
+    @PostMapping("/getCheckPswrd")
     public SsoLoginDto getCheckPswrd(HttpServletResponse response, @RequestBody SsoLoginDto loginDto) throws Exception {
 
         if(ObjectUtil.isEmpty(loginDto.getLoginPswrd())){
@@ -29,7 +29,7 @@ public class LoginController {
         return loginService.getCheckPswrd(loginDto);
     }
 
-    @PostMapping("/upd/pswrd")
+    @PostMapping("/updPswrd")
     public int updPswrd(@RequestBody SsoLoginDto loginDto) throws Exception {
 
         if(ObjectUtil.isEmpty(loginDto.getLoginPswrd()) || ObjectUtil.isEmpty(loginDto.getNewLoginPswrd())){

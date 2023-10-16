@@ -38,6 +38,6 @@ pagehelper:
 jwt:
   request:
     ignore.module: >
-      /auth/api/sso/get/login,
-      /auth/api/sso/get/token
+      /auth/api/sso/getLogin,
+      /auth/api/sso/getToken
 

@@ -26,7 +26,7 @@ public class LoginPublicController {
 
     private final LoginPublicService loginPublicService;
 
-    @PostMapping("/get/login")
+    @PostMapping("/getLogin")
     public LoginDto getLogin(HttpServletResponse response, @RequestBody SsoLoginDto loginDto) throws Exception {
 
         if(loginDto.getClientNo() < CommonConst.FINPL_CLIENT_NO || ObjectUtil.isEmpty(loginDto.getLoginId()) || ObjectUtil.isEmpty(loginDto.getLoginPswrd())){
@@ -36,12 +36,12 @@ public class LoginPublicController {
         return loginPublicService.getLogin(response, loginDto);
     }
 
-    @PostMapping("/get/token")
+    @PostMapping("/getToken")
     public Map<String, Object> getToken(HttpServletRequest request) throws Exception {
         return loginPublicService.getToken(request);
     }
 
-    @PostMapping("/get/accessuser")
+    @PostMapping("/getAccessUser")
     public UserTokenDto getAccessUser() throws Exception {
         return CoreService.getUserInfo();
     }
