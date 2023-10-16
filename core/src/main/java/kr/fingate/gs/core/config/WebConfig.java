@@ -1,7 +1,6 @@
 package kr.fingate.gs.core.config;
 
 
-import kr.fingate.gs.core.view.FileDownloadView;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,6 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -52,11 +50,6 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	    resolvers.add(fileViewResolver());
 	    resolver.setViewResolvers(resolvers);
 	    return resolver;
-	}
-
-	@Bean("downloadView")
-	public View fileDownloadView() {
-		return new FileDownloadView();
 	}
 
 	@Bean

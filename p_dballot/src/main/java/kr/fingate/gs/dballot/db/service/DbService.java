@@ -10,6 +10,7 @@ import kr.fingate.gs.dballot.db.dto.DbListDto;
 import kr.fingate.gs.dballot.db.dto.DbSearchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Slf4j

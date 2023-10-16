@@ -5,19 +5,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.fingate.gs.core.aop.exception.BizException;
 import kr.fingate.gs.core.aop.response.ResponseCode;
 import kr.fingate.gs.core.dto.file.FileDto;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
+import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.view.AbstractView;
+
 import java.io.*;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
  * File download view
  */
+@Slf4j
+@Component("downloadView")
 public class FileDownloadView extends AbstractView {
 	final static Logger logger = LoggerFactory.getLogger(FileDownloadView.class);
 
@@ -39,7 +42,7 @@ public class FileDownloadView extends AbstractView {
 
 		response.setContentType(getContentType());
 		response.setContentLength((int) file.length());
-		String fileName = new String(originFileName.getBytes("UTF-8"), "ISO-8859-1");
+		String fileName = new String(originFileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
 
         response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName+"\";");
         response.setHeader("Content-Transfer-Encoding", "binary");
