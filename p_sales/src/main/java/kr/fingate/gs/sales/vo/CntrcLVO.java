@@ -61,6 +61,9 @@ public class CntrcLVO extends BaseVO {
     @Info(value="환산보험료3차년")
     private BigInteger premChange3;
 
+    @Info(value="환산보험료4차년")
+    private BigInteger premChange4;
+
     @Info(value="할인보험료")
     private BigInteger premDscnt;
 

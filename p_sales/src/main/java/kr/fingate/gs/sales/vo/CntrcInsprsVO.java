@@ -27,8 +27,8 @@ public class CntrcInsprsVO extends BaseVO {
     @Info(value="고객번호")
     private long cstmrNo;
 
-    @Info(value="소개자명")
-    private String agnetName;
+    @Info(value="이름")
+    private String name;
 
     @Info(value="주민번호")
     private String idntnNo;

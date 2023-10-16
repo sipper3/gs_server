@@ -18,8 +18,8 @@ public class CntrcClctnUserVO extends BaseVO {
     @Info(value="등록순번")
     private long regSeq;
 
-    @Info(value="사용인번호")
-    private long userNo;
+    @Info(value="수금자")
+    private long clctnUserNo;
 
     @Info(value="데이터상태")
     private String dataStatus;

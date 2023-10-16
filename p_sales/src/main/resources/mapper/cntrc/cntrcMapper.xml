@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.fingate.gs.sales.cntrc.dao.CntrcDao">
+    <sql id="includePage">
+        <if test='pageSize > 0'>
+            LIMIT #{pageNum}, #{pageSize}
+        </if>
+    </sql>
+    <sql id="includeGetSbscrList">
+        <where>
+            AND CT.DATA_STATE = 'A'
+            AND CT.CLIENT_NO = #{clientNo}
+            <if test='regStartDate != null and !regStartDate.equals("")'>
+                AND CT.REG_DATE <![CDATA[ >= ]]> STR_TO_DATE(CONCAT(#{regStartDate}, '000000'), '%Y%m%d%H%i%S')
+            </if>
+            <if test='regEndDate != null and !regEndDate.equals("")'>
+                AND CT.REG_DATE <![CDATA[ <= ]]> STR_TO_DATE(CONCAT(#{regEndDate}, '235959'), '%Y%m%d%H%i%S')
+            </if>
+
+            <if test='cntrcStartDate != null and !cntrcStartDate.equals("")'>
+                AND CT.CNTRC_DATE <![CDATA[ >= ]]> STR_TO_DATE(CONCAT(#{cntrcStartDate}, '000000'), '%Y%m%d%H%i%S')
+            </if>
+            <if test='cntrcEndDate != null and !cntrcEndDate.equals("")'>
+                AND CT.CNTRC_DATE <![CDATA[ <= ]]> STR_TO_DATE(CONCAT(#{cntrcEndDate}, '235959'), '%Y%m%d%H%i%S')
+            </if>
+
+            <if test='cstmrName != null and !cstmrName.equals("")'>
+                AND CT.CNTRC_NO IN (SELECT CNTRC_NO FROM TB_CNTRC_INSPRS WHERE NAME LIKE CONCAT(#{cstmrName}, '%'))
+            </if>
+            <if test='sbscrStateType != null and !sbscrStateType.equals("")'>
+                AND CT.SBSCR_STATE LIKE CONCAT(#{sbscrStateType}, '%')
+            </if>
+            <if test='sbscrState != null and !sbscrState.equals("")'>
+                AND CT.SBSCR_STATE = #{sbscrState}
+            </if>
+            <if test='saleMethod != null and !saleMethod.equals("")'>
+                AND FC.SALE_METHOD = #{saleMethod}
+            </if>
+            <if test='orgnzNoList != null and orgnzNoList.size != 0'>
+                AND CT.RSPNS_USER_NO IN (
+                    SELECT USER_NO
+                    FROM TB_USER
+                    WHERE ORGNZ_NO IN
+                    <foreach item="item" index="index" collection="orgnzNoList" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test='rspnsUserName != null and !rspnsUserName.equals("")'>
+                AND CT.RSPNS_USER_NO IN (
+                    SELECT USER_NO
+                    FROM TB_USER
+                    WHERE USER_NAME = #{rspnsUserName}
+                )
+            </if>
+            <if test='prdctClass != null and prdctClass.size != 0'>
+                AND CT.PRDCT_CLASS IN
+                <foreach item="item" index="index" collection="prdctClass" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='prdctKind != null and prdctKind.size != 0'>
+                AND RP.PRDCT_KIND IN
+                <foreach item="item" index="index" collection="prdctKind" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='insrrCode != null and insrrCode.size != 0'>
+                AND CT.INSRR_CODE IN
+                <foreach item="item" index="index" collection="insrrCode" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='hndwrState != null and !hndwrState.equals("")'>
+                AND CT.HNDWR_STATE = #{hndwrState}
+            </if>
+            <!-- 빠른검색 START -->
+            <if test='quickSearchYn.equals("Y") and quickSearchValue != null and !quickSearchValue.equals("")'>
+                <if test='quickSearchKey.equals("name")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE NAME LIKE CONCAT(#{quickSearchValue}, '%')
+                    )
+                </if>
+                <if test='quickSearchKey.equals("c0Name")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE INSPRS_CODE = 'C0' AND NAME LIKE CONCAT(#{quickSearchValue}, '%')
+                    )
+                </if>
+                <if test='quickSearchKey.equals("p1Name")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE INSPRS_CODE = 'P1' AND NAME LIKE CONCAT(#{quickSearchValue}, '%')
+                    )
+                </if>
+                <if test='quickSearchKey.equals("etc")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT CNTRC_NO
+                        FROM (
+                            SELECT DISTINCT CNTRC_NO
+                            FROM TB_CNTRC
+                            WHERE POLICY_NO = #{quickSearchValue} OR INSRR_DESIGN_NO = #{quickSearchValue}
+                            UNION
+                            SELECT DISTINCT CNTRC_NO
+                            FROM TB_CNTRC_INSPRS
+                            WHERE EMAIL = #{quickSearchValueEncrypt}
+                        ) T
+                    )
+                </if>
+                <if test='quickSearchKey.equals("policyNo")'>
+                    AND CT.POLICY_NO = #{quickSearchValue}
+                </if>
+                <if test='quickSearchKey.equals("insrrDesignNo")'>
+                    AND CT.INSRR_DESIGN_NO = #{quickSearchValue}
+                </if>
+                <if test='quickSearchKey.equals("email")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE EMAIL = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("idntn6Dgt")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE IDNTN_6DGT = #{quickSearchValue}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("tlphnNo")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE TLPHN_NO = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("clphnNo")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE CLPHN_NO = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("idntnNo")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE IDNTN_NO = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("phoneNo4Dgt")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE CLPHN_NO_4DGT = #{quickSearchValue} OR TLPHN_NO_4DGT = #{quickSearchValue}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("cntrcNo")'>
+                    CT.CNTRC_NO = #{quickSearchValue}
+                </if>
+            </if>
+            <!-- 빠른검색 END -->
+        </where>
+    </sql>
+
+    <!-- 청약 리스트 카운트 -->
+    <select id="getSbscrList_COUNT" parameterType="SbscrListSearchDto" resultType="long">
+        /* kr.fingate.gs.sales.cntrc.dao.CntrcDao.getSbscrList_COUNT */
+        SELECT COUNT(1)
+        FROM TB_CNTRC CT
+        <!-- 상품종류 검색시 상품테이블 조인 -->
+        <if test='prdctKind != null and prdctKind.size != 0'>
+            LEFT JOIN TB_RPRSN_PRDCT RP ON ( CT.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE )
+        </if>
+        <!-- 조건절 -->
+        <include refid="includeGetSbscrList"/>
+    </select>
+
+    <!-- 청약 리스트 -->
+    <select id="getSbscrList" parameterType="SbscrListSearchDto" resultType="SbscrListDto">
+        /* kr.fingate.gs.sales.cntrc.dao.CntrcDao.getSbscrList */
+        SELECT CT.CNTRC_NO
+            , DATE_FORMAT(CT.REG_DATE, '%y/%m/%d %H:%i') AS REG_DATE
+            , DATE_FORMAT(STR_TO_DATE(CT.CNTRC_DATE, '%Y%m%d'), '%y/%m/%d') AS CNTRC_DATE
+            , RCRT_U.ORGNZ_NAME AS RCRT_ORGNZ_NAME
+            , RCRT_U.USER_NAME AS RCRT_USER_NAME
+            , CI01.NAME AS C0_NAME
+            , CI02.NAME AS P1_NAME
+            , CI02.BRTHD AS P1_BRTHD
+            , CI01.CLPHN_NO AS C0_CLPHN_NO
+            , CT.INSRR_CODE
+            , RP.RPRSN_PRDCT_NAME
+            , CASE CT.PRDCT_CLASS
+                WHEN 'L' THEN CTL.PREM_TOTAL
+                WHEN 'N' THEN CTL.PREM_TOTAL
+                WHEN 'C' THEN CTC.PREM_TOTAL
+                WHEN 'E' THEN CTE.PREM_TOTAL
+            END AS PREM_TOTAL
+            , TRUNCATE(CEA.PREM_EVLTN,0) AS PREM_EVLTN
+            , SUBSTR(CT.SBSCR_STATE, 1, 1) AS SBSCR_STATE_TYPE
+            , CT.SBSCR_STATE
+            # , CSP_U.USER_NAME AS RCV_USER_NAME
+            # , IF(CSP_U.USER_NAME IS NULL, NULL, 'Y') AS RCV_YN
+            , CT.POLICY_NO
+            , CASE
+                WHEN IFNULL(CT.INSRR_APP_CNTRC_YN,'N') = 'N'
+                    THEN IFNULL(DATE_FORMAT(AA_ATTACH.REG_DATE,'%y/%m/%d'),'')
+                ELSE
+                    CASE
+                        WHEN AM_ATTACH.FILE_SEQ > 0 AND AO_ATTACH.FILE_SEQ > 0 AND AJ_ATTACH.FILE_SEQ > 0
+                            THEN (
+                                CASE
+                                    WHEN (CASE WHEN AM_ATTACH.REG_DATE > AO_ATTACH.REG_DATE THEN AM_ATTACH.REG_DATE ELSE AO_ATTACH.REG_DATE END) > AJ_ATTACH.REG_DATE
+                                        THEN (
+                                            CASE WHEN AM_ATTACH.REG_DATE > AO_ATTACH.REG_DATE THEN IFNULL(DATE_FORMAT(AM_ATTACH.REG_DATE,'%y/%m/%d'),'') ELSE IFNULL(DATE_FORMAT(AO_ATTACH.REG_DATE,'%y/%m/%d'),'') END
+                                        )
+                                    ELSE IFNULL(DATE_FORMAT(AJ_ATTACH.REG_DATE,'%y/%m/%d'),'')
+                                END
+                            )
+                        ELSE ''
+                    END
+            END AS CNTRC_FILE_REG_DATE
+            , IFNULL(CI02.NTGNT_YN,'N') AS NTGNT_YN
+            , DATE_FORMAT(CSP.REG_DATE, '%y/%m/%d %H:%i') AS PRCSN_DATE
+            , CT.PRDCT_CLASS
+            , CT.INSRR_APP_CNTRC_YN
+            , CASE
+                WHEN CSP.SBSCR_STATE = 'C01' THEN CSP.PRCSN_CNTNT
+                ELSE ''
+            END AS PROC_CNTT
+        FROM (
+            SELECT CT.CNTRC_NO
+                , CT.POLICY_NO
+                , CT.REG_DATE
+                , CT.CNTRC_DATE
+                , CT.RCRT_USER_NO
+                , CT.CLCTN_USER_NO
+                , CT.RSPNS_USER_NO
+                , CT.INSRR_CODE
+                , CT.SBSCR_STATE
+                , CT.INSRR_APP_CNTRC_YN
+                , CT.RPRSN_PRDCT_CODE
+                , CT.PRDCT_CLASS
+            FROM TB_CNTRC CT
+            <!-- 상품종류 검색시 상품테이블 조인 -->
+            <if test='prdctKind != null and prdctKind.size != 0'>
+                LEFT JOIN TB_RPRSN_PRDCT RP ON ( CT.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE )
+            </if>
+            <!-- WHERE -->
+            <include refid="includeGetSbscrList"/>
+            <!-- ORDER BY -->
+            ORDER BY
+            <choose>
+                <when test='order != null and order.equals("regDate")'>
+                    CT.REG_DATE
+                </when>
+                <when test='order != null and order.equals("cntrcDate")'>
+                    CT.CNTRC_DATE
+                </when>
+                <otherwise>
+                    CT.REG_DATE
+                </otherwise>
+            </choose>
+            <choose>
+                <when test='sort != null and sort.equals("asc")'>
+                    ASC
+                </when>
+                <otherwise>
+                    DESC
+                </otherwise>
+            </choose>
+            <!-- LIMIT -->
+            <include refid="includePage" />
+        ) CT
+        LEFT OUTER JOIN TB_CNTRC_L CTL ON CTL.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_CNTRC_C CTC ON CTC.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_CNTRC_E CTE ON CTE.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_USER RCRT_U ON RCRT_U.USER_NO = CT.RCRT_USER_NO
+        LEFT OUTER JOIN TB_ORGNZ RCRT_O ON RCRT_O.ORGNZ_NO = RCRT_U.ORGNZ_NO
+        LEFT OUTER JOIN TB_CNTRC_INSPRS CI01 ON (CT.CNTRC_NO = CI01.CNTRC_NO AND CI01.INSPRS_CODE = 'C0')
+        LEFT OUTER JOIN TB_CNTRC_INSPRS CI02 ON (CT.CNTRC_NO = CI02.CNTRC_NO AND CI02.INSPRS_CODE = 'P1')
+        LEFT OUTER JOIN TB_RPRSN_PRDCT RP ON RP.RPRSN_PRDCT_CODE = CT.RPRSN_PRDCT_CODE
+        LEFT OUTER JOIN TB_CNTRC_EXTPY_AMOUNT CEA ON CEA.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_CNTRC_STATE_PRCSN CSP
+            ON (
+                CSP.CNTRC_NO = CT.CNTRC_NO
+                AND CSP.PRCSN_NO = (SELECT MAX(PRCSN_NO) FROM TB_CNTRC_STATE_PRCSN WHERE CNTRC_NO = CT.CNTRC_NO)
+            )
+        LEFT OUTER JOIN TB_USER CSP_U ON CSP_U.USER_NO = CSP.REG_USER_NO
+        /* 첨부파일 : 청약서 */
+        LEFT OUTER JOIN TB_CNTRC_ATTACH AS AA_ATTACH
+            ON (
+                AA_ATTACH.CNTRC_NO = CT.CNTRC_NO
+                AND AA_ATTACH.FILE_SEQ = (SELECT MAX(FILE_SEQ) FROM TB_CNTRC_ATTACH WHERE CNTRC_NO = CT.CNTRC_NO AND FILE_FORMAT ='AA' AND DATA_STATUS='A')
+            )
+        /* 첨부파일 : 개인정보처리동의서 */
+        LEFT OUTER JOIN TB_CNTRC_ATTACH AS AM_ATTACH
+            ON (
+                AM_ATTACH.CNTRC_NO = CT.CNTRC_NO
+                AND AM_ATTACH.FILE_SEQ = (SELECT MAX(FILE_SEQ) FROM TB_CNTRC_ATTACH WHERE CNTRC_NO = CT.CNTRC_NO AND FILE_FORMAT ='AM' AND DATA_STATUS='A')
+            )
+        /* 첨부파일 : 금소볍비교설명확인서 */
+        LEFT OUTER JOIN TB_CNTRC_ATTACH AS AO_ATTACH
+            ON (
+                AO_ATTACH.CNTRC_NO = CT.CNTRC_NO
+                AND AO_ATTACH.FILE_SEQ = (SELECT MAX(FILE_SEQ) FROM TB_CNTRC_ATTACH WHERE CNTRC_NO = CT.CNTRC_NO AND FILE_FORMAT ='AO' AND DATA_STATUS='A')
+            )
+        /* 첨부파일 : 보험상품비교설명확인서 */
+        LEFT OUTER JOIN TB_CNTRC_ATTACH AS AJ_ATTACH
+            ON (
+                AJ_ATTACH.CNTRC_NO = CT.CNTRC_NO
+                AND AJ_ATTACH.FILE_SEQ = (SELECT MAX(FILE_SEQ) FROM TB_CNTRC_ATTACH WHERE CNTRC_NO = CT.CNTRC_NO AND FILE_FORMAT ='AJ' AND DATA_STATUS='A')
+            )
+    </select>
+
+
+
+
+
+
+    <sql id="includeGetCntrcList">
+        <where>
+            <choose>
+                <!-- 정산미확인  -->
+                <when test='sbscrState == "D01"'>
+                    AND CT.SBSCR_STATE = 'D01'
+                </when>
+                <otherwise>
+                    AND CT.DATA_STATE = 'A'
+                    AND CT.SBSCR_STATE = 'C99'
+                </otherwise>
+            </choose>
+            AND CT.CLIENT_NO = #{clientNo}
+            <if test='regStartDate != null and !regStartDate.equals("")'>
+                AND CT.REG_DATE <![CDATA[ >= ]]> STR_TO_DATE(CONCAT(#{regStartDate}, '000000'), '%Y%m%d%H%i%S')
+            </if>
+            <if test='regEndDate != null and !regEndDate.equals("")'>
+                AND CT.REG_DATE <![CDATA[ <= ]]> STR_TO_DATE(CONCAT(#{regEndDate}, '235959'), '%Y%m%d%H%i%S')
+            </if>
+            <if test='cntrcStartDate != null and !cntrcStartDate.equals("")'>
+                AND CT.CNTRC_DATE <![CDATA[ >= ]]> STR_TO_DATE(CONCAT(#{cntrcStartDate}, '000000'), '%Y%m%d%H%i%S')
+            </if>
+            <if test='cntrcEndDate != null and !cntrcEndDate.equals("")'>
+                AND CT.CNTRC_DATE <![CDATA[ <= ]]> STR_TO_DATE(CONCAT(#{cntrcEndDate}, '235959'), '%Y%m%d%H%i%S')
+            </if>
+
+            <if test='cntrcNo > 0'>
+                AND CT.CNTRC_NO = #{cntrcNo}
+            </if>
+            <if test='policyNo != null and !policyNo.equals("")'>
+                AND CT.POLICY_NO = #{policyNo}
+            </if>
+            <if test='finalRdmptCntrcState != null and !finalRdmptCntrcState.equals("")'>
+                AND CT.FINAL_RDMPT_CNTRC_STATE = #{finalRdmptCntrcState}
+            </if>
+            <if test='ctomyClassDtl != null and ctomyClassDtl.size != 0'>
+                AND CT.CTOMY_CLASS_DTL IN
+                <foreach item="item" index="index" collection="ctomyClassDtl" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='saleMethod != null and !saleMethod.equals("")'>
+                AND FC.SALE_METHOD = #{saleMethod}
+            </if>
+            <if test='orgnzNoList != null and orgnzNoList.size != 0'>
+                AND CT.RSPNS_USER_NO IN (
+                    SELECT USER_NO
+                    FROM TB_USER
+                    WHERE ORGNZ_NO IN
+                    <foreach item="item" index="index" collection="orgnzNoList" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test='rspnsUserName != null and !rspnsUserName.equals("")'>
+                AND CT.RSPNS_USER_NO IN (
+                    SELECT USER_NO
+                    FROM TB_USER
+                    WHERE USER_NAME = #{rspnsUserName}
+                )
+            </if>
+            <if test='prdctClass != null and prdctClass.size != 0'>
+                AND CT.PRDCT_CLASS IN
+                <foreach item="item" index="index" collection="prdctClass" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='prdctKind != null and prdctKind.size != 0'>
+                AND RP.PRDCT_KIND IN
+                <foreach item="item" index="index" collection="prdctKind" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='insrrCode != null and insrrCode.size != 0'>
+                AND CT.INSRR_CODE IN
+                <foreach item="item" index="index" collection="insrrCode" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='hndwrState != null and !hndwrState.equals("")'>
+                AND CT.HNDWR_STATE = #{hndwrState}
+            </if>
+
+            <!-- 빠른검색 START -->
+            <if test='quickSearchYn.equals("Y") and quickSearchValue != null and !quickSearchValue.equals("")'>
+                <if test='quickSearchKey.equals("name")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE NAME LIKE CONCAT(#{quickSearchValue}, '%')
+                    )
+                </if>
+                <if test='quickSearchKey.equals("c0Name")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE INSPRS_CODE = 'C0' AND NAME LIKE CONCAT(#{quickSearchValue}, '%')
+                    )
+                </if>
+                <if test='quickSearchKey.equals("p1Name")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE INSPRS_CODE = 'P1' AND NAME LIKE CONCAT(#{quickSearchValue}, '%')
+                    )
+                </if>
+                <if test='quickSearchKey.equals("etc")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT CNTRC_NO
+                        FROM (
+                            SELECT DISTINCT CNTRC_NO
+                            FROM TB_CNTRC
+                            WHERE POLICY_NO = #{quickSearchValue} OR INSRR_DESIGN_NO = #{quickSearchValue}
+                            UNION
+                            SELECT DISTINCT CNTRC_NO
+                            FROM TB_CNTRC_INSPRS
+                            WHERE EMAIL = #{quickSearchValueEncrypt}
+                        ) T
+                    )
+                </if>
+                <if test='quickSearchKey.equals("policyNo")'>
+                    AND CT.POLICY_NO = #{quickSearchValue}
+                </if>
+                <if test='quickSearchKey.equals("insrrDesignNo")'>
+                    AND CT.INSRR_DESIGN_NO = #{quickSearchValue}
+                </if>
+                <if test='quickSearchKey.equals("email")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE EMAIL = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("idntn6Dgt")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE IDNTN_6DGT = #{quickSearchValue}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("tlphnNo")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE TLPHN_NO = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("clphnNo")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE CLPHN_NO = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("idntnNo")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE IDNTN_NO = #{quickSearchValueEncrypt}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("phoneNo4Dgt")'>
+                    AND CT.CNTRC_NO IN (
+                        SELECT DISTINCT CNTRC_NO
+                        FROM TB_CNTRC_INSPRS
+                        WHERE CLPHN_NO_4DGT = #{quickSearchValue} OR TLPHN_NO_4DGT = #{quickSearchValue}
+                    )
+                </if>
+                <if test='quickSearchKey.equals("cntrcNo")'>
+                    CT.CNTRC_NO = #{quickSearchValue}
+                </if>
+            </if>
+            <!-- 빠른검색 END -->
+        </where>
+    </sql>
+
+    <!-- 계약 리스트 카운트 -->
+    <select id="getCntrcList_COUNT" parameterType="CntrcListSearchDto" resultType="long">
+        /* kr.fingate.gs.sales.cntrc.dao.CntrcDao.getCntrcList_COUNT */
+        SELECT COUNT(1)
+        FROM TB_CNTRC CT
+        <!-- 상품종류 검색시 상품테이블 조인 -->
+        <if test='prdctKind != null and prdctKind.size != 0'>
+            LEFT JOIN TB_RPRSN_PRDCT RP ON ( CT.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE )
+        </if>
+        <!-- 조건절 -->
+        <include refid="includeGetCntrcList"/>
+    </select>
+
+    <!-- 계약 리스트 -->
+    <select id="getCntrcList" parameterType="CntrcListSearchDto" resultType="CntrcListDto">
+        /* kr.fingate.gs.sales.cntrc.dao.CntrcDao.getCntrcList */
+        SELECT CT.CNTRC_NO
+        , DATE_FORMAT(CT.REG_DATE, '%y/%m/%d') AS REG_DATE
+        , DATE_FORMAT(STR_TO_DATE(CT.CNTRC_DATE, '%Y%m%d'), '%y/%m/%d') AS CNTRC_DATE
+        , RSPNS_U.ORGNZ_NAME AS RSPNS_ORGNZ_NAME
+        , RSPNS_U.USER_NAME AS RSPNS_USER_NAME
+        , CI01.NAME AS C0_NAME
+        , CI02.NAME AS P1_NAME
+        , CI02.BRTHD AS P1_BRTHD
+        , CI01.CLPHN_NO AS C0_CLPHN_NO
+        , CT.INSRR_CODE
+        , RP.RPRSN_PRDCT_NAME
+        , CASE CT.PRDCT_CLASS
+            WHEN 'L' THEN CTL.PREM_TOTAL
+            WHEN 'N' THEN CTL.PREM_TOTAL
+            WHEN 'C' THEN CTC.PREM_TOTAL
+            WHEN 'E' THEN CTE.PREM_TOTAL
+        END AS PREM_TOTAL
+        , TRUNCATE(CEA.PREM_EVLTN,0) AS PREM_EVLTN
+        , SUBSTR(CT.SBSCR_STATE, 1, 1) AS SBSCR_STATE_TYPE
+        , CT.POLICY_NO
+        , CT.FINAL_RDMPT_CNTRC_STATE
+        , IF(CT.CTOMY_CLASS_DTL IS NOT NULL, LEFT(CT.CTOMY_CLASS_DTL, 2), NULL) AS CTOMY_CLASS
+        , CT.CTOMY_CLASS_DTL
+        , FN_INSRN_PERIOD(CTL.INSRN_PERIOD) AS INSRN_PERIOD
+        , FN_PYMNT_PERIOD(CTL.PYMNT_PERIOD) AS PYMNT_PERIOD
+        , CT.HNDWR_STATE
+        , CT.PRDCT_CLASS
+        , FN_ORGNZ_USER(CT.FINAL_STATE_USER_NO) AS FINAL_STATE_USER_NAME
+        , DATE_FORMAT(CT.FINAL_STATE_DATE, '%y/%m/%d %H:%i') AS FINAL_STATE_DATE
+        , FN_ORGNZ_USER(CT.RCRT_USER_NO) AS RCRT_USER_NAME
+        , FN_ORGNZ_USER(CSP_C99.REG_USER_NO) AS C99_STATE_PRSCN_USER_NAME
+        , DATE_FORMAT(CSP_C99.REG_DATE, '%y/%m/%d %H:%i') AS C99_STATE_PRSCN_DATE
+        FROM (
+        SELECT CT.CNTRC_NO
+            , CT.POLICY_NO
+            , CT.REG_DATE
+            , CT.CNTRC_DATE
+            , CT.RCRT_USER_NO
+            , CT.CLCTN_USER_NO
+            , CT.RSPNS_USER_NO
+            , CT.INSRR_CODE
+            , CT.SBSCR_STATE
+            , CT.INSRR_APP_CNTRC_YN
+            , CT.RPRSN_PRDCT_CODE
+            , CT.PRDCT_CLASS
+            , CT.FINAL_RDMPT_CNTRC_STATE
+            , CT.CTOMY_CLASS_DTL
+            , CT.HNDWR_STATE
+            , CT.FINAL_STATE_USER_NO
+            , CT.FINAL_STATE_DATE
+        FROM TB_CNTRC CT
+        <!-- 상품종류 검색시 상품테이블 조인 -->
+        <if test='prdctKind != null and prdctKind.size != 0'>
+            LEFT JOIN TB_RPRSN_PRDCT RP ON ( CT.RPRSN_PRDCT_CODE = RP.RPRSN_PRDCT_CODE )
+        </if>
+        <!-- WHERE -->
+        <include refid="includeGetCntrcList"/>
+        <!-- ORDER BY -->
+        ORDER BY
+        <choose>
+            <when test='order != null and order.equals("regDate")'>
+                CT.REG_DATE
+            </when>
+            <when test='order != null and order.equals("cntrcDate")'>
+                CT.CNTRC_DATE
+            </when>
+            <otherwise>
+                CT.REG_DATE
+            </otherwise>
+        </choose>
+        <choose>
+            <when test='sort != null and sort.equals("asc")'>
+                ASC
+            </when>
+            <otherwise>
+                DESC
+            </otherwise>
+        </choose>
+        <!-- LIMIT -->
+        <include refid="includePage" />
+        ) CT
+        LEFT OUTER JOIN TB_CNTRC_L CTL ON CTL.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_CNTRC_C CTC ON CTC.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_CNTRC_E CTE ON CTE.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_USER RSPNS_U ON RSPNS_U.USER_NO = CT.RSPNS_USER_NO
+        LEFT OUTER JOIN TB_CNTRC_INSPRS CI01 ON (CT.CNTRC_NO = CI01.CNTRC_NO AND CI01.INSPRS_CODE = 'C0')
+        LEFT OUTER JOIN TB_CNTRC_INSPRS CI02 ON (CT.CNTRC_NO = CI02.CNTRC_NO AND CI02.INSPRS_CODE = 'P1')
+        LEFT OUTER JOIN TB_RPRSN_PRDCT RP ON RP.RPRSN_PRDCT_CODE = CT.RPRSN_PRDCT_CODE
+        LEFT OUTER JOIN TB_CNTRC_EXTPY_AMOUNT CEA ON CEA.CNTRC_NO = CT.CNTRC_NO
+        LEFT OUTER JOIN TB_CNTRC_STATE_PRCSN CSP_C99
+            ON (
+                CSP_C99.CNTRC_NO = CT.CNTRC_NO
+                AND CSP_C99.PRCSN_NO = (SELECT MAX(PRCSN_NO) FROM TB_CNTRC_STATE_PRCSN WHERE CNTRC_NO = CT.CNTRC_NO AND SBSCR_STATE = 'C99')
+            )
+    </select>
+
+</mapper>

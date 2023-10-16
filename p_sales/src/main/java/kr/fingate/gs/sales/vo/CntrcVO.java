@@ -33,8 +33,8 @@ public class CntrcVO extends BaseVO {
     @Info(value="계약시간")
     private String cntrcTime;
 
-    @Info(value="처리상태")
-    private String prcsnState;
+    @Info(value="청약상태")
+    private String sbscrState;
 
     @Info(value="출력상태")
     private String printState;
@@ -105,8 +105,8 @@ public class CntrcVO extends BaseVO {
     @Info(value="마감확정일시")
     private String closeDfntnDt;
 
-    @Info(value="사용인번호")
-    private long userNo;
+    @Info(value="수금자")
+    private long clctnUserNo;
 
     @Info(value="담당자")
     private long rspnsUserNo;
@@ -120,8 +120,8 @@ public class CntrcVO extends BaseVO {
     @Info(value="법인계약여부")
     private String corpCntrcYn;
 
-    @Info(value="세부유형")
-    private String dtlType;
+    @Info(value="집금책임업무세부유형")
+    private String ctomyClassDtl;
 
     @Info(value="최종환수계약상태")
     private String finalRdmptCntrcState;
@@ -133,7 +133,7 @@ public class CntrcVO extends BaseVO {
     private String cntrcAcptnDate;
 
     @Info(value="모집자")
-    private long orgUserNo;
+    private long rcrtUserNo;
 
     @Info(value="법인DB계약여부")
     private String corpDbCntrcYn;
@@ -199,7 +199,7 @@ public class CntrcVO extends BaseVO {
     private String endrsState;
 
     @Info(value="데이터상태")
-    private String dataStatus;
+    private String dataState;
 
     @Info(value="최종요청일")
     private String finalRqstDate;
@@ -208,10 +208,10 @@ public class CntrcVO extends BaseVO {
     private String finalPrcsnDate;
 
     @Info(value="최종처리일시")
-    private String finalPrcsnDt;
+    private String finalStateDate;
 
     @Info(value="최종처리자")
-    private long finalPrcsnUserNo;
+    private long finalStateUserNo;
 
     @Info(value="최종납입년월")
     private String finalPymntYymm;
