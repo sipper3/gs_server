@@ -4,6 +4,7 @@ public enum ResponseCode {
     OK(1, "OK"),
     FAIL(-1, "FAIL"),
 
+    INTERNAL_SERVER_ERROR(500, "내부 서버 오류가 발생 했습니다."),
     //TODO 필요한 시스템 정의 오류 항목 추가 필요
 
     FILE_NOT_FOUND(1000, "파일이 존재하지 않습니다."),

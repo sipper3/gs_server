@@ -3,6 +3,8 @@ package kr.fingate.gs.rpa.job.controller;
 import jakarta.servlet.http.HttpServletResponse;
 
 import kr.fingate.gs.common.dto.PageInfoDto;
+import kr.fingate.gs.core.aop.exception.BizException;
+import kr.fingate.gs.core.aop.response.ResponseCode;
 import kr.fingate.gs.core.dto.file.FileDto;
 import kr.fingate.gs.core.util.FileUtil;
 import kr.fingate.gs.rpa.job.dto.JobDto;
@@ -37,6 +39,7 @@ public class JobController {
     public JobDto getNextJob(@RequestParam int jobState) throws Exception {
         JobDto jobDto = new JobDto();
         jobDto.setJobState(jobState);
+//        throw new BizException(ResponseCode.FILE_NOT_ALLOW, "파일은 내 멋데로");
         return jobService.getJob(jobDto);
     }
 

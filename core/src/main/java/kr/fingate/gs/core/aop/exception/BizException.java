@@ -16,6 +16,30 @@ public class BizException extends RuntimeException {
         this.message = resCode.reasonPhrase();
     }
 
+    public BizException(ResponseCode resCode, String msg) {
+        super(resCode.reasonPhrase());
+        this.code = resCode.value();
+        this.message = msg;
+    }
+
+    public BizException(ResponseCode resCode, Throwable e) {
+        super(resCode.reasonPhrase(), e);
+        this.code = resCode.value();
+        this.message = resCode.reasonPhrase();
+    }
+
+    public BizException(String msg) {
+        super(msg);
+        this.code = ResponseCode.INTERNAL_SERVER_ERROR.value();
+        this.message = msg;
+    }
+
+    public BizException(String msg, Throwable e) {
+        super(msg, e);
+        this.code = ResponseCode.INTERNAL_SERVER_ERROR.value();
+        this.message = msg;
+    }
+
     @Override
     public String getMessage() {
         return this.message;
