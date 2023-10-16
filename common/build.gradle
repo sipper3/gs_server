@@ -33,6 +33,7 @@ dependencies {
     testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
     testFixturesImplementation 'org.springframework.security:spring-security-test'
     testFixturesImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.1'
+    testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 test {
