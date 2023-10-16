@@ -75,6 +75,7 @@ public class LoginPublicService {
         String cookieValue = null;
 
         Cookie[] cookies = request.getCookies(); // 모든 쿠키 가져오기
+        log.error("cookies.length {}", cookies.length);
 
         if(cookies != null){
             for (Cookie c : cookies) {
